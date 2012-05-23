@@ -21,8 +21,3 @@ public class Greet extends Feature
     }
   }
 }
-
-/* Location:           C:\Users\Stefan\Desktop\No name_01.jar
- * Qualified Name:     features.Greet
- * JD-Core Version:    0.6.0
- */

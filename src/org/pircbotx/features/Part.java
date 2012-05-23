@@ -23,8 +23,3 @@ public class Part extends Feature
     }
   }
 }
-
-/* Location:           C:\Users\Stefan\Desktop\No name_01.jar
- * Qualified Name:     features.Part
- * JD-Core Version:    0.6.0
- */

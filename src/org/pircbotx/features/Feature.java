@@ -26,8 +26,3 @@ public abstract class Feature
 
   public abstract void process(String paramString1, String paramString2, String paramString3);
 }
-
-/* Location:           C:\Users\Stefan\Desktop\No name_01.jar
- * Qualified Name:     features.Feature
- * JD-Core Version:    0.6.0
- */

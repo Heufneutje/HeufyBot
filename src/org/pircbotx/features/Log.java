@@ -108,8 +108,3 @@ public class Log extends Feature
     }
   }
 }
-
-/* Location:           C:\Users\Stefan\Desktop\No name_01.jar
- * Qualified Name:     features.Log
- * JD-Core Version:    0.6.0
- */

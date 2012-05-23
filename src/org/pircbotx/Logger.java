@@ -45,8 +45,3 @@ public class Logger
     }
   }
 }
-
-/* Location:           C:\Users\Stefan\Desktop\No name_01.jar
- * Qualified Name:     Logger
- * JD-Core Version:    0.6.0
- */

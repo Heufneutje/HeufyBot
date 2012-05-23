@@ -21,8 +21,3 @@ public class Time extends Feature
     this.bot.sendMessage(source, "The current time is " + format.format(date));
   }
 }
-
-/* Location:           C:\Users\Stefan\Desktop\No name_01.jar
- * Qualified Name:     features.Time
- * JD-Core Version:    0.6.0
- */
