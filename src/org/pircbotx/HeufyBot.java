@@ -27,6 +27,7 @@ import lombok.Setter;
 import lombok.Getter;
 import java.util.concurrent.CountDownLatch;
 import javax.net.SocketFactory;
+import java.net.SocketException;
 
 import org.pircbotx.gui.MainWindow;
 import org.pircbotx.gui.PopupManager;
@@ -162,7 +163,7 @@ public class HeufyBot {
 	// DccManager to process and handle all DCC events.
 	protected DccManager _dccManager = new DccManager(this);
 	@Setter(AccessLevel.PROTECTED)
-	protected List<Integer> dccPorts = new ArrayList();
+	protected List<Integer> dccPorts = new ArrayList<Integer>();
 	protected InetAddress _dccInetAddress = null;
 	// Default settings for the PircBotX.
 	protected boolean _autoNickChange = false;
@@ -188,7 +189,7 @@ public class HeufyBot {
 	 */
 	protected int socketTimeout = 1000 * 60 * 5;
 	protected final ServerInfo serverInfo = new ServerInfo(this);
-	protected final ListBuilder<ChannelListEntry> channelListBuilder = new ListBuilder();
+	protected final ListBuilder<ChannelListEntry> channelListBuilder = new ListBuilder<ChannelListEntry>();
 	protected SocketFactory _socketFactory = null;
 	protected boolean loggedIn = false;
 	
@@ -1528,21 +1529,37 @@ public class HeufyBot {
 	}
 
 	@Synchronized(value = "logLock")
-	public void logException(Throwable t) {
-		if (!_verbose)
-			return;
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		t.printStackTrace(pw);
-		pw.flush();
-		StringTokenizer tokenizer = new StringTokenizer(sw.toString(), "\r\n");
-		log("### Your implementation of PircBotX is faulty and you have", "server");
-	      log("### allowed an uncaught Exception or Error to propagate in your", "server");
-	      log("### code. It may be possible for PircBotX to continue operating", "server");
-	      log("### normally. Here is the stack trace that was produced: -", "server");
-	      log("### ", "server");
-		while (tokenizer.hasMoreTokens())
-			log("### " + tokenizer.nextToken(), "server");
+	public void logException(Throwable t)
+	{
+		if(t instanceof SocketException && t.getMessage().equals("Connection reset"))
+		{
+			Set<Channel> channels =_userChanInfo.getAValues();
+			reset();
+			this.disconnect();
+			this.connectWithSettings("settings.xml");
+			for(Channel channel : channels)
+			{
+				joinChannel(channel.getName());
+			}
+			log("Reconnected. Java is stupid", "server");
+		}
+		else
+		{
+			if (!_verbose)
+				return;
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw);
+			t.printStackTrace(pw);
+			pw.flush();
+			StringTokenizer tokenizer = new StringTokenizer(sw.toString(), "\r\n");
+			log("### Your implementation of PircBotX is faulty and you have", "server");
+		      log("### allowed an uncaught Exception or Error to propagate in your", "server");
+		      log("### code. It may be possible for PircBotX to continue operating", "server");
+		      log("### normally. Here is the stack trace that was produced: -", "server");
+		      log("### ", "server");
+			while (tokenizer.hasMoreTokens())
+				log("### " + tokenizer.nextToken(), "server");
+		}
 	}
 
 	/**
@@ -2718,6 +2735,7 @@ public class HeufyBot {
 		_userChanInfo.clear();
 		//Clear any existing channel list
 		channelListBuilder.finish();
+		gui.reset();
 	}
 
 	/**
