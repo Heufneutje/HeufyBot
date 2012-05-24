@@ -1531,35 +1531,20 @@ public class HeufyBot {
 	@Synchronized(value = "logLock")
 	public void logException(Throwable t)
 	{
-		if(t instanceof SocketException && t.getMessage().equals("Connection reset"))
-		{
-			Set<Channel> channels =_userChanInfo.getAValues();
-			reset();
-			this.disconnect();
-			this.connectWithSettings("settings.xml");
-			for(Channel channel : channels)
-			{
-				joinChannel(channel.getName());
-			}
-			log("Reconnected. Java is stupid", "server");
-		}
-		else
-		{
-			if (!_verbose)
-				return;
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			t.printStackTrace(pw);
-			pw.flush();
-			StringTokenizer tokenizer = new StringTokenizer(sw.toString(), "\r\n");
-			log("### Your implementation of PircBotX is faulty and you have", "server");
-		      log("### allowed an uncaught Exception or Error to propagate in your", "server");
-		      log("### code. It may be possible for PircBotX to continue operating", "server");
-		      log("### normally. Here is the stack trace that was produced: -", "server");
-		      log("### ", "server");
-			while (tokenizer.hasMoreTokens())
-				log("### " + tokenizer.nextToken(), "server");
-		}
+		if (!_verbose)
+			return;
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		t.printStackTrace(pw);
+		pw.flush();
+		StringTokenizer tokenizer = new StringTokenizer(sw.toString(), "\r\n");
+		log("### Your implementation of PircBotX is faulty and you have", "server");
+	      log("### allowed an uncaught Exception or Error to propagate in your", "server");
+	      log("### code. It may be possible for PircBotX to continue operating", "server");
+	      log("### normally. Here is the stack trace that was produced: -", "server");
+	      log("### ", "server");
+		while (tokenizer.hasMoreTokens())
+			log("### " + tokenizer.nextToken(), "server");
 	}
 
 	/**
