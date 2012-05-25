@@ -397,7 +397,9 @@ public class HeufyBot {
 
 		if (isConnected())
 			throw new IrcException("The PircBotXis already connected to an IRC server.  Disconnect first.");
-
+		
+		IdentServer ident = new IdentServer(this, getLogin());
+		
 		// Clear everything we may have know about channels.
 		_userChanInfo.clear();
 
@@ -423,7 +425,7 @@ public class HeufyBot {
 		_inputThread = createInputThread(_socket, breader);
 		_outputThread = createOutputThread(bwriter);
 		_outputThread.start();
-
+		
 		// Attempt to join the server.
 		if (password != null && !password.trim().equals(""))
 			_outputThread.sendRawLineNow("PASS " + password);
