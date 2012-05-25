@@ -105,12 +105,12 @@ public class MainWindow extends JFrame
     }
     else if (target.contains("#"))
     {
-      ((ChatWindow)this.channels.get(target)).appendText(text);
+      ((ChatWindow)this.channels.get(target.toLowerCase())).appendText(text);
     }
     else if (!this.channels.containsKey(target))
     {
       ChatWindow newWindow = new ChatWindow(target, this);
-      this.channels.put(target, newWindow);
+      this.channels.put(target.toLowerCase(), newWindow);
       this.tabbedPane.add(newWindow, target);
       newWindow.appendText(text);
     }

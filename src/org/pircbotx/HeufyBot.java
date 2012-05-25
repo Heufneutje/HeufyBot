@@ -1558,6 +1558,7 @@ public class HeufyBot {
 	 */
 	protected void handleLine(String line)
 	{
+		//log(line, "server");
 		// Check for server pings.
 		if (line.startsWith("PING ")) {
 			// Respond to the ping and return immediately.
