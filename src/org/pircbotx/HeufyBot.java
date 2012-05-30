@@ -1558,7 +1558,6 @@ public class HeufyBot {
 	 */
 	protected void handleLine(String line)
 	{
-		//log(line, "server");
 		// Check for server pings.
 		if (line.startsWith("PING ")) {
 			// Respond to the ping and return immediately.
@@ -1775,6 +1774,7 @@ public class HeufyBot {
 			channel.setTopic(topic);
 			channel.setTopicSetter(sourceNick);
 			channel.setTopicTimestamp(currentTime);
+			gui.setChannelTopic(channel.getName(), topic);
 			
 			log(sourceNick + " changes topic to '" + topic + "'", target);
 			getListenerManager().dispatchEvent(new TopicEvent(this, channel, topic, source, currentTime, true));
@@ -1839,6 +1839,7 @@ public class HeufyBot {
 			String channel = parsed[1];
 			String topic = parsed[2].substring(1);
 			log("Topic is '" + topic + "'", channel);
+			gui.setChannelTopic(channel, topic);
 
 			getChannel(channel).setTopic(topic);
 		} else if (code == RPL_TOPICINFO) {

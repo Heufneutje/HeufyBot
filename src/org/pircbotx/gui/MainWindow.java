@@ -6,11 +6,12 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultCaret;
+
 import org.pircbotx.HeufyBot;
 
 public class MainWindow extends JFrame
@@ -36,6 +37,8 @@ public class MainWindow extends JFrame
     this.chat.setLineWrap(true);
     this.chat.setWrapStyleWord(true);
     this.chat.setEditable(false);
+    DefaultCaret caret = (DefaultCaret)chat.getCaret();
+    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     this.inputField = new JTextField();
     this.inputField.addActionListener(new InputListener());
     this.scrollPane = new JScrollPane(this.chat);
@@ -53,7 +56,7 @@ public class MainWindow extends JFrame
     setSize(640, 480);
     setTitle("HeufyBot 2.0.0");
     setLocationRelativeTo(null);
-    setDefaultCloseOperation(2);
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
   }
 
@@ -95,13 +98,7 @@ public class MainWindow extends JFrame
   {
     if (target.equals("server"))
     {
-      JScrollBar vbar = this.scrollPane.getVerticalScrollBar();
-      boolean autoScroll = vbar.getValue() + vbar.getVisibleAmount() == vbar.getMaximum();
       this.chat.append(text);
-      if (autoScroll)
-      {
-        this.chat.setCaretPosition(this.chat.getDocument().getLength());
-      }
     }
     else if (target.contains("#"))
     {
@@ -119,14 +116,20 @@ public class MainWindow extends JFrame
       ((ChatWindow)this.channels.get(target)).appendText(text);
     }
   }
+  
+  public void setChannelTopic(String channel, String topic)
+  {
+	  channels.get(channel).setChannelTopic(topic);
+  }
 
   public void dispose()
   {
-    if (this.bot.isConnected())
-    {
-      this.bot.disconnect();
-    }
-    System.exit(0);
+	  super.dispose();
+	  if (this.bot.isConnected())
+	  {
+	      this.bot.disconnect();
+	  }
+	  System.exit(0);
   }
 
   public void sendText(String text, String source)
@@ -162,12 +165,12 @@ public class MainWindow extends JFrame
     }
   }
   
-  class InputListener implements ActionListener
-{
-  public void actionPerformed(ActionEvent e)
-  {
-    sendText(inputField.getText(), "server");
-    inputField.setText("");
-  }
-}
+  	class InputListener implements ActionListener
+	{
+		public void actionPerformed(ActionEvent e)
+		{
+		    sendText(inputField.getText(), "server");
+		    inputField.setText("");
+		}
+	}
 }
