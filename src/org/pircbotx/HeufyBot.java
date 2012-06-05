@@ -263,6 +263,8 @@ public class HeufyBot {
 						connect(serverip, port);
 					}
 					
+					sendRawLine("MODE " + _name + " +iB");
+					
 					if ((channels != null) && (!channels.equals("")))
 					{
 						if (channels.contains(","))
@@ -392,7 +394,7 @@ public class HeufyBot {
 		if (isConnected())
 			throw new IrcException("The PircBotXis already connected to an IRC server.  Disconnect first.");
 		
-		IdentServer ident = new IdentServer(this, getLogin());
+		new IdentServer(this, getLogin());
 		
 		// Clear everything we may have know about channels.
 		_userChanInfo.clear();
