@@ -1529,19 +1529,6 @@ public class HeufyBot {
 	@Synchronized(value = "logLock")
 	public void logException(Throwable t)
 	{
-		if(t instanceof SocketException && t.getMessage().equals("Connection reset"))
-		{
-			Set<Channel> channels =_userChanInfo.getAValues();
-			reset();
-			this.disconnect();
-			this.connectWithSettings("settings.xml");
-			for(Channel channel : channels)
-			{
-				joinChannel(channel.getName());
-			}
-			log("Reconnected. Java is stupid", "server");
-		}
-		
 		if (!_verbose)
 			return;
 		StringWriter sw = new StringWriter();
