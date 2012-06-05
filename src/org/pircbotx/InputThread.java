@@ -111,6 +111,8 @@ public class InputThread extends Thread {
 			socket.close();
 		} catch (Exception e) {
 			bot.logException(e);
+			isConnected = false;
+			bot.reset();
 		}
 
 		//Now that the socket is definatly closed, call event and log

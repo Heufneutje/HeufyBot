@@ -27,6 +27,8 @@ import lombok.Setter;
 import lombok.Getter;
 import java.util.concurrent.CountDownLatch;
 import javax.net.SocketFactory;
+import javax.swing.Timer;
+
 import java.net.SocketException;
 
 import org.pircbotx.gui.MainWindow;
@@ -83,6 +85,7 @@ import java.util.HashSet;
 import org.pircbotx.exception.IrcException;
 import org.pircbotx.exception.NickAlreadyInUseException;
 import java.util.Set;
+import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.BufferedReader;
@@ -212,16 +215,6 @@ public class HeufyBot {
 		}
 		listenerManager.addListener(new CoreHooks());
 		listenerManager.addListener(featureInterface);
-		final HeufyBot thisBot = this;
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				if (thisBot.isConnected()) {
-					thisBot.disconnect();
-					thisBot.dispose();
-				}
-			}
-		});
 	}
 	
 	public String getRealName()
@@ -304,6 +297,7 @@ public class HeufyBot {
 				}
 				catch (Exception e1)
 				{
+					e1.printStackTrace();
 					PopupManager.showErrorMessage("Could not connect", e1.getClass().getCanonicalName() + "\n" + e1.getMessage());
 				}
 			}
@@ -669,7 +663,7 @@ public class HeufyBot {
 	public void quitServer() {
 		if (!isConnected())
 			throw new RuntimeException("Can't quit from server because we are already disconnected!");
-		quitServer("");
+		quitServer("Shutting down...");
 	}
 
 	/**
@@ -1533,6 +1527,19 @@ public class HeufyBot {
 	@Synchronized(value = "logLock")
 	public void logException(Throwable t)
 	{
+		if(t instanceof SocketException && t.getMessage().equals("Connection reset"))
+		{
+			Set<Channel> channels =_userChanInfo.getAValues();
+			reset();
+			this.disconnect();
+			this.connectWithSettings("settings.xml");
+			for(Channel channel : channels)
+			{
+				joinChannel(channel.getName());
+			}
+			log("Reconnected. Java is stupid", "server");
+		}
+		
 		if (!_verbose)
 			return;
 		StringWriter sw = new StringWriter();
@@ -1930,10 +1937,17 @@ public class HeufyBot {
 		}
 		else if (code == RPL_WELCOME)
 	    {
-	      String response2 = response.split(" :")[1];
-	      String networkName = response2.split("Welcome to the ")[1].split(" ")[0];
-	      this.gui.setNetworkName(networkName);
-	      log(response2, "server");
+			String response2 = response.split(" :")[1];
+			try
+			{
+			    String networkName = response2.split("Welcome to the ")[1].split(" ")[0];
+			    this.gui.setNetworkName(networkName);
+			}
+			catch(ArrayIndexOutOfBoundsException e)
+			{
+				//Ignore
+			}
+			log(response2, "server");
 	    }
 	    else if ((code == RPL_YOURHOST) || (code == RPL_CREATED))
 	    {
@@ -1941,7 +1955,14 @@ public class HeufyBot {
 	    }
 	    else if ((code == RPL_MYINFO) || (code == RPL_BOUNCE) || ((code > 400) && (code < 503)))
 	    {
-	      log(response.split(this._nick + " ")[1], "server");
+	    	try
+	    	{
+	    		log(response.split(this._nick + " ")[1], "server");
+	    	}
+	    	catch(ArrayIndexOutOfBoundsException e)
+	    	{
+	    		//Ignore
+	    	}
 	    }
 		//WARNING: Parsed array might be modified, recreate if you're going to use down here
 		getListenerManager().dispatchEvent(new ServerResponseEvent(this, code, response));

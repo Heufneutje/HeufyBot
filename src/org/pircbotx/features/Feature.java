@@ -12,6 +12,7 @@ public abstract class Feature
   {
     this.bot = bot;
     this.name = name;
+    this.triggers = new String[0];
   }
 
   public String[] getTriggers()

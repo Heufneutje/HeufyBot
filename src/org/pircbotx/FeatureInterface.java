@@ -1,5 +1,6 @@
 package org.pircbotx;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import org.pircbotx.features.Feature;
@@ -15,6 +16,11 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   public FeatureInterface(HeufyBot bot)
   {
     this.bot = bot;
+    File file = new File("featuresettings");
+    if(!file.exists())
+    {
+    	file.mkdir();
+    }
   }
 
   @Override
@@ -25,7 +31,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     {
       for (int i = 0; i < feature.getTriggers().length; i++)
       {
-        if (!event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
+        if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
           continue;
         feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick());
       }
