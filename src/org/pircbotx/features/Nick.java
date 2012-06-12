@@ -29,4 +29,9 @@ public class Nick extends Feature
       }
     }
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

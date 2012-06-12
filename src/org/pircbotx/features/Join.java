@@ -22,4 +22,9 @@ public class Join extends Feature
       this.bot.joinChannel(metadata.substring(1));
     }
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

@@ -15,4 +15,9 @@ public class Source extends Feature
 	{
 		this.bot.sendMessage(source, "https://github.com/Heufneutje/HeufyBot");
 	}
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

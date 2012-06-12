@@ -20,4 +20,9 @@ public class Time extends Feature
     DateFormat format = new SimpleDateFormat("hh:mm aa (z)");
     this.bot.sendMessage(source, "The current time is " + format.format(date));
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

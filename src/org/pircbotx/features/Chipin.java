@@ -34,59 +34,6 @@ public class Chipin extends Feature
 		super(bot, name);
 		this.triggers = new String[1];
 		this.triggers[0] = "!donations";
-		
-		
-		readSettingsFile();
-		
-		this.previousEntriesCount = this.countRssEntries(rssFeed);
-		String current = this.readLastEntry(rssFeed);
-		currentTotal = current.substring(current.indexOf("(") + 1).split(" so")[0];;
-		
-		if(current.contains("This event has started"))
-		{
-			currentTotal = "$0.00";
-		}
-		if(current.contains("This event has ended"))
-		{
-			if(bot.isConnected())
-			{
-				for(Channel channel : bot.getChannels())
-				{
-					bot.sendMessage(channel, "[Chipin] This event has ended");
-				}
-			}
-		}
-		else
-		{
-			int delay = 60000; //milliseconds
-			  ActionListener taskPerformer = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0)
-				{
-					int currentEntries = countRssEntries(rssFeed);
-					String newEntry = "";
-					
-					if(currentEntries > previousEntriesCount)
-					{
-						previousEntriesCount = currentEntries;
-						newEntry = readLastEntry(rssFeed);
-						String donation = newEntry.split(" was")[0];
-						int donationTotalLength = newEntry.indexOf("(") + 1;
-						currentTotal = newEntry.substring(donationTotalLength).split(" so")[0];
-						int percentage = (int) (Double.parseDouble(currentTotal.substring(1)) / donationGoal * 100);
-						
-						if(bot.isConnected())
-						{
-							for(Channel channel : bot.getChannels())
-							{
-								bot.sendMessage(channel, "New donation of " + donation + "! We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) +" (" + percentage + "% of our goal)! " + message);
-							}
-						}
-					}
-				}
-			  };
-			  new Timer(delay, taskPerformer).start();
-		}
 	}
 	
 	public void readSettingsFile()
@@ -191,6 +138,62 @@ public class Chipin extends Feature
 		catch (Exception e)
 		{
 		    return null;
+		}
+	}
+
+	@Override
+	public void connectTrigger()
+	{
+		readSettingsFile();
+		
+		this.previousEntriesCount = this.countRssEntries(rssFeed);
+		String current = this.readLastEntry(rssFeed);
+		currentTotal = current.substring(current.indexOf("(") + 1).split(" so")[0];;
+		
+		if(current.contains("This event has started"))
+		{
+			currentTotal = "$0.00";
+		}
+		if(current.contains("This event has ended"))
+		{
+			if(bot.isConnected())
+			{
+				for(Channel channel : bot.getChannels())
+				{
+					bot.sendMessage(channel, "[Chipin] This event has ended");
+				}
+			}
+		}
+		else
+		{
+			int delay = 60000; //milliseconds
+			  ActionListener taskPerformer = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0)
+				{
+					int currentEntries = countRssEntries(rssFeed);
+					String newEntry = "";
+					
+					if(currentEntries > previousEntriesCount)
+					{
+						previousEntriesCount = currentEntries;
+						newEntry = readLastEntry(rssFeed);
+						String donation = newEntry.split(" was")[0];
+						int donationTotalLength = newEntry.indexOf("(") + 1;
+						currentTotal = newEntry.substring(donationTotalLength).split(" so")[0];
+						int percentage = (int) (Double.parseDouble(currentTotal.substring(1)) / donationGoal * 100);
+						
+						if(bot.isConnected())
+						{
+							for(Channel channel : bot.getChannels())
+							{
+								bot.sendMessage(channel, "New donation of " + donation + "! We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) +" (" + percentage + "% of our goal)! " + message);
+							}
+						}
+					}
+				}
+			  };
+			  new Timer(delay, taskPerformer).start();
 		}
 	}
 }

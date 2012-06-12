@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.pircbotx.features.Feature;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
 public class FeatureInterface extends ListenerAdapter implements Listener
@@ -21,6 +22,18 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     {
     	file.mkdir();
     }
+  }
+  
+  @Override
+  public void onJoin(JoinEvent event)
+  {
+	  for (Feature feature : this.features)
+	    {
+	        if (feature.getType().equals("join"))
+	        {
+	        	feature.process(event.getChannel().getName(), "", event.getUser().getNick());
+	        }
+	    }
   }
 
   @Override
@@ -151,5 +164,29 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     {
       loadFeature(featureNames[i]);
     }
+  }
+  
+  public void reloadFeatures()
+  {
+	  String[] featureNames = new String[features.size()];
+	  
+	  for(int i = 0; i < features.size(); i++)
+	  {
+		  featureNames[i] = features.get(i).getName();
+		  unloadFeature(features.get(i).getName());
+	  }
+	  
+	  for(int j = 0; j < featureNames.length; j++)
+	  {
+		  loadFeature(featureNames[j]);
+	  }
+  }
+  
+  public void runConnectTriggers()
+  {
+	  for(Feature feature : features)
+	  {
+		  feature.connectTrigger();
+	  }
   }
 }

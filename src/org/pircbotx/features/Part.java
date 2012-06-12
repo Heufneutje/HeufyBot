@@ -22,4 +22,9 @@ public class Part extends Feature
       this.bot.partChannel(metadata.substring(1));
     }
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

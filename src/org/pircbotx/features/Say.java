@@ -22,4 +22,9 @@ public class Say extends Feature
       this.bot.sendMessage(source, metadata.substring(1));
     }
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

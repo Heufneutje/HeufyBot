@@ -280,6 +280,8 @@ public class HeufyBot {
 							joinChannel(channels);
 						}
 					}
+					
+					featureInterface.runConnectTriggers();
 				}
 				catch (UnknownHostException e1)
 				{
@@ -517,7 +519,9 @@ public class HeufyBot {
 	 * @see #quitServer() quitServer
 	 * @see #quitServer(String) quitServer
 	 */
-	public synchronized void disconnect() {
+	public synchronized void disconnect()
+	{
+		featureInterface.reloadFeatures();
 		quitServer();
 		gui.reset();
 	}
@@ -1543,6 +1547,42 @@ public class HeufyBot {
 	      log("### ", "server");
 		while (tokenizer.hasMoreTokens())
 			log("### " + tokenizer.nextToken(), "server");
+	}
+	
+	public boolean isOped(Channel channel)
+	{
+		for(User user : channel.getHalfOps())
+		{
+			if(user.getNick().equals(_nick))
+			{
+				return true;
+			}
+		}
+		
+		for(User user : channel.getOps())
+		{
+			if(user.getNick().equals(_nick))
+			{
+				return true;
+			}
+		}
+		
+		for(User user : channel.getSuperOps())
+		{
+			if(user.getNick().equals(_nick))
+			{
+				return true;
+			}
+		}
+		
+		for(User user : channel.getOwners())
+		{
+			if(user.getNick().equals(_nick))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -2735,6 +2775,7 @@ public class HeufyBot {
 		//Clear any existing channel list
 		channelListBuilder.finish();
 		gui.reset();
+		featureInterface.reloadFeatures();
 	}
 
 	/**

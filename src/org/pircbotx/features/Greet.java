@@ -20,4 +20,9 @@ public class Greet extends Feature
       this.bot.sendMessage(source, "Hi, " + triggerUser + "!");
     }
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

@@ -107,4 +107,9 @@ public class Log extends Feature
       e.printStackTrace();
     }
   }
+
+	@Override
+	public void connectTrigger()
+	{
+	}
 }

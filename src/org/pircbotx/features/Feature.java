@@ -7,6 +7,7 @@ public abstract class Feature
   protected String[] triggers;
   protected HeufyBot bot;
   protected String name;
+  protected String featureType = "message";
 
   public Feature(HeufyBot bot, String name)
   {
@@ -24,6 +25,13 @@ public abstract class Feature
   {
     return this.name;
   }
+  
+  public String getType()
+  {
+	  return featureType;
+  }
 
-  public abstract void process(String paramString1, String paramString2, String paramString3);
+  public abstract void process(String source, String metadata, String triggerUser);
+  
+  public abstract void connectTrigger();
 }
