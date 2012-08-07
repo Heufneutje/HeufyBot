@@ -2,10 +2,9 @@ package org.pircbotx.features;
 
 import org.pircbotx.HeufyBot;
 
-public class AutoVoice extends Feature
+public class Autovoice extends Feature
 {
-	
-	public AutoVoice(HeufyBot bot, String name)
+	public Autovoice(HeufyBot bot, String name)
 	{
 		super(bot, name);
 		super.featureType = "join";

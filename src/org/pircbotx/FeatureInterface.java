@@ -53,59 +53,74 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 
     if (event.getMessage().startsWith("!load"))
     {
-      String metadata = event.getMessage().substring(5);
-      String source = event.getChannel().getName();
-
-      if ((metadata.equals("")) || (metadata.equals(" ")))
-      {
-        this.bot.sendMessage(source, "Load what?");
+    	String source = event.getChannel().getName();
+    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje") && event.getUser().isIdentified())
+    	{
+	      String metadata = event.getMessage().substring(5);
+	
+	      if ((metadata.equals("")) || (metadata.equals(" ")))
+	      {
+	        this.bot.sendMessage(source, "Load what?");
+	      }
+	      else if (metadata.startsWith(" "))
+	      {
+	        String featureName = "";
+	        featureName = featureName + Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
+	
+	        switch (loadFeature(featureName)) {
+	        case 0:
+	          this.bot.sendMessage(source, "Feature \"" + featureName + "\" was succesfully loaded!");
+	          break;
+	        case 1:
+	          this.bot.sendMessage(source, "Feature \"" + featureName + "\" is already loaded!");
+	          break;
+	        case 2:
+	          this.bot.sendMessage(source, "Feature \"" + featureName + "\" does not exist!");
+	        default:
+	          break;
+	        }
+	      }
       }
-      else if (metadata.startsWith(" "))
-      {
-        String featureName = "";
-        featureName = featureName + Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
-
-        switch (loadFeature(featureName)) {
-        case 0:
-          this.bot.sendMessage(source, "Feature \"" + featureName + "\" was succesfully loaded!");
-          break;
-        case 1:
-          this.bot.sendMessage(source, "Feature \"" + featureName + "\" is already loaded!");
-          break;
-        case 2:
-          this.bot.sendMessage(source, "Feature \"" + featureName + "\" does not exist!");
-        default:
-          break;
-        }
-      }
+    	else
+	    {
+    		this.bot.sendMessage(source, "Only OPs can load features!");
+	    }
     }
     else
     {
       String featureName;
       if (event.getMessage().startsWith("!unload"))
       {
-        String metadata = event.getMessage().substring(7);
-        String source = event.getChannel().getName();
-
-        if ((metadata.equals("")) || (metadata.equals(" ")))
-        {
-          this.bot.sendMessage(source, "Unload what?");
+    	  String source = event.getChannel().getName();
+    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje") && event.getUser().isIdentified())
+    	  {
+	        String metadata = event.getMessage().substring(7);
+	
+	        if ((metadata.equals("")) || (metadata.equals(" ")))
+	        {
+	          this.bot.sendMessage(source, "Unload what?");
+	        }
+	        else if (metadata.startsWith(" "))
+	        {
+	          featureName = "";
+	          featureName = featureName + Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
+	
+	          switch (unloadFeature(featureName)) 
+	          {
+	          case 0:
+	            this.bot.sendMessage(source, "Feature \"" + featureName + "\" was succesfully unloaded!");
+	            break;
+	          case 1:
+	            this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
+	          default:
+	            break;
+	          }
+	        }
         }
-        else if (metadata.startsWith(" "))
-        {
-          featureName = "";
-          featureName = featureName + Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
-
-          switch (unloadFeature(featureName)) {
-          case 0:
-            this.bot.sendMessage(source, "Feature \"" + featureName + "\" was succesfully unloaded!");
-            break;
-          case 1:
-            this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
-          default:
-            break;
-          }
-        }
+    	  else
+	      {
+    		  this.bot.sendMessage(source, "Only OPs can unload features!");
+	      }
       }
       else if (event.getMessage().startsWith("!help"))
       {

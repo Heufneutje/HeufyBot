@@ -198,4 +198,9 @@ public class User implements Comparable<User> {
 	public int getHops() {
 		return hops;
 	}
+	
+	public boolean isOped(Channel channel)
+	{
+		return channel.isOp(this) || channel.isOwner(this) || channel.isHalfOp(this);
+	}
 }
