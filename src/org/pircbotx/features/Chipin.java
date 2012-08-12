@@ -2,10 +2,7 @@ package org.pircbotx.features;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.text.DecimalFormat;
 
@@ -41,18 +38,7 @@ public class Chipin extends Feature
 		File file = new File(settingsPath);
 		if(!file.exists())
 		{
-			FileWriter writer;
-			try {
-				writer = new FileWriter(settingsPath, true);
-				BufferedWriter bw = new BufferedWriter(writer);
-			      bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><settings><rssfeed>http://n64galore.chipin.com/rss/id/2a38e46718a1039b</rssfeed><donationgoal>1000</donationgoal><message>Keep donating at http://stream.tbpcullman.com/ to raise money for Make-A-Wish!</message></settings>");
-			      bw.flush();
-			      bw.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			bot.writeFile(settingsPath, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><settings><rssfeed>http://n64galore.chipin.com/rss/id/2a38e46718a1039b</rssfeed><donationgoal>1000</donationgoal><message>Keep donating at http://stream.tbpcullman.com/ to raise money for Make-A-Wish!</message></settings>");
 		}
 		
 		try 

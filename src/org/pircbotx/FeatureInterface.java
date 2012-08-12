@@ -92,13 +92,22 @@ public class FeatureInterface extends ListenerAdapter implements Listener
       if (event.getMessage().startsWith("!unload"))
       {
     	  String source = event.getChannel().getName();
-    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje") && event.getUser().isIdentified())
+    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje"))
     	  {
 	        String metadata = event.getMessage().substring(7);
 	
 	        if ((metadata.equals("")) || (metadata.equals(" ")))
 	        {
 	          this.bot.sendMessage(source, "Unload what?");
+	        }
+	        else if (metadata.equals(" *"))
+	        {
+	        	int featureCount = features.size();
+	      	  	for(int i = 0; i < featureCount; i++)
+	      	  	{
+	        		unloadFeature(features.get(0).getName());
+	      	  	}
+	        	this.bot.sendMessage(source, "All features have been unloaded.");
 	        }
 	        else if (metadata.startsWith(" "))
 	        {
@@ -185,10 +194,11 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   {
 	  String[] featureNames = new String[features.size()];
 	  
-	  for(int i = 0; i < features.size(); i++)
+	  int featureCount = features.size();
+	  for(int i = 0; i < featureCount; i++)
 	  {
-		  featureNames[i] = features.get(i).getName();
-		  unloadFeature(features.get(i).getName());
+		  featureNames[i] = features.get(0).getName();
+		  unloadFeature(features.get(0).getName());
 	  }
 	  
 	  for(int j = 0; j < featureNames.length; j++)

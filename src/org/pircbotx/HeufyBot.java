@@ -86,6 +86,10 @@ import org.pircbotx.exception.IrcException;
 import org.pircbotx.exception.NickAlreadyInUseException;
 import java.util.Set;
 import java.awt.event.ActionListener;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.BufferedReader;
@@ -1037,6 +1041,57 @@ public class HeufyBot {
 	public void setChannelKey(Channel chan, String key) {
 		setMode(chan, "+k", key);
 	}
+	
+	public String readFile(String filePath)
+	{
+		try
+		{
+			FileInputStream fstream = new FileInputStream(filePath);
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			
+			String result = "";
+			String read = "";
+			
+			while((read = br.readLine()) != null)
+			{
+				result += read += "\n";
+			}
+			
+			in.close();
+			return result;
+		}
+		catch (FileNotFoundException e)
+		{
+			return null;
+		}
+		catch (IOException e)
+		{
+			return null;
+		}
+	}
+	
+	public void writeFile(String filePath, String text)
+	{
+		File file = new File(filePath);
+		if(file.exists())
+		{
+			file.delete();
+		}
+		FileWriter writer;
+		try 
+		{
+			writer = new FileWriter(filePath, true);
+			BufferedWriter bw = new BufferedWriter(writer);
+		      bw.write(text);
+		      bw.flush();
+		      bw.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Removes the channel key (-k) or password to get into the channel. May require
@@ -1553,7 +1608,7 @@ public class HeufyBot {
 	{
 		for(User user : channel.getHalfOps())
 		{
-			if(user.getNick().equals(_nick))
+			if(user.getNick().equals(_name))
 			{
 				return true;
 			}
@@ -1561,7 +1616,7 @@ public class HeufyBot {
 		
 		for(User user : channel.getOps())
 		{
-			if(user.getNick().equals(_nick))
+			if(user.getNick().equals(_name))
 			{
 				return true;
 			}
@@ -1569,7 +1624,7 @@ public class HeufyBot {
 		
 		for(User user : channel.getSuperOps())
 		{
-			if(user.getNick().equals(_nick))
+			if(user.getNick().equals(_name))
 			{
 				return true;
 			}
