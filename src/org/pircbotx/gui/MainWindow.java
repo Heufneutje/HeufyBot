@@ -124,11 +124,11 @@ public class MainWindow extends JFrame
 
   public void dispose()
   {
-	  super.dispose();
 	  if (this.bot.isConnected())
 	  {
-	      this.bot.disconnect();
+	      this.bot.quitServer();
 	  }
+	  super.dispose();
 	  System.exit(0);
   }
 

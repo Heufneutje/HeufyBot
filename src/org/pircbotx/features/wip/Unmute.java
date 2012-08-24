@@ -1,20 +1,21 @@
-package org.pircbotx.features;
+package org.pircbotx.features.wip;
 
 import java.util.ArrayList;
 
 import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.User;
+import org.pircbotx.features.Feature;
 
-public class Mute extends Feature
+public class Unmute extends Feature
 {
 	private String settingsPath = "featuresettings/mute.txt";
 	
-	public Mute(HeufyBot bot, String name)
+	public Unmute(HeufyBot bot, String name)
 	{
 		super(bot, name);
 		this.triggers = new String[1];
-		this.triggers[0] = "!mute";
+		this.triggers[0] = "!unmute";
 	}
 
 	@Override
@@ -22,7 +23,7 @@ public class Mute extends Feature
 	{
 		if ((metadata.equals("")) || (metadata.equals(" ")))
 	    {
-			this.bot.sendMessage(source, "Mute what?");
+			this.bot.sendMessage(source, "Unmute what?");
 	    }
 	    else if (metadata.startsWith(" "))
 	    {
@@ -41,31 +42,30 @@ public class Mute extends Feature
 					muteList.add(mutes[i]);
 				}
 				
-				boolean isAlreadyMuted = false;
-				for(String mute : muteList)
+				boolean unmuted = false;
+				for(int i = 0; i < muteList.size(); i++)
 				{
-					if(mute.equals(user.getHostmask()))
+					if(muteList.get(i).equals(user.getHostmask()))
 					{
-						this.bot.sendMessage(source, "User " + user.getNick() + " is already muted!");
-						isAlreadyMuted = true;
+						this.bot.sendMessage(source, "User " + user.getNick() + " was unmuted.");
+						muteList.remove(i);
+						for(Channel channel : user.getChannels())
+						{
+							bot.setMode(channel, "+v " + user.getNick());
+						}
+						String newFile = "";
+						for(int j = 0; j < muteList.size(); j++)
+						{
+							newFile += muteList.get(j) + "\n";
+						}
+						bot.writeFile(settingsPath, newFile);
+						unmuted = true;
 					}
 				}
 				
-				if(!isAlreadyMuted)
+				if(!unmuted)
 				{
-					muteList.add(user.getHostmask());
-					for(Channel channel : user.getChannels())
-					{
-						bot.setMode(channel, "-v " + user.getNick());
-					}
-					this.bot.sendMessage(source, "User " + user.getNick() + " was muted.");
-					
-					String newFile = "";
-					for(int i = 0; i < muteList.size(); i++)
-					{
-						newFile += muteList.get(i) + "\n";
-					}
-					bot.writeFile(settingsPath, newFile);
+					this.bot.sendMessage(source, "User " + user.getNick() + " was not muted!");
 				}
 			}
 			else

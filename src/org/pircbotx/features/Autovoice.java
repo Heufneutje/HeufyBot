@@ -15,24 +15,32 @@ public class Autovoice extends Feature
 	@Override
 	public void process(String source, String metadata, String triggerUser) 
 	{
-		String read = bot.readFile(settingsPath);
-		String[] mutes = new String[0];
-		if(read != null)
+		if(triggerUser.equals(bot.getName()))
 		{
-			mutes = read.split("\n");
+			bot.setMode(bot.getChannel(source), "+m");
 		}
-		
-		boolean useVoice = true;
-		for(int i = 0; i < mutes.length; i++)
-		{
-			if(bot.getUser(triggerUser).getHostmask().equals(mutes[i]))
+		else
+		{		
+			/*String read = bot.readFile(settingsPath);
+			String[] mutes = new String[0];
+			if(read != null)
 			{
-				useVoice = false;
+				mutes = read.split("\n");
 			}
-		}
-		
-		if(useVoice)
-		{
+			
+			boolean useVoice = true;
+			for(int i = 0; i < mutes.length; i++)
+			{
+				if(bot.getUser(triggerUser).getHostmask().equals(mutes[i]))
+				{
+					useVoice = false;
+				}
+			}
+			
+			if(useVoice)
+			{
+				bot.setMode(bot.getChannel(source), "+v " + triggerUser);
+			}*/
 			bot.setMode(bot.getChannel(source), "+v " + triggerUser);
 		}
 	}
