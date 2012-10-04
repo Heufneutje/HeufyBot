@@ -15,7 +15,7 @@ public class Nick extends Feature
   {
     if ((metadata.equals("")) || (metadata.equals(" ")))
     {
-      this.bot.sendMessage(source, "Change my nick to what?");
+      this.bot.sendMessage(source, "[Nick] Change my nick to what?");
     }
     else if (metadata.startsWith(" "))
     {
@@ -25,7 +25,7 @@ public class Nick extends Feature
       }
       else
       {
-        this.bot.sendMessage(source, "Only my owner can change my nick!");
+        this.bot.sendMessage(source, "[Nick] Only my owner can change my nick!");
       }
     }
   }

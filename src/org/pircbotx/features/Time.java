@@ -18,7 +18,7 @@ public class Time extends Feature
   {
     Date date = new Date();
     DateFormat format = new SimpleDateFormat("hh:mm aa (z)");
-    this.bot.sendMessage(source, "The current time is " + format.format(date));
+    this.bot.sendMessage(source, "[Time] The current time is " + format.format(date) + ".");
   }
 
 	@Override

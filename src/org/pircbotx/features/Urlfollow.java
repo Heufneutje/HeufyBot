@@ -87,11 +87,11 @@ public class Urlfollow extends Feature
 		      //output the title
 		      if( title.length() > 0 )
 		      {
-		    	  this.bot.sendMessage(source, "[URL] Title: " + title + " | At host: " + url.getHost());
+		    	  this.bot.sendMessage(source, "[URLFollow] Title: " + title + " | At host: " + url.getHost());
 		      }
 		      else
 		      {
-		    	  this.bot.sendMessage(source, "[URL] No title found | At host: " + url.getHost());
+		    	  this.bot.sendMessage(source, "[URLFollow] No title found | At host: " + url.getHost());
 		      }
 		      
 		    }

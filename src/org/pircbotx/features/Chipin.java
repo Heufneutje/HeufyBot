@@ -80,8 +80,15 @@ public class Chipin extends Feature
 	@Override
 	public void process(String source, String metadata, String triggerUser) 
 	{
-		int percentage = (int) (Double.parseDouble(currentTotal.substring(1)) / donationGoal * 100);
-		bot.sendMessage(source, "We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) + " (" + percentage + "% of our goal)! " + message);
+		try
+		{
+			int percentage = (int) (Double.parseDouble(currentTotal.substring(1)) / donationGoal * 100);
+			bot.sendMessage(source, "[ChipIn] We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) + " (" + percentage + "% of our goal)! " + message);
+		}
+		catch (Exception e)
+		{
+			bot.sendMessage(source, "[ChipIn] The donations for the event currently set are not available. Check the event settings.");
+		}
 	}
 	
 	public int countRssEntries(String path)
@@ -146,7 +153,7 @@ public class Chipin extends Feature
 			{
 				for(Channel channel : bot.getChannels())
 				{
-					bot.sendMessage(channel, "[Chipin] This event has ended");
+					bot.sendMessage(channel, "[ChipIn] This event has ended");
 				}
 			}
 		}
@@ -173,7 +180,7 @@ public class Chipin extends Feature
 						{
 							for(Channel channel : bot.getChannels())
 							{
-								bot.sendMessage(channel, "New donation of " + donation + "! We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) +" (" + percentage + "% of our goal)! " + message);
+								bot.sendMessage(channel, "[ChipIn] New donation of " + donation + "! We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) +" (" + percentage + "% of our goal)! " + message);
 							}
 						}
 					}

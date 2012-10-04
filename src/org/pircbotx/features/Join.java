@@ -15,7 +15,7 @@ public class Join extends Feature
   {
     if ((metadata.equals("")) || (metadata.equals(" ")))
     {
-      this.bot.sendMessage(source, "Join what?");
+      this.bot.sendMessage(source, "[Join] Join what?");
     }
     else if (metadata.startsWith(" "))
     {
