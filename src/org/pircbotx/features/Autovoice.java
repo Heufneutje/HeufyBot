@@ -1,6 +1,9 @@
 package org.pircbotx.features;
 
+import java.util.Set;
+
 import org.pircbotx.HeufyBot;
+import org.pircbotx.User;
 
 public class Autovoice extends Feature
 {
@@ -18,6 +21,18 @@ public class Autovoice extends Feature
 		if(triggerUser.equals(bot.getName()))
 		{
 			bot.setMode(bot.getChannel(source), "+m");
+			Set<User> users = bot.getChannel(source).getUsers();
+			
+			String modeString = "+";
+			String usersString = "";
+			
+			for (User user : users)
+			{
+				modeString += "v";
+				usersString += user.getNick() + " ";
+			}
+			
+			bot.setMode(bot.getChannel(source), modeString + " " + usersString);
 		}
 		else
 		{		
