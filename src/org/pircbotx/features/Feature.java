@@ -8,6 +8,7 @@ public abstract class Feature
   protected HeufyBot bot;
   protected String name;
   protected String featureType = "message";
+  protected boolean messageMustStartWithTrigger = true;
 
   public Feature(HeufyBot bot, String name)
   {
@@ -29,6 +30,11 @@ public abstract class Feature
   public String getType()
   {
 	  return featureType;
+  }
+  
+  public boolean mustStartWithTrigger()
+  {
+	  return messageMustStartWithTrigger;
   }
 
   public abstract void process(String source, String metadata, String triggerUser);

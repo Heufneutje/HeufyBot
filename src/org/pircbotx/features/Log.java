@@ -23,7 +23,7 @@ public class Log extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!log";
+    this.triggers[0] = ".log";
   }
 
   public void process(String source, String metadata, String triggerUser)
@@ -96,6 +96,7 @@ public class Log extends Feature
           this.bot.sendMessage(this.source, "Log for " + this.source + " on " + this.dateString + " posted: " + decodedString + " (Link expires in 10 minutes)");
         }
         in.close();
+        fileScanner.close();
       }
       else
       {

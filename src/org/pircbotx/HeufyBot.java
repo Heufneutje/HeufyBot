@@ -1508,7 +1508,8 @@ public class HeufyBot {
 				getListenerManager().dispatchEvent(new ActionEvent(this, source, channel, request.substring(7)));
 			} else if (request.startsWith("PING ")) 
 			// PING request
-			getListenerManager().dispatchEvent(new PingEvent(this, source, channel, request.substring(5))); else if (request.equals("TIME")) {
+			getListenerManager().dispatchEvent(new PingEvent(this, source, channel, request.substring(5)));
+			else if (request.equals("TIME")) {
 				log("[" + sourceNick + " " + request + "]", "server");
 				getListenerManager().dispatchEvent(new TimeEvent(this, source, channel));
 			} else if (request.equals("FINGER")) {

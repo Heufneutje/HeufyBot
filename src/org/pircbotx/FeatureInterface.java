@@ -44,14 +44,23 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     {
       for (int i = 0; i < feature.getTriggers().length; i++)
       {
-        if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
-          continue;
-        feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick());
+    	  if(feature.mustStartWithTrigger())
+    	  {
+    		  if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
+    	          continue;
+    	        feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick());
+    	  }
+    	  else
+    	  {
+    		  if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().contains(feature.getTriggers()[i]))
+    	          continue;
+    	        feature.process(event.getChannel().getName(), event.getMessage(), event.getUser().getNick());
+    	  }
       }
 
     }
 
-    if (event.getMessage().startsWith("!load"))
+    if (event.getMessage().startsWith(".load"))
     {
     	String source = event.getChannel().getName();
     	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje") && event.getUser().isIdentified())
@@ -89,7 +98,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     else
     {
       String featureName;
-      if (event.getMessage().startsWith("!unload"))
+      if (event.getMessage().startsWith(".unload"))
       {
     	  String source = event.getChannel().getName();
     	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje"))
@@ -131,7 +140,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     		  this.bot.sendMessage(source, "Only OPs can unload features!");
 	      }
       }
-      else if (event.getMessage().startsWith("!help"))
+      else if (event.getMessage().startsWith(".help"))
       {
         String response = "Features loaded: ";
         for (Feature feature : this.features)

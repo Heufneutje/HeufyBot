@@ -10,6 +10,7 @@ public class Greet extends Feature
     this.triggers = new String[2];
     this.triggers[0] = "hi ";
     this.triggers[1] = "hi,";
+    this.messageMustStartWithTrigger = false;
   }
 
   public void process(String source, String metadata, String triggerUser)

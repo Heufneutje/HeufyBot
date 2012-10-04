@@ -8,7 +8,7 @@ public class Source extends Feature
 	{
 		super(bot, name);
 		this.triggers = new String[1];
-		this.triggers[0] = "!source";
+		this.triggers[0] = ".source";
 	}
 
 	public void process(String source, String metadata, String triggerUser)
