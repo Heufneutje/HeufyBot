@@ -9,7 +9,9 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
 import org.pircbotx.HeufyBot;
 
@@ -40,7 +42,25 @@ public class Log extends Feature
     }
     else if (metadata.startsWith(" "))
     {
-      this.bot.sendMessage(source, "This does not work yet, because Heufy is lazy");
+    	try
+    	{
+    		int year = Integer.parseInt(metadata.substring(1, 5));
+    		int month = Integer.parseInt(metadata.substring(6, 8));
+    		int day = Integer.parseInt(metadata.substring(9));
+    		
+    		Calendar calendar = new GregorianCalendar(year, month, day);
+    		calendar.clear();
+    		
+    		this.dateString = metadata.substring(1);
+    		this.source = source;
+    	    Thread thread = new Thread(this);
+    	    thread.run();
+    		
+    	}
+    	catch (Exception e)
+    	{
+    		this.bot.sendMessage(source, "[Log] Parser Error: Make sure the date format for the log is: yyyy-mm-dd");
+    	}
     }
   }
 
@@ -93,14 +113,14 @@ public class Log extends Feature
         String decodedString;
         while ((decodedString = in.readLine()) != null)
         {
-          this.bot.sendMessage(this.source, "Log for " + this.source + " on " + this.dateString + " posted: " + decodedString + " (Link expires in 10 minutes)");
+          this.bot.sendMessage(this.source, "[Log] Log for " + this.source + " on " + this.dateString + " posted: " + decodedString + " (Link expires in 10 minutes)");
         }
         in.close();
         fileScanner.close();
       }
       else
       {
-        this.bot.sendMessage(this.source, "I do not have that log");
+        this.bot.sendMessage(this.source, "[Log] I do not have that log");
       }
     }
     catch (Exception e)
