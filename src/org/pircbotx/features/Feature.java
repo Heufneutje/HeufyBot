@@ -36,7 +36,9 @@ public abstract class Feature
   {
 	  return messageMustStartWithTrigger;
   }
-
+  
+  public abstract String getHelp();
+  
   public abstract void process(String source, String metadata, String triggerUser);
   
   public abstract void connectTrigger();

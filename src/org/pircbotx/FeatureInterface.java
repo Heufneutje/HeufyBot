@@ -60,7 +60,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 
     }
 
-    if (event.getMessage().startsWith(".load"))
+    if (event.getMessage().startsWith("!load"))
     {
     	String source = event.getChannel().getName();
     	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje") && event.getUser().isIdentified())
@@ -98,7 +98,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     else
     {
       String featureName;
-      if (event.getMessage().startsWith(".unload"))
+      if (event.getMessage().startsWith("!unload"))
       {
     	  String source = event.getChannel().getName();
     	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje"))
@@ -140,14 +140,32 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     		  this.bot.sendMessage(source, "Only OPs can unload features!");
 	      }
       }
-      else if (event.getMessage().startsWith(".help"))
+      else if (event.getMessage().startsWith("!help"))
       {
-        String response = "Features loaded: ";
-        for (Feature feature : this.features)
-        {
-          response = response + feature.getName() + " ";
-        }
-        this.bot.sendMessage(event.getChannel(), response);
+    	  String source = event.getChannel().getName();
+    	  String metadata = event.getMessage().substring(5);
+    	  if ((metadata.equals("")) || (metadata.equals(" ")))
+	        {
+    		  	String response = "Features loaded: ";
+    	        for (Feature feature : this.features)
+    	        {
+    	          response = response + feature.getName() + " ";
+    	        }
+    	        this.bot.sendMessage(event.getChannel(), response);
+	        }
+	        else if (metadata.startsWith(" "))
+	        {
+	        	featureName = Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
+	        	String help = this.getFeatureHelp(featureName);
+	        	if(help != null)
+	        	{
+	        		this.bot.sendMessage(source, "[Help: " + featureName + " ] " + help);
+	        	}
+	        	else
+	        	{
+	        		this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
+	        	}
+	        }
       }
     }
   }
@@ -189,6 +207,19 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     }
 
     return 1;
+  }
+  
+  public String getFeatureHelp(String featureName)
+  {
+	  String className = "org.pircbotx.features." + featureName;
+	  for (int i = 0; i < this.features.size(); i++)
+	    {
+	      if (!((Feature)this.features.get(i)).getClass().getName().equals(className))
+	    	  continue;
+	        return features.get(i).getHelp();
+	    }
+
+	    return null;
   }
 
   public void loadFeatures(String[] featureNames)

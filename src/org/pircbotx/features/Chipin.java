@@ -30,7 +30,7 @@ public class Chipin extends Feature
 	{
 		super(bot, name);
 		this.triggers = new String[1];
-		this.triggers[0] = ".donations";
+		this.triggers[0] = "!donations";
 	}
 	
 	public void readSettingsFile()
@@ -188,5 +188,11 @@ public class Chipin extends Feature
 			  };
 			  new Timer(delay, taskPerformer).start();
 		}
+	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: !donations | Automatically checks for new donations when provided with a ChipIn RSS feed. Outputs messages in chat and updates the chat topic.";
 	}
 }

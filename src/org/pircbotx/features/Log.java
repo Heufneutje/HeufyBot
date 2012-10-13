@@ -15,8 +15,7 @@ import java.util.GregorianCalendar;
 import java.util.Scanner;
 import org.pircbotx.HeufyBot;
 
-public class Log extends Feature
-  implements Runnable
+public class Log extends Feature implements Runnable
 {
   private String source;
   private String dateString;
@@ -25,7 +24,7 @@ public class Log extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = ".log";
+    this.triggers[0] = "!log";
   }
 
   public void process(String source, String metadata, String triggerUser)
@@ -132,5 +131,11 @@ public class Log extends Feature
 	@Override
 	public void connectTrigger()
 	{
+	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: !log, !log <YYYY-MM-DD> | Provides a log of the current channel for today, or another date if specified.";
 	}
 }

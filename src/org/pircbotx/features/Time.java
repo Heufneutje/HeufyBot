@@ -11,7 +11,7 @@ public class Time extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = ".time";
+    this.triggers[0] = "!time";
   }
 
   public void process(String source, String metadata, String triggerUser)
@@ -24,5 +24,11 @@ public class Time extends Feature
 	@Override
 	public void connectTrigger()
 	{
+	}
+
+	@Override
+	public String getHelp() 
+	{
+		return "Commands: !time | Displays the time of the computer the bot is currently running on.";
 	}
 }

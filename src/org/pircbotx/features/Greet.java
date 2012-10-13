@@ -26,4 +26,10 @@ public class Greet extends Feature
 	public void connectTrigger()
 	{
 	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: None | Greets every user that says hi to the bot.";
+	}
 }

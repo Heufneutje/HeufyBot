@@ -8,7 +8,7 @@ public class Join extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = ".join";
+    this.triggers[0] = "!join";
   }
 
   public void process(String source, String metadata, String triggerUser)
@@ -26,5 +26,11 @@ public class Join extends Feature
 	@Override
 	public void connectTrigger()
 	{
+	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: !join <channel> | Makes the bot join a channel.";
 	}
 }

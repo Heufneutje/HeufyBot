@@ -106,4 +106,10 @@ public class Urlfollow extends Feature
 	public void connectTrigger()
 	{
 	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: None | Looks up and posts the title of a URL when posted.";
+	}
 }

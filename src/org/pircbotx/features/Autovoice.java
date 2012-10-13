@@ -7,8 +7,6 @@ import org.pircbotx.User;
 
 public class Autovoice extends Feature
 {
-	private String settingsPath = "featuresettings/mute.txt";
-	
 	public Autovoice(HeufyBot bot, String name)
 	{
 		super(bot, name);
@@ -63,5 +61,11 @@ public class Autovoice extends Feature
 	@Override
 	public void connectTrigger()
 	{
+	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: None | Automatically gives everyone who joins the channel voice (+v) and makes the channel moderated (+m).";
 	}
 }

@@ -8,7 +8,7 @@ public class Nick extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = ".nick";
+    this.triggers[0] = "!nick";
   }
 
   public void process(String source, String metadata, String triggerUser)
@@ -33,5 +33,11 @@ public class Nick extends Feature
 	@Override
 	public void connectTrigger()
 	{
+	}
+
+	@Override
+	public String getHelp()
+	{
+		return "Commands: !nick <nickname> | Changes the nickname of the bot.";
 	}
 }
