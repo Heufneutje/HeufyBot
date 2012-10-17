@@ -173,6 +173,7 @@ public class Chipin extends Feature
 						newEntry = readLastEntry(rssFeed);
 						String donation = newEntry.split(" was")[0];
 						int donationTotalLength = newEntry.indexOf("(") + 1;
+						String oldTotal = currentTotal;
 						currentTotal = newEntry.substring(donationTotalLength).split(" so")[0];
 						int percentage = (int) (Double.parseDouble(currentTotal.substring(1)) / donationGoal * 100);
 						
@@ -180,6 +181,14 @@ public class Chipin extends Feature
 						{
 							for(Channel channel : bot.getChannels())
 							{
+								if(channel.getTopic().indexOf("Donations") == -1)
+								{
+									bot.setTopic(channel, channel.getTopic() + " | Donations: " + currentTotal);
+								}
+								else
+								{
+									bot.setTopic(channel, channel.getTopic().replaceFirst(oldTotal.substring(1), currentTotal.substring(1)));
+								}
 								bot.sendMessage(channel, "[ChipIn] New donation of " + donation + "! We are at " + currentTotal + " of $" + new DecimalFormat("#.##").format(donationGoal) +" (" + percentage + "% of our goal)! " + message);
 							}
 						}
