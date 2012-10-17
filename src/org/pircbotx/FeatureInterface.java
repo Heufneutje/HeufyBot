@@ -187,6 +187,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
       Feature feature = (Feature)ctor.newInstance(new Object[] { this.bot, featureName });
 
       this.features.add(feature);
+      feature.connectTrigger();
     }
     catch (Exception e)
     {
