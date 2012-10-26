@@ -150,6 +150,7 @@ public class HeufyBot {
 	protected InetAddress _inetAddress = null;
 	// Details about the last server that we connected to.
 	protected String _server = null;
+	private String _networkName = null;
 	protected int _port = -1;
 	protected String _password = null;
 	protected long _messageDelay = 1000;
@@ -1391,7 +1392,10 @@ public class HeufyBot {
 				String logLine = "[" + dateFormat.format(date) + "] " + line + "\n";
 				System.out.print(logLine);
 				this.gui.appendText(logLine, target);
-				Logger.write(logLine, this._server, target);
+				if(this.getNetworkName() != null)
+				{
+					Logger.write(logLine, this.getNetworkName(), target);
+				}
 			}
 		}
 	}
@@ -1755,12 +1759,15 @@ public class HeufyBot {
 			getListenerManager().dispatchEvent(new MotdEvent(this, (getServerInfo().getMotd())));
 		} else if (code == RPL_WELCOME) {
 			String response2 = response.split(" :")[1];
-			try {
-				String networkName = response2.split("Welcome to the ")[1].split(" ")[0];
-				this.gui.setNetworkName(networkName);
-			} catch (ArrayIndexOutOfBoundsException e) {
-				//Ignore
+			try
+			{
+				this.setNetworkName(response2.split("Welcome to the ")[1].split(" ")[0]);
 			}
+			catch (ArrayIndexOutOfBoundsException e)
+			{
+				this.setNetworkName(_server);
+			}
+			this.gui.setNetworkName(getNetworkName());
 			log(response2, "server");
 		} else if ((code == RPL_YOURHOST) || (code == RPL_CREATED)) {
 			log(response.split(" :")[1], "server");
@@ -2564,5 +2571,15 @@ public class HeufyBot {
 	@java.lang.SuppressWarnings("all")
 	protected void setDccPorts(final List<Integer> dccPorts) {
 		this.dccPorts = dccPorts;
+	}
+
+	public String getNetworkName()
+	{
+		return _networkName;
+	}
+
+	public void setNetworkName(String networkName)
+	{
+		this._networkName = networkName;
 	}
 }

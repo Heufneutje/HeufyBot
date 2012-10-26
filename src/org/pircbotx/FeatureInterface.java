@@ -159,7 +159,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	        	String help = this.getFeatureHelp(featureName);
 	        	if(help != null)
 	        	{
-	        		this.bot.sendMessage(source, "[Help: " + featureName + " ] " + help);
+	        		this.bot.sendMessage(source, "[Help: " + featureName + "] " + help);
 	        	}
 	        	else
 	        	{

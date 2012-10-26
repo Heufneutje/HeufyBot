@@ -68,7 +68,7 @@ public class Log extends Feature implements Runnable
     try
     {
       String log = "";
-      File file = new File("logs/" + this.bot.getServer() + "/" + this.source + "/" + this.dateString + ".txt");
+      File file = new File("logs/" + this.bot.getNetworkName() + "/" + this.source + "/" + this.dateString + ".txt");
 
       if (file.exists())
       {
