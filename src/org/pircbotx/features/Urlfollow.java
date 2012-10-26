@@ -1,8 +1,11 @@
 package org.pircbotx.features;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import org.pircbotx.HeufyBot;
 
@@ -48,6 +51,8 @@ public class Urlfollow extends Feature
 		      bufReader = new BufferedReader( new InputStreamReader(url.openStream()));
 		      
 		      //read line by line
+		      line = bufReader.readLine();
+		      System.out.println(line);
 		      while( (line = bufReader.readLine()) != null && !foundEndTag)
 		      {
 		        //System.out.println(line);
@@ -87,7 +92,7 @@ public class Urlfollow extends Feature
 		      //output the title
 		      if( title.length() > 0 )
 		      {
-		    	  this.bot.sendMessage(source, "[URLFollow] Title: " + title + " | At host: " + url.getHost());
+		    	  this.bot.sendMessage(source, "[URLFollow] Title: " + title + " || At host: " + url.getHost());
 		      }
 		      else
 		      {
@@ -95,9 +100,22 @@ public class Urlfollow extends Feature
 		      }
 		      
 		    }
-		    catch( Exception e )
+		    catch(IllegalArgumentException e)
 		    {
-		     	
+		     	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
+		    }
+		    catch(UnknownHostException e1)
+		    {
+		    	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL. Host " + e1.getMessage() + " was not found.");
+		    }
+		    catch(FileNotFoundException e2)
+		    {
+		    	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
+		    }
+		    catch(IOException e3)
+		    {
+		    	e3.printStackTrace();
+		    	this.bot.sendMessage(source, "[URLFollow] Error: " + e3.getMessage() + ".");
 		    }
 		  }
   	}
