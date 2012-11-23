@@ -63,7 +63,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     if (event.getMessage().startsWith("!load"))
     {
     	String source = event.getChannel().getName();
-    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje") && event.getUser().isIdentified())
+    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("heufneutje"))
     	{
 	      String metadata = event.getMessage().substring(5);
 	
@@ -101,7 +101,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
       if (event.getMessage().startsWith("!unload"))
       {
     	  String source = event.getChannel().getName();
-    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("Heufneutje"))
+    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("heufneutje"))
     	  {
 	        String metadata = event.getMessage().substring(7);
 	

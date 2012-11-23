@@ -18,9 +18,15 @@
  */
 package org.pircbotx;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InterruptedIOException;
 import java.net.Socket;
+import java.text.DecimalFormat;
+
+import javax.swing.Timer;
+
 import org.pircbotx.hooks.events.DisconnectEvent;
 
 /**
@@ -79,6 +85,16 @@ public class InputThread extends Thread {
 	 */
 	@Override
 	public void run() {
+		  ActionListener taskPerformer = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				bot.sendRawLine("PING " + (System.currentTimeMillis() / 1000));
+			}
+		  };
+		  new Timer(60000, taskPerformer).start();
+		
+		
 		while (true) {
 			//Get line from the server
 			String line = null;
