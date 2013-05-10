@@ -34,7 +34,7 @@ public class Logger
         file.mkdir();
       }
 
-      DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       Date date = new Date();
 
       FileWriter writer = new FileWriter("logs/" + server + "/" + target + "/" + dateFormat.format(date) + ".txt", true);

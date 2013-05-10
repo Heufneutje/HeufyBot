@@ -264,10 +264,11 @@ public class HeufyBot {
 							joinChannel(channels);
 						}
 					}
-					featureInterface.runConnectTriggers();
+					//featureInterface.runConnectTriggers();
 				} catch (UnknownHostException e1) {
 					PopupManager.showErrorMessage("Could not connect", "Host " + e1.getMessage() + " was not found.");
 				} catch (ConnectException e1) {
+					e1.printStackTrace();
 					PopupManager.showErrorMessage("Could not connect", "Connection was refused.");
 				} catch (NumberFormatException e1) {
 					PopupManager.showErrorMessage("Could not connect", "The port is invalid.");

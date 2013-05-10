@@ -31,7 +31,7 @@ public class Log extends Feature implements Runnable
   {
     if ((metadata.equals("")) || (metadata.equals(" ")))
     {
-      DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
       Date date = new Date();
       this.dateString = dateFormat.format(date);
 

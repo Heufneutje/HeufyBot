@@ -250,6 +250,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   
   public void runConnectTriggers()
   {
+	  
 	  for(Feature feature : features)
 	  {
 		  feature.connectTrigger();
