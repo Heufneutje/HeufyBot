@@ -202,10 +202,11 @@ public class HeufyBot {
 	 * the bot by calling {@link #disconnect() } and {@link #dispose() }
 	 */
 	public HeufyBot() {
-		this.gui = new MainWindow(this);
+		//this.gui = new MainWindow(this);
 		featureInterface = new FeatureInterface(this);
 		if (XMLIO.readXML("settings.xml") == null) {
-			PopupManager.showWarningMessage("Settings", "The settings file is corrupted or missing.\nThe default settings file will be created.");
+			log("server", "!! The settings file is corrupted or missing.\nThe default settings file will be created.");
+			//PopupManager.showWarningMessage("Settings", "The settings file is corrupted or missing.\nThe default settings file will be created.");
 		}
 		listenerManager.addListener(new CoreHooks());
 		listenerManager.addListener(featureInterface);
@@ -266,17 +267,19 @@ public class HeufyBot {
 					}
 					//featureInterface.runConnectTriggers();
 				} catch (UnknownHostException e1) {
-					PopupManager.showErrorMessage("Could not connect", "Host " + e1.getMessage() + " was not found.");
+					//PopupManager.showErrorMessage("Could not connect", "Host " + e1.getMessage() + " was not found.");
+					log("server", "!! Host " + e1.getMessage() + " was not found.");
 				} catch (ConnectException e1) {
 					e1.printStackTrace();
-					PopupManager.showErrorMessage("Could not connect", "Connection was refused.");
+					//PopupManager.showErrorMessage("Could not connect", "Connection was refused.");
+					log("server, ", "Connection was refused.");
 				} catch (NumberFormatException e1) {
-					PopupManager.showErrorMessage("Could not connect", "The port is invalid.");
+					//PopupManager.showErrorMessage("Could not connect", "The port is invalid.");
 				} catch (IrcException e1) {
-					PopupManager.showErrorMessage("Could not connect", e1.getMessage());
+					//PopupManager.showErrorMessage("Could not connect", e1.getMessage());
 				} catch (Exception e1) {
 					e1.printStackTrace();
-					PopupManager.showErrorMessage("Could not connect", e1.getClass().getCanonicalName() + "\n" + e1.getMessage());
+					//PopupManager.showErrorMessage("Could not connect", e1.getClass().getCanonicalName() + "\n" + e1.getMessage());
 				}
 			}
 		};
@@ -426,7 +429,7 @@ public class HeufyBot {
 		//Start input to start accepting lines
 		_inputThread.start();
 		getListenerManager().dispatchEvent(new ConnectEvent(this));
-		this.gui.setConnected(true);
+		//this.gui.setConnected(true);
 	}
 	
 	protected InputThread createInputThread(Socket socket, BufferedReader breader) {
@@ -464,7 +467,7 @@ public class HeufyBot {
 	public synchronized void disconnect() {
 		featureInterface.reloadFeatures();
 		quitServer();
-		gui.reset();
+		//gui.reset();
 	}
 	/**
 	 * When you connect to a server and your nick is already in use and
@@ -955,6 +958,20 @@ public class HeufyBot {
 			e.printStackTrace();
 		}
 	}
+	
+	public void writeFileAppend(String filePath, String text)
+	{
+		FileWriter writer;
+		try {
+			writer = new FileWriter(filePath, true);
+			BufferedWriter bw = new BufferedWriter(writer);
+			bw.write(text);
+			bw.flush();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Removes the channel key (-k) or password to get into the channel. May require
 	 * operator privileges in the channel
@@ -1392,7 +1409,7 @@ public class HeufyBot {
 				Date date = new Date();
 				String logLine = "[" + dateFormat.format(date) + "] " + line + "\n";
 				System.out.print(logLine);
-				this.gui.appendText(logLine, target);
+				//this.gui.appendText(logLine, target);
 				if(this.getNetworkName() != null)
 				{
 					Logger.write(logLine, this.getNetworkName(), target);
@@ -1544,7 +1561,7 @@ public class HeufyBot {
 				//Its us, do some setup (don't use channel var since channel doesn't exist yet)
 				sendRawLine("WHO " + target);
 				sendRawLine("MODE " + target);
-				this.gui.joinChannel(channel.getName());
+				//this.gui.joinChannel(channel.getName());
 			}
 			source.setLogin(sourceLogin);
 			source.setHostmask(sourceHostname);
@@ -1556,7 +1573,7 @@ public class HeufyBot {
 		if (sourceNick.equals(getNick())) {
 			//We parted the channel
 			_userChanInfo.deleteA(channel);
-			this.gui.partChannel(channel.getName());
+			//this.gui.partChannel(channel.getName());
 		} else {
 			//Just remove the user from memory
 			_userChanInfo.dissociate(channel, getUser(sourceNick));
@@ -1599,7 +1616,7 @@ public class HeufyBot {
 			User recipient = getUser(tokenizer.nextToken());
 			if (recipient.getNick().equals(getNick())) {
 				this._userChanInfo.deleteA(channel);
-				this.gui.partChannel(channel.getName());
+				//this.gui.partChannel(channel.getName());
 				log("You were kicked from " + channel.getName() + " by " + sourceNick + " (" + message + ")", "server");
 				joinChannel(channel.getName());
 			} else {
@@ -1621,7 +1638,7 @@ public class HeufyBot {
 			channel.setTopic(topic);
 			channel.setTopicSetter(sourceNick);
 			channel.setTopicTimestamp(currentTime);
-			gui.setChannelTopic(channel.getName(), topic);
+			//gui.setChannelTopic(channel.getName(), topic);
 			log(sourceNick + " changes topic to \'" + topic + "\'", target);
 			getListenerManager().dispatchEvent(new TopicEvent(this, channel, topic, source, currentTime, true));
 		} else if (command.equals("INVITE")) {
@@ -1682,7 +1699,7 @@ public class HeufyBot {
 			String channel = parsed[1];
 			String topic = parsed[2].substring(1);
 			log("Topic is \'" + topic + "\'", channel);
-			gui.setChannelTopic(channel, topic);
+			//gui.setChannelTopic(channel, topic);
 			getChannel(channel).setTopic(topic);
 		} else if (code == RPL_TOPICINFO) {
 			//EXAMPLE: 333 PircBotX #aChannel ISetTopic 1564842512
@@ -1768,7 +1785,7 @@ public class HeufyBot {
 			{
 				this.setNetworkName(_server);
 			}
-			this.gui.setNetworkName(getNetworkName());
+			//this.gui.setNetworkName(getNetworkName());
 			log(response2, "server");
 		} else if ((code == RPL_YOURHOST) || (code == RPL_CREATED)) {
 			log(response.split(" :")[1], "server");
@@ -2448,7 +2465,7 @@ public class HeufyBot {
 		_userChanInfo.clear();
 		//Clear any existing channel list
 		channelListBuilder.finish();
-		gui.reset();
+		//gui.reset();
 		featureInterface.reloadFeatures();
 	}
 	/**
