@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import javax.net.SocketFactory;
-import javax.swing.Timer;
-import java.net.SocketException;
 import org.pircbotx.gui.MainWindow;
 import org.pircbotx.gui.PopupManager;
 import org.pircbotx.hooks.events.ActionEvent;
