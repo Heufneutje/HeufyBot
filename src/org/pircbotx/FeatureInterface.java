@@ -31,7 +31,8 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	    {
 	        if (feature.getType().equals("join"))
 	        {
-	        	feature.process(event.getChannel().getName(), "", event.getUser().getNick());
+	        	feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" +
+	        			"");
 	        }
 	    }
   }
@@ -48,13 +49,13 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     	  {
     		  if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
     	          continue;
-    	        feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick());
+    	        feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick(), feature.getTriggers()[i]);
     	  }
     	  else
     	  {
     		  if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().contains(feature.getTriggers()[i]))
     	          continue;
-    	        feature.process(event.getChannel().getName(), event.getMessage(), event.getUser().getNick());
+    	        feature.process(event.getChannel().getName(), event.getMessage(), event.getUser().getNick(), null);
     	  }
       }
 

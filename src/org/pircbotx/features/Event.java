@@ -1,9 +1,6 @@
 package org.pircbotx.features;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,7 +17,7 @@ public class Event extends Feature
     this.triggers[0] = "!event";
   }
 
-  public void process(String source, String metadata, String triggerUser)
+  public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
 	  try
 	  {

@@ -14,7 +14,7 @@ public class Time extends Feature
     this.triggers[0] = "!time";
   }
 
-  public void process(String source, String metadata, String triggerUser)
+  public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
     Date date = new Date();
     DateFormat format = new SimpleDateFormat("hh:mm aa (z)");

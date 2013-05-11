@@ -39,7 +39,7 @@ public abstract class Feature
   
   public abstract String getHelp();
   
-  public abstract void process(String source, String metadata, String triggerUser);
+  public abstract void process(String source, String metadata, String triggerUser, String triggerCommand);
   
   public abstract void connectTrigger();
 }

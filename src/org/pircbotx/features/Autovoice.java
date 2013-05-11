@@ -14,7 +14,7 @@ public class Autovoice extends Feature
 	}
 
 	@Override
-	public void process(String source, String metadata, String triggerUser) 
+	public void process(String source, String metadata, String triggerUser, String triggerCommand) 
 	{
 		if(triggerUser.equals(bot.getName()))
 		{

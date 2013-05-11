@@ -20,7 +20,7 @@ public class Urlfollow extends Feature
     this.messageMustStartWithTrigger = false;
   }
 
-  public void process(String source, String metadata, String triggerUser)
+  public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
 	  String[] message = metadata.split(" ");
 	  String[] urls = new String[message.length];

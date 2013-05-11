@@ -11,7 +11,7 @@ public class Join extends Feature
     this.triggers[0] = "!join";
   }
 
-  public void process(String source, String metadata, String triggerUser)
+  public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
     if ((metadata.equals("")) || (metadata.equals(" ")))
     {

@@ -19,7 +19,6 @@
  */
 package org.pircbotx;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -90,7 +89,7 @@ public class User implements Comparable<User> {
 	 *         channels user has Operator status in
 	 */
 	public Set<Channel> getChannelsOpIn() {
-		Set<Channel> channels = new HashSet();
+		Set<Channel> channels = new HashSet<Channel>();
 		for (Channel curChannel : bot.getChannels()) if (curChannel.isOp(this)) channels.add(curChannel);
 		return Collections.unmodifiableSet(channels);
 	}
@@ -102,7 +101,7 @@ public class User implements Comparable<User> {
 	 *         channels user has Voice status in
 	 */
 	public Set<Channel> getChannelsVoiceIn() {
-		Set<Channel> channels = new HashSet();
+		Set<Channel> channels = new HashSet<Channel>();
 		for (Channel curChannel : bot.getChannels()) if (curChannel.hasVoice(this)) channels.add(curChannel);
 		return Collections.unmodifiableSet(channels);
 	}
@@ -114,7 +113,7 @@ public class User implements Comparable<User> {
 	 *         channels user has Owner status in
 	 */
 	public Set<Channel> getChannelsOwnerIn() {
-		Set<Channel> channels = new HashSet();
+		Set<Channel> channels = new HashSet<Channel>();
 		for (Channel curChannel : bot.getChannels()) if (curChannel.isOwner(this)) channels.add(curChannel);
 		return Collections.unmodifiableSet(channels);
 	}
@@ -126,7 +125,7 @@ public class User implements Comparable<User> {
 	 *         channels user has Half Operator status in
 	 */
 	public Set<Channel> getChannelsHalfOpIn() {
-		Set<Channel> channels = new HashSet();
+		Set<Channel> channels = new HashSet<Channel>();
 		for (Channel curChannel : bot.getChannels()) if (curChannel.isHalfOp(this)) channels.add(curChannel);
 		return Collections.unmodifiableSet(channels);
 	}
@@ -138,7 +137,7 @@ public class User implements Comparable<User> {
 	 *         channels user has Super Operator status in
 	 */
 	public Set<Channel> getChannelsSuperOpIn() {
-		Set<Channel> channels = new HashSet();
+		Set<Channel> channels = new HashSet<Channel>();
 		for (Channel curChannel : bot.getChannels()) if (curChannel.isSuperOp(this)) channels.add(curChannel);
 		return Collections.unmodifiableSet(channels);
 	}

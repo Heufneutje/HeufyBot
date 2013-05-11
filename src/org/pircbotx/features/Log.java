@@ -27,7 +27,7 @@ public class Log extends Feature implements Runnable
     this.triggers[0] = "!log";
   }
 
-  public void process(String source, String metadata, String triggerUser)
+  public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
     if ((metadata.equals("")) || (metadata.equals(" ")))
     {

@@ -13,7 +13,7 @@ public class Greet extends Feature
     this.messageMustStartWithTrigger = false;
   }
 
-  public void process(String source, String metadata, String triggerUser)
+  public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
     metadata = metadata.toLowerCase();
     if (metadata.contains(this.bot.getNick().toLowerCase()))

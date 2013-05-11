@@ -11,7 +11,7 @@ public class Source extends Feature
 		this.triggers[0] = "!source";
 	}
 
-	public void process(String source, String metadata, String triggerUser)
+	public void process(String source, String metadata, String triggerUser, String triggerCommand)
 	{
 		this.bot.sendMessage(source, "[Source] https://github.com/Heufneutje/HeufyBot");
 	}
