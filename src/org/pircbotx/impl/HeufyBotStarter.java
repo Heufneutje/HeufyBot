@@ -43,7 +43,15 @@ public class HeufyBotStarter
     	  }
     	  else if(command.equals("disconnect"))
     	  {
-    		  bot.disconnect();
+    		  if (bot.isConnected())
+    		  {
+    		      bot.disconnect();
+    		  }
+    	  }
+    	  else if(command.equals("quit"))
+    	  {
+    		  bot.quitServer();
+    		  System.exit(0);
     	  }
       }
     }
