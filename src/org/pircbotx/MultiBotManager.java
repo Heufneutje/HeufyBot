@@ -61,7 +61,7 @@ public class MultiBotManager {
 	 * @param name The name that all bots will have by default
 	 */
 	public MultiBotManager(final String name) {
-		this(new HeufyBot(){
+		this(new HeufyBot(true){
 			{
 				setName(name);
 			}
@@ -121,7 +121,7 @@ public class MultiBotManager {
 	 */
 	public HeufyBot createBot(String hostname, int port, String password, SocketFactory socketFactory) {
 		//Create bot with all of the global settings
-		HeufyBot bot = new HeufyBot();
+		HeufyBot bot = new HeufyBot(true);
 		bot.setListenerManager(listenerManager);
 		bot.setName(name);
 		bot.setVerbose(verbose);

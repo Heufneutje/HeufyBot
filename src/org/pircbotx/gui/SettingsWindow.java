@@ -29,7 +29,7 @@ public class SettingsWindow extends JFrame
   private JLabel passwordLabel;
   private JLabel authenticationtypeLabel;
   private JLabel channelsLabel;
-  private JComboBox<String> authenticationtypeBox;
+  private JComboBox authenticationtypeBox;
   private JButton confirm;
   private JButton cancel;
 
@@ -48,7 +48,7 @@ public class SettingsWindow extends JFrame
     this.channelsField = new JTextField((String)settingsMap.get("channels"));
 
     String[] authenticationTypes = { "None", "Server Password", "NickServ", "Q Auth" };
-    this.authenticationtypeBox = new JComboBox<String>(authenticationTypes);
+    this.authenticationtypeBox = new JComboBox(authenticationTypes);
     this.authenticationtypeBox.setSelectedIndex(Integer.parseInt((String)settingsMap.get("authenticationtype")));
 
     this.nicknameLabel = new JLabel("Nickname");

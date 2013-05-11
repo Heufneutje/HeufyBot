@@ -13,9 +13,25 @@ public class HeufyBotStarter
     try
     {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      HeufyBot bot = new HeufyBot();
+      HeufyBot bot;
+      if(args.length > 0)
+      {
+    	  if(args[0].equals("nogui"))
+    	  {
+    		  bot = new HeufyBot(false);
+    	  }
+    	  else
+    	  {
+    		  bot = new HeufyBot(true);
+    	  }
+      }
+      else
+      {
+    	  bot = new HeufyBot(true);
+      }
+      
       bot.setVersion("HeufyBot IRC Bot V2.0.0 (PircBotX 1.6)");
-      bot.getFeatureInterface().loadFeatures(new String[] {"Log", "Say", "Source", "Urlfollow", "Join", "Part", "Greet", "Event"});
+      bot.getFeatureInterface().loadFeatures(new String[] {"Log", "Say", "Source", "Urlfollow", "Join", "Part", "Greet", "Event", "Uptime"});
       
       while(true)
       {

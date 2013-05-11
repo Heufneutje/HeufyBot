@@ -13,12 +13,12 @@ public class Uptime extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!time";
+    this.triggers[0] = "!uptime";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
-    DateFormat format = new SimpleDateFormat("MM-dd-YYYY hh:mm aa (z)");
+    DateFormat format = new SimpleDateFormat("MM-dd-yyyy hh:mm aa (z)");
     this.bot.sendMessage(source, "[Uptime] HeufyBot has been running since " + format.format(date) + ".");
   }
 

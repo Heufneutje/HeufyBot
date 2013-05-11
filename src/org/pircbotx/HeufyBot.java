@@ -193,6 +193,7 @@ public class HeufyBot {
 	protected final ListBuilder<ChannelListEntry> channelListBuilder = new ListBuilder<ChannelListEntry>();
 	protected SocketFactory _socketFactory = null;
 	protected boolean loggedIn = false;
+	protected boolean useGui;
 	private MainWindow gui;
 	private FeatureInterface featureInterface;
 	/**
@@ -201,12 +202,24 @@ public class HeufyBot {
 	 * adds a shutdown hook to the current runtime while will properly shutdown 
 	 * the bot by calling {@link #disconnect() } and {@link #dispose() }
 	 */
-	public HeufyBot() {
-		//this.gui = new MainWindow(this);
+	public HeufyBot(boolean useGui) 
+	{
+		this.useGui = useGui;
+		if(useGui)
+		{
+			this.gui = new MainWindow(this);
+		}
 		featureInterface = new FeatureInterface(this);
 		if (XMLIO.readXML("settings.xml") == null) {
 			log("server", "!! The settings file is corrupted or missing.\nThe default settings file will be created.");
-			//PopupManager.showWarningMessage("Settings", "The settings file is corrupted or missing.\nThe default settings file will be created.");
+			if(useGui)
+			{
+				PopupManager.showWarningMessage("Settings", "The settings file is corrupted or missing.\nThe default settings file will be created.");
+			}
+			else
+			{
+				log("server", "The settings file is corrupted or missing. The default settings file will be created.");
+			}
 		}
 		listenerManager.addListener(new CoreHooks());
 		listenerManager.addListener(featureInterface);
@@ -429,7 +442,10 @@ public class HeufyBot {
 		//Start input to start accepting lines
 		_inputThread.start();
 		getListenerManager().dispatchEvent(new ConnectEvent(this));
-		//this.gui.setConnected(true);
+		if(useGui)
+		{
+			this.gui.setConnected(true);
+		}
 	}
 	
 	protected InputThread createInputThread(Socket socket, BufferedReader breader) {
@@ -467,7 +483,10 @@ public class HeufyBot {
 	public synchronized void disconnect() {
 		featureInterface.reloadFeatures();
 		quitServer();
-		//gui.reset();
+		if(useGui)
+		{
+			gui.reset();
+		}
 	}
 	/**
 	 * When you connect to a server and your nick is already in use and
@@ -1408,8 +1427,11 @@ public class HeufyBot {
 				DateFormat dateFormat = new SimpleDateFormat("HH:mm");
 				Date date = new Date();
 				String logLine = "[" + dateFormat.format(date) + "] " + line + "\n";
-				System.out.print(logLine);
-				//this.gui.appendText(logLine, target);
+				System.out.print(target + ": " + logLine);
+				if(useGui)
+				{
+					this.gui.appendText(logLine, target);
+				}
 				if(this.getNetworkName() != null)
 				{
 					Logger.write(logLine, this.getNetworkName(), target);
@@ -1561,7 +1583,10 @@ public class HeufyBot {
 				//Its us, do some setup (don't use channel var since channel doesn't exist yet)
 				sendRawLine("WHO " + target);
 				sendRawLine("MODE " + target);
-				//this.gui.joinChannel(channel.getName());
+				if(useGui)
+				{
+					this.gui.joinChannel(channel.getName());
+				}
 			}
 			source.setLogin(sourceLogin);
 			source.setHostmask(sourceHostname);
@@ -1573,7 +1598,10 @@ public class HeufyBot {
 		if (sourceNick.equals(getNick())) {
 			//We parted the channel
 			_userChanInfo.deleteA(channel);
-			//this.gui.partChannel(channel.getName());
+			if(useGui)
+			{
+				this.gui.partChannel(channel.getName());
+			}
 		} else {
 			//Just remove the user from memory
 			_userChanInfo.dissociate(channel, getUser(sourceNick));
@@ -1616,7 +1644,10 @@ public class HeufyBot {
 			User recipient = getUser(tokenizer.nextToken());
 			if (recipient.getNick().equals(getNick())) {
 				this._userChanInfo.deleteA(channel);
-				//this.gui.partChannel(channel.getName());
+				if(useGui)
+				{
+					this.gui.partChannel(channel.getName());
+				}
 				log("You were kicked from " + channel.getName() + " by " + sourceNick + " (" + message + ")", "server");
 				joinChannel(channel.getName());
 			} else {
@@ -1638,7 +1669,10 @@ public class HeufyBot {
 			channel.setTopic(topic);
 			channel.setTopicSetter(sourceNick);
 			channel.setTopicTimestamp(currentTime);
-			//gui.setChannelTopic(channel.getName(), topic);
+			if(useGui)
+			{
+				gui.setChannelTopic(channel.getName(), topic);
+			}
 			log(sourceNick + " changes topic to \'" + topic + "\'", target);
 			getListenerManager().dispatchEvent(new TopicEvent(this, channel, topic, source, currentTime, true));
 		} else if (command.equals("INVITE")) {
@@ -1699,7 +1733,10 @@ public class HeufyBot {
 			String channel = parsed[1];
 			String topic = parsed[2].substring(1);
 			log("Topic is \'" + topic + "\'", channel);
-			//gui.setChannelTopic(channel, topic);
+			if(useGui)
+			{
+				gui.setChannelTopic(channel, topic);
+			}
 			getChannel(channel).setTopic(topic);
 		} else if (code == RPL_TOPICINFO) {
 			//EXAMPLE: 333 PircBotX #aChannel ISetTopic 1564842512
@@ -1785,7 +1822,10 @@ public class HeufyBot {
 			{
 				this.setNetworkName(_server);
 			}
-			//this.gui.setNetworkName(getNetworkName());
+			if(useGui)
+			{
+				this.gui.setNetworkName(getNetworkName());
+			}
 			log(response2, "server");
 		} else if ((code == RPL_YOURHOST) || (code == RPL_CREATED)) {
 			log(response.split(" :")[1], "server");
@@ -2465,7 +2505,10 @@ public class HeufyBot {
 		_userChanInfo.clear();
 		//Clear any existing channel list
 		channelListBuilder.finish();
-		//gui.reset();
+		if(useGui)
+		{
+			gui.reset();
+		}
 		featureInterface.reloadFeatures();
 	}
 	/**
