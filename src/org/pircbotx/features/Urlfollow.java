@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 import org.pircbotx.HeufyBot;
 
@@ -23,16 +24,16 @@ public class Urlfollow extends Feature
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
 	  String[] message = metadata.split(" ");
-	  String[] urls = new String[message.length];
+	  ArrayList<String> urls = new ArrayList<String>();
 	  for(int i = 0; i < message.length; i++)
 	  {
 		  if(message[i].startsWith("http"))
 		  {
-			  urls[i] = message[i];
+			  urls.add(message[i]);
 		  }
 	  }
 	  
-	  for(int i = 0; i < urls.length; i++)
+	  for(String urlstring : urls)
 	  {
 		  	String startTag = "<title>";
 		  	String endTag = "</title>";
@@ -47,7 +48,7 @@ public class Urlfollow extends Feature
 		    try
 		    {
 		      //open file
-		    	URL url = new URL(urls[i]);
+		    	URL url = new URL(urlstring);
 		      bufReader = new BufferedReader( new InputStreamReader(url.openStream()));
 		      
 		      //read line by line

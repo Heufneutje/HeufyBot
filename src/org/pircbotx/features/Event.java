@@ -13,8 +13,10 @@ public class Event extends Feature
   public Event(HeufyBot bot, String name)
   {
     super(bot, name);
-    this.triggers = new String[1];
+    this.triggers = new String[3];
     this.triggers[0] = "!event";
+    this.triggers[1] = "!timetill";
+    this.triggers[2] = "!remevent";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
