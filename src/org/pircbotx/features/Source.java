@@ -8,7 +8,7 @@ public class Source extends Feature
 	{
 		super(bot, name);
 		this.triggers = new String[1];
-		this.triggers[0] = "!source";
+		this.triggers[0] = bot.getCommandPrefix() + "source";
 	}
 
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -24,6 +24,6 @@ public class Source extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: !source | Provides a link to the bot's source code.";
+		return "Commands: " + bot.getCommandPrefix() + "source | Provides a link to the bot's source code.";
 	}
 }

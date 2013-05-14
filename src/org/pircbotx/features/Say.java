@@ -8,7 +8,7 @@ public class Say extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!say";
+    this.triggers[0] = bot.getCommandPrefix() + "say";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -31,6 +31,6 @@ public class Say extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: !say <message> | Makes the bot say the given line.";
+		return "Commands: " + bot.getCommandPrefix() + "say <message> | Makes the bot say the given line.";
 	}
 }

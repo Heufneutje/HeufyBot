@@ -61,10 +61,10 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 
     }
 
-    if (event.getMessage().startsWith("!load"))
+    if (event.getMessage().startsWith(bot.getCommandPrefix() + "load"))
     {
     	String source = event.getChannel().getName();
-    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("heufneutje"))
+    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().toLowerCase().equals("heufneutje"))
     	{
 	      String metadata = event.getMessage().substring(5);
 	
@@ -99,10 +99,10 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     else
     {
       String featureName;
-      if (event.getMessage().startsWith("!unload"))
+      if (event.getMessage().startsWith(bot.getCommandPrefix() + "unload"))
       {
     	  String source = event.getChannel().getName();
-    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equals("heufneutje"))
+    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().toLowerCase().equals("heufneutje"))
     	  {
 	        String metadata = event.getMessage().substring(7);
 	
@@ -141,7 +141,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     		  this.bot.sendMessage(source, "Only OPs can unload features!");
 	      }
       }
-      else if (event.getMessage().startsWith("!help"))
+      else if (event.getMessage().startsWith(bot.getCommandPrefix() + "help"))
       {
     	  String source = event.getChannel().getName();
     	  String metadata = event.getMessage().substring(5);

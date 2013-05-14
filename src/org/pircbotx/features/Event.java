@@ -18,14 +18,14 @@ public class Event extends Feature
   {
     super(bot, name);
     this.triggers = new String[3];
-    this.triggers[0] = "!event";
-    this.triggers[1] = "!timetill";
-    this.triggers[2] = "!remevent";
+    this.triggers[0] = bot.getCommandPrefix() + "event";
+    this.triggers[1] = bot.getCommandPrefix() + "timetill";
+    this.triggers[2] = bot.getCommandPrefix() + "remevent";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
-	  if(triggerCommand.equals("!event"))
+	  if(triggerCommand.equals(bot.getCommandPrefix() + "event"))
 	  {
 		  try
 		  {
@@ -54,7 +54,7 @@ public class Event extends Feature
 			  this.bot.sendMessage(source, "[Event] Unknown error. Please try again.");
 		  }
 	  }
-	  else if(triggerCommand.equals("!timetill"))
+	  else if(triggerCommand.equals(bot.getCommandPrefix() + "timetill"))
 	  {
 		  String events = bot.readFile(settingsPath);
 		  String[] eventsArray = events.split("\n");
@@ -193,7 +193,7 @@ public class Event extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: !event (MM-DD-YYYY hh:mm) Event, !timetill Event, !remevent Event | Create an event that can be called using !timetill or removed using !remevent.";
+		return "Commands: " + bot.getCommandPrefix() + "event (MM-DD-YYYY hh:mm) Event, " + bot.getCommandPrefix() + "timetill Event, " + bot.getCommandPrefix() + "remevent Event | Create an event that can be called using timetill or removed using remevent.";
 	}
 	
 	private void addEvent(String date, String event)

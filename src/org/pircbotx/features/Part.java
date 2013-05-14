@@ -8,7 +8,7 @@ public class Part extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!part";
+    this.triggers[0] = bot.getCommandPrefix() + "part";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -31,6 +31,6 @@ public class Part extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: !part <channel> | Makes the bot leave a channel.";
+		return "Commands: " + bot.getCommandPrefix() + "part <channel> | Makes the bot leave a channel.";
 	}
 }

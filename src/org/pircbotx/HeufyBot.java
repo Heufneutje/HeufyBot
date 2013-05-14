@@ -175,6 +175,7 @@ public class HeufyBot {
 	protected String _version = "VERSION";
 	protected String _finger = "Boop!";
 	protected String _channelPrefixes = "#&+!";
+	protected char _commandPrefix = '~';
 	/**
 	 * The logging lock object preventing lines from being printed as other
 	 * lines are being printed
@@ -2678,5 +2679,10 @@ public class HeufyBot {
 	public void setNetworkName(String networkName)
 	{
 		this._networkName = networkName;
+	}
+	
+	public char getCommandPrefix()
+	{
+		return this._commandPrefix;
 	}
 }

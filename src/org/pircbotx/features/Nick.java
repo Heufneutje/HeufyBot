@@ -8,7 +8,7 @@ public class Nick extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!nick";
+    this.triggers[0] = bot.getCommandPrefix() + "nick";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -19,7 +19,7 @@ public class Nick extends Feature
     }
     else if (metadata.startsWith(" "))
     {
-      if (triggerUser.equals("Heufneutje"))
+      if (triggerUser.toLowerCase().equals("heufneutje"))
       {
         this.bot.sendRawLine("NICK " + metadata.substring(1));
       }
@@ -38,6 +38,6 @@ public class Nick extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: !nick <nickname> | Changes the nickname of the bot.";
+		return "Commands: " + bot.getCommandPrefix() + "nick <nickname> | Changes the nickname of the bot.";
 	}
 }

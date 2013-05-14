@@ -13,7 +13,7 @@ public class Uptime extends Feature
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!uptime";
+    this.triggers[0] = bot.getCommandPrefix() + "uptime";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -31,6 +31,6 @@ public class Uptime extends Feature
 	@Override
 	public String getHelp() 
 	{
-		return "Commands: !uptime | Shows how long the bot has been running.";
+		return "Commands: " + bot.getCommandPrefix() + "uptime | Shows how long the bot has been running.";
 	}
 }

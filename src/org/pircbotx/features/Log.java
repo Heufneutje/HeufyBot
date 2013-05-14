@@ -24,7 +24,7 @@ public class Log extends Feature implements Runnable
   {
     super(bot, name);
     this.triggers = new String[1];
-    this.triggers[0] = "!log";
+    this.triggers[0] = bot.getCommandPrefix() + "log";
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -136,6 +136,6 @@ public class Log extends Feature implements Runnable
 	@Override
 	public String getHelp()
 	{
-		return "Commands: !log, !log <YYYY-MM-DD> | Provides a log of the current channel for today, or another date if specified.";
+		return "Commands: " + bot.getCommandPrefix() + "log, " + bot.getCommandPrefix() + "log <YYYY-MM-DD> | Provides a log of the current channel for today, or another date if specified.";
 	}
 }
