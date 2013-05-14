@@ -53,6 +53,10 @@ public class HeufyBotStarter
     		  bot.quitServer();
     		  System.exit(0);
     	  }
+    	  //else if(command.startsWith("msg"))
+    	  //{
+    	  //	bot.sendMessage(command.split(" ")[1], command.substring(command.split(" ")[1].indexOf(" ") + 1));
+    	  //} 
       }
     }
     catch (Exception e)

@@ -277,20 +277,58 @@ public class HeufyBot {
 						}
 					}
 					//featureInterface.runConnectTriggers();
-				} catch (UnknownHostException e1) {
-					//PopupManager.showErrorMessage("Could not connect", "Host " + e1.getMessage() + " was not found.");
-					log("server", "!! Host " + e1.getMessage() + " was not found.");
-				} catch (ConnectException e1) {
+				} catch (UnknownHostException e1) 
+				{
+					if(useGui)
+					{
+						PopupManager.showErrorMessage("Could not connect", "Host " + e1.getMessage() + " was not found.");
+					}
+					else
+					{
+						log("server", "!! Host " + e1.getMessage() + " was not found.");
+					}
+				} catch (ConnectException e1) 
+				{
 					e1.printStackTrace();
-					//PopupManager.showErrorMessage("Could not connect", "Connection was refused.");
-					log("server, ", "Connection was refused.");
-				} catch (NumberFormatException e1) {
-					//PopupManager.showErrorMessage("Could not connect", "The port is invalid.");
-				} catch (IrcException e1) {
-					//PopupManager.showErrorMessage("Could not connect", e1.getMessage());
-				} catch (Exception e1) {
-					e1.printStackTrace();
-					//PopupManager.showErrorMessage("Could not connect", e1.getClass().getCanonicalName() + "\n" + e1.getMessage());
+					if(useGui)
+					{
+						PopupManager.showErrorMessage("Could not connect", "Connection was refused.");
+					}
+					else
+					{
+						log("server", "Connection was refused.");
+					}
+				}
+				catch (NumberFormatException e1) 
+				{
+					if(useGui)
+					{
+						PopupManager.showErrorMessage("Could not connect", "The port is invalid.");
+					}
+					else
+					{
+						log("server", "Could not connect. The port is invalid.");
+					}
+				} catch (IrcException e1) 
+				{
+					if(useGui)
+					{
+						PopupManager.showErrorMessage("Could not connect", e1.getMessage());
+					}
+					else
+					{
+						log("server", "Could not connect. " + e1.getMessage());
+					}
+				} catch (Exception e1)
+				{
+					if(useGui)
+					{
+						PopupManager.showErrorMessage("Could not connect", e1.getClass().getCanonicalName() + "\n" + e1.getMessage());
+					}
+					else
+					{
+						log("server", "Could not connect. " + e1.getClass().getCanonicalName() + " " + e1.getMessage());
+					}
 				}
 			}
 		};
