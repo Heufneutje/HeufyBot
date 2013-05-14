@@ -1,5 +1,7 @@
 package org.pircbotx.gui;
 
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -7,38 +9,41 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import org.pircbotx.XMLIO;
 
 public class SettingsWindow extends JFrame
 {
   private static final long serialVersionUID = 3538433380355281876L;
-  private JTextField nicknameField;
-  private JTextField realnameField;
-  private JTextField usernameField;
-  private JTextField serverField;
-  private JTextField portField;
-  private JTextField channelsField;
+  
+  private JPanel connectionSettingsPanel, botSettingsPanel, buttonPanel;
+  
+  private JTabbedPane tabbedPane;
+  
+  private JTextField nicknameField, realnameField, usernameField, serverField, portField, channelsField, prefixField;
   private JPasswordField passwordField;
-  private JLabel nicknameLabel;
-  private JLabel realnameLabel;
-  private JLabel usernameLabel;
-  private JLabel serverLabel;
-  private JLabel portLabel;
-  private JLabel passwordLabel;
-  private JLabel authenticationtypeLabel;
-  private JLabel channelsLabel;
+  private JLabel nicknameLabel, realnameLabel, usernameLabel, serverLabel, portLabel, passwordLabel, authenticationtypeLabel, channelsLabel, prefixLabel;
   private JComboBox authenticationtypeBox;
-  private JButton confirm;
-  private JButton cancel;
+  private JButton confirm, cancel;
 
   public SettingsWindow()
   {
     HashMap<String, String> settingsMap = XMLIO.readXML("settings.xml");
 
-    setLayout(null);
-
+    this.setLayout(new BorderLayout());
+    
+    this.tabbedPane = new JTabbedPane();
+    this.connectionSettingsPanel = new JPanel();
+    this.botSettingsPanel = new JPanel();
+    this.buttonPanel = new JPanel();
+    
+    this.connectionSettingsPanel.setLayout(null);
+    this.botSettingsPanel.setLayout(null);
+    this.buttonPanel.setLayout(new GridLayout(1, 2));
+    
     this.nicknameField = new JTextField((String)settingsMap.get("nickname"));
     this.realnameField = new JTextField((String)settingsMap.get("realname"));
     this.usernameField = new JTextField((String)settingsMap.get("username"));
@@ -46,6 +51,7 @@ public class SettingsWindow extends JFrame
     this.portField = new JTextField((String)settingsMap.get("port"));
     this.passwordField = new JPasswordField((String)settingsMap.get("password"));
     this.channelsField = new JTextField((String)settingsMap.get("channels"));
+    this.prefixField = new JTextField((String)settingsMap.get("commandprefix"));
 
     String[] authenticationTypes = { "None", "Server Password", "NickServ", "Q Auth" };
     this.authenticationtypeBox = new JComboBox(authenticationTypes);
@@ -59,6 +65,7 @@ public class SettingsWindow extends JFrame
     this.passwordLabel = new JLabel("Password");
     this.authenticationtypeLabel = new JLabel("Authentication Type");
     this.channelsLabel = new JLabel("Channels");
+    this.prefixLabel = new JLabel("Command Prefix");
 
     this.confirm = new JButton("OK");
     this.cancel = new JButton("Cancel");
@@ -71,6 +78,7 @@ public class SettingsWindow extends JFrame
     this.passwordLabel.setBounds(5, 130, 100, 20);
     this.authenticationtypeLabel.setBounds(5, 155, 100, 20);
     this.channelsLabel.setBounds(5, 180, 100, 20);
+    this.prefixLabel.setBounds(5, 5, 100, 20);
 
     this.nicknameField.setBounds(120, 5, 165, 20);
     this.realnameField.setBounds(120, 30, 165, 20);
@@ -80,35 +88,41 @@ public class SettingsWindow extends JFrame
     this.passwordField.setBounds(120, 130, 165, 20);
     this.authenticationtypeBox.setBounds(120, 155, 165, 20);
     this.channelsField.setBounds(120, 180, 165, 20);
-
-    this.confirm.setBounds(5, 205, 140, 20);
-    this.cancel.setBounds(150, 205, 140, 20);
-
+    this.prefixField.setBounds(120, 5, 165, 20);
+    
     ActionListener listener = new SettingsListener();
     this.authenticationtypeBox.addActionListener(listener);
     this.confirm.addActionListener(listener);
     this.cancel.addActionListener(listener);
+    
+    this.tabbedPane.add(connectionSettingsPanel, "Connection Settings");
+    this.tabbedPane.add(botSettingsPanel, "Bot Settings");
+    this.add(tabbedPane, BorderLayout.CENTER);
+    this.add(buttonPanel, BorderLayout.SOUTH);
+    
+    buttonPanel.add(this.confirm);
+    buttonPanel.add(this.cancel);
+    
+    connectionSettingsPanel.add(this.nicknameLabel);
+    connectionSettingsPanel.add(this.realnameLabel);
+    connectionSettingsPanel.add(this.usernameLabel);
+    connectionSettingsPanel.add(this.serverLabel);
+    connectionSettingsPanel.add(this.portLabel);
+    connectionSettingsPanel.add(this.passwordLabel);
+    connectionSettingsPanel.add(this.authenticationtypeLabel);
+    connectionSettingsPanel.add(this.channelsLabel);
 
-    add(this.nicknameLabel);
-    add(this.realnameLabel);
-    add(this.usernameLabel);
-    add(this.serverLabel);
-    add(this.portLabel);
-    add(this.passwordLabel);
-    add(this.authenticationtypeLabel);
-    add(this.channelsLabel);
-
-    add(this.nicknameField);
-    add(this.realnameField);
-    add(this.usernameField);
-    add(this.serverField);
-    add(this.portField);
-    add(this.passwordField);
-    add(this.authenticationtypeBox);
-    add(this.channelsField);
-
-    add(this.confirm);
-    add(this.cancel);
+    connectionSettingsPanel.add(this.nicknameField);
+    connectionSettingsPanel.add(this.realnameField);
+    connectionSettingsPanel.add(this.usernameField);
+    connectionSettingsPanel.add(this.serverField);
+    connectionSettingsPanel.add(this.portField);
+    connectionSettingsPanel.add(this.passwordField);
+    connectionSettingsPanel.add(this.authenticationtypeBox);
+    connectionSettingsPanel.add(this.channelsField);
+    
+    botSettingsPanel.add(prefixLabel);
+    botSettingsPanel.add(prefixField);
 
     if (Integer.parseInt((String)settingsMap.get("authenticationtype")) == 0)
     {
@@ -119,7 +133,7 @@ public class SettingsWindow extends JFrame
 
     setTitle("Settings");
     setResizable(false);
-    setSize(300, 260);
+    setSize(300, 290);
     setLocationRelativeTo(null);
     setDefaultCloseOperation(2);
     setVisible(true);
@@ -149,6 +163,11 @@ public class SettingsWindow extends JFrame
 	    }
 	    else
 	    {
+	    	if(prefixField.getText().length() > 1)
+	    	{
+	    		prefixField.setText(prefixField.getText().substring(0, 1));
+	    	}
+	    	
 	      HashMap<String, String> settingsMap = new HashMap<String, String>();
 	      settingsMap.put("nickname", nicknameField.getText());
 	      settingsMap.put("realname", realnameField.getText());
@@ -158,6 +177,7 @@ public class SettingsWindow extends JFrame
 	      settingsMap.put("password", new String(passwordField.getPassword()));
 	      settingsMap.put("authenticationtype", "" + authenticationtypeBox.getSelectedIndex());
 	      settingsMap.put("channels", channelsField.getText());
+	      settingsMap.put("commandprefix", prefixField.getText());
 	      XMLIO.writeXML(settingsMap, "settings.xml");
 	      dispose();
 	    }

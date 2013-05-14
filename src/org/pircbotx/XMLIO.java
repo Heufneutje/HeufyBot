@@ -54,6 +54,17 @@ public class XMLIO
         settingsMap.put("authenticationtype", getTagValue("authenticationtype", eElement));
         settingsMap.put("channels", getTagValue("channels", eElement));
       }
+      
+      NodeList nList3 = doc.getElementsByTagName("botsettings");
+
+      for (int temp = 0; temp < nList3.getLength(); temp++)
+      {
+        Node nNode = nList3.item(temp);
+        if (nNode.getNodeType() != 1)
+          continue;
+        Element eElement = (Element)nNode;
+        settingsMap.put("commandprefix", getTagValue("commandprefix", eElement));
+      }
 
     }
     catch (Exception e)
@@ -121,6 +132,13 @@ public class XMLIO
       Element channels = doc.createElement("channels");
       channels.appendChild(doc.createTextNode((String)settingsMap.get("channels")));
       serversettings.appendChild(channels);
+      
+      Element botsettings = doc.createElement("botsettings");
+      rootElement.appendChild(botsettings);
+      
+      Element commandprefix = doc.createElement("commandprefix");
+      commandprefix.appendChild(doc.createTextNode((String)settingsMap.get("commandprefix")));
+      botsettings.appendChild(commandprefix);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();

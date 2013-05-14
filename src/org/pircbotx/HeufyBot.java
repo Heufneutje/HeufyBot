@@ -175,7 +175,7 @@ public class HeufyBot {
 	protected String _version = "VERSION";
 	protected String _finger = "Boop!";
 	protected String _channelPrefixes = "#&+!";
-	protected char _commandPrefix = '~';
+	protected String _commandPrefix = "~";
 	/**
 	 * The logging lock object preventing lines from being printed as other
 	 * lines are being printed
@@ -247,6 +247,7 @@ public class HeufyBot {
 					String password = (String)settingsMap.get("password");
 					int authenticationtype = Integer.parseInt((String)settingsMap.get("authenticationtype"));
 					String channels = (String)settingsMap.get("channels");
+					_commandPrefix = (String)settingsMap.get("commandprefix");
 					switch (authenticationtype) {
 					case 1: 
 						connect(serverip, port, password);
@@ -2681,7 +2682,7 @@ public class HeufyBot {
 		this._networkName = networkName;
 	}
 	
-	public char getCommandPrefix()
+	public String getCommandPrefix()
 	{
 		return this._commandPrefix;
 	}

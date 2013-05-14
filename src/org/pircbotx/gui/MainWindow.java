@@ -54,7 +54,7 @@ public class MainWindow extends JFrame
     setJMenuBar(this.menuBar);
 
     setSize(640, 480);
-    setTitle("HeufyBot 2.0.0");
+    setTitle("HeufyBot");
     setLocationRelativeTo(null);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setVisible(true);
