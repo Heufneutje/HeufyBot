@@ -163,9 +163,9 @@ public class SettingsWindow extends JFrame
 	    }
 	    else
 	    {
-	    	if(prefixField.getText().length() > 1)
+	    	if(prefixField.getText().length() != 1)
 	    	{
-	    		prefixField.setText(prefixField.getText().substring(0, 1));
+	    		prefixField.setText("~");
 	    	}
 	    	
 	      HashMap<String, String> settingsMap = new HashMap<String, String>();
