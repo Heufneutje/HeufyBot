@@ -53,10 +53,13 @@ public class HeufyBotStarter
     		  bot.quitServer();
     		  System.exit(0);
     	  }
-    	  //else if(command.startsWith("msg"))
-    	  //{
-    	  //	bot.sendMessage(command.split(" ")[1], command.substring(command.split(" ")[1].indexOf(" ") + 1));
-    	  //} 
+    	  else if(command.startsWith("msg "))
+    	  {
+    		  command = command.substring(4);
+    		  String destination = command.split(" ")[0];
+    		  String message = command.substring(destination.length() + 1);
+    		  bot.sendMessage(destination, message);
+    	  } 
       }
     }
     catch (Exception e)
