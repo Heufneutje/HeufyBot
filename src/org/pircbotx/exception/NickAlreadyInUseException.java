@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,31 +10,26 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.exception;
 
 /**
- * A NickAlreadyInUseException class.  This exception is
+ * A NickAlreadyInUseException class. This exception is
  * thrown when the PircBot attempts to join an IRC server
  * with a user name that is already in use.
  *
- * @since   PircBot 0.9
- * @author  Origionally by:
- *          <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
- *          <p>Forked and Maintained by in <a href="http://pircbotx.googlecode.com">PircBotX</a>:
- *          Leon Blakey <lord.quackstar at gmail.com>
+ * @since PircBot 0.9
+ * @author Origionally by:
+ * <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
+ * <p>Forked and Maintained by in <a href="http://pircbotx.googlecode.com">PircBotX</a>:
+ * Leon Blakey <lord.quackstar at gmail.com>
  */
 public class NickAlreadyInUseException extends IrcException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3483679936642640869L;
-
 	/**
 	 * Constructs a new IrcException.
 	 *

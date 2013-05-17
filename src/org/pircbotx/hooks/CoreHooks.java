@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.hooks;
 
@@ -34,7 +34,7 @@ import org.pircbotx.hooks.managers.ListenerManager;
  * <p>
  * <b>Warning:</b> Removing CoreHooks without providing a replacement will produce
  * undesired results like server timeouts due to not responding to pings.
- * 
+ * <p/>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class CoreHooks implements Listener {

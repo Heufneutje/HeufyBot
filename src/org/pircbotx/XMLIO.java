@@ -78,6 +78,7 @@ public class XMLIO
       defaultSettings.put("password", "");
       defaultSettings.put("authenticationtype", "0");
       defaultSettings.put("channels", "#heufybot");
+      defaultSettings.put("commandprefix", "~");
       writeXML(defaultSettings, filePath);
       return null;
     }

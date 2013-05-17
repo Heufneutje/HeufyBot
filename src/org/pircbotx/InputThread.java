@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx;
 
@@ -23,29 +23,23 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InterruptedIOException;
 import java.net.Socket;
-import java.text.DecimalFormat;
 
 import javax.swing.Timer;
 
-import org.pircbotx.hooks.events.DisconnectEvent;
-
 /**
- * A Thread which reads lines from the IRC server.  It then
+ * A Thread which reads lines from the IRC server. It then
  * passes these lines to the PircBotX without changing them.
  * This running Thread also detects disconnection from the server
  * and is thus used by the OutputThread to send lines to the server.
  *
- * @author  Origionally by:
- *          <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
- *          <p>Forked and Maintained by in <a href="http://pircbotx.googlecode.com">PircBotX</a>:
- *          Leon Blakey <lord.quackstar at gmail.com>
+ * @author Origionally by:
+ * <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
+ * <p>Forked and Maintained by Leon Blakey <lord.quackstar at gmail.com> in <a href="http://pircbotx.googlecode.com">PircBotX</a>
  */
 public class InputThread extends Thread {
 	private final HeufyBot bot;
-	private Socket socket;
 	private BufferedReader breader = null;
 	private boolean isConnected = true;
-	public static final int MAX_LINE_LENGTH = 512;
 
 	/**
 	 * The InputThread reads lines from the IRC server and allows the
@@ -57,7 +51,6 @@ public class InputThread extends Thread {
 	 */
 	protected InputThread(HeufyBot bot, Socket socket, BufferedReader breader) {
 		this.bot = bot;
-		this.socket = socket;
 		this.breader = breader;
 	}
 
@@ -76,16 +69,16 @@ public class InputThread extends Thread {
 	 * Called to start this Thread reading lines from the IRC server.
 	 * When a line is read, this method calls the handleLine method
 	 * in the PircBotX, which may subsequently call an 'onXxx' method
-	 * in the PircBotX subclass.  If any subclass of Throwable (i.e.
+	 * in the PircBotX subclass. If any subclass of Throwable (i.e.
 	 * any Exception or Error) is thrown by your method, then this
-	 * method will print the stack trace to the standard output.  It
+	 * method will print the stack trace to the standard output. It
 	 * is probable that the PircBotX may still be functioning normally
 	 * after such a problem, but the existence of any uncaught exceptions
 	 * in your code is something you should really fix.
 	 */
 	@Override
 	public void run() {
-		  ActionListener taskPerformer = new ActionListener() {
+		ActionListener taskPerformer = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0)
 			{
@@ -93,8 +86,7 @@ public class InputThread extends Thread {
 			}
 		  };
 		  new Timer(60000, taskPerformer).start();
-		
-		
+		  
 		while (true) {
 			//Get line from the server
 			String line = null;
@@ -107,7 +99,9 @@ public class InputThread extends Thread {
 				// Now we go back to listening for stuff from the server...
 				continue;
 			} catch (Exception e) {
+				//Something is wrong. Assume its bad and begin disconnect
 				bot.logException(e);
+				line = null;
 			}
 
 			//End the loop if the line is null
@@ -118,23 +112,19 @@ public class InputThread extends Thread {
 			try {
 				bot.handleLine(line);
 			} catch (Exception e) {
+				//Exception in client code. Just log and continue
 				bot.logException(e);
+			}
+
+			//Do nothing if this thread is being interrupted (meaning shutdown() was run)
+			if (Thread.interrupted()) {
+				isConnected = false;
+				return;
 			}
 		}
 
-		//Disconnected at this point, close the socket
-		try {
-			socket.close();
-		} catch (Exception e) {
-			bot.logException(e);
-			isConnected = false;
-			bot.reset();
-		}
-
-		//Now that the socket is definatly closed, call event and log
+		//Now that the socket is definatly closed call event, log, and kill the OutputThread
 		isConnected = false;
-		bot.reset();
-		bot.getListenerManager().dispatchEvent(new DisconnectEvent(bot));
-		bot.log("*** Disconnected.", "server");
+		bot.shutdown();
 	}
 }

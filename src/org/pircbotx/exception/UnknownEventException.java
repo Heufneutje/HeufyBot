@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.exception;
 
@@ -25,16 +25,11 @@ import org.pircbotx.hooks.Event;
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class UnknownEventException extends RuntimeException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2307668822330978964L;
-
-	public UnknownEventException(Event<?> event, Throwable cause) {
+	public UnknownEventException(Event event, Throwable cause) {
 		super("Unknown Event " + event.getClass().toString(), cause);
 	}
 
-	public UnknownEventException(Event<?> event) {
-		this(event,null);
+	public UnknownEventException(Event event) {
+		this(event, null);
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.hooks.types;
 
@@ -25,7 +25,7 @@ import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 /**
  * Generic event for an incoming message from a user, whether it be a private
- * message, channel message, channel action, etc. 
+ * message, channel message, channel action, etc.
  * <p>
  * Used in {@link MessageEvent} and {@link PrivateMessageEvent}
  * @author Leon Blakey <lord.quackstar@gmail.com>

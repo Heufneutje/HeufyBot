@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx;
 
@@ -25,6 +25,7 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
+import java.util.Arrays;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocket;
@@ -33,15 +34,15 @@ import javax.net.ssl.TrustManager;
 
 /**
  * An SSLSocketFactory implementation that treats all certificates as valid. Use with care.
- * 
+ * <p/>
  * @deprecated This class has been superseded by {@link UtilSSLSocketFactory}, which
  * provides much more flexibility and ease of use. This class is kept for backwards
  * compatability only.
- * @author Originally by: 
- *         <a href="http://www.brudvik.org/projects/development/pircbot-with-ssl/">Kjell Arne Brudvik from brudvik.org</a>
- *         <p>Implemented and Maintained in PircBotX by: 
- *         Leon Blakey <lord.quackstar at gmail.com>
- *         
+ * @author Originally by:
+ * <a href="http://www.brudvik.org/projects/development/pircbot-with-ssl/">Kjell Arne Brudvik from brudvik.org</a>
+ * <p>Implemented and Maintained in PircBotX by:
+ * Leon Blakey <lord.quackstar at gmail.com>
+ * <p/>
  */
 @Deprecated
 public class TrustingSSLSocketFactory extends SSLSocketFactory {
@@ -75,7 +76,7 @@ public class TrustingSSLSocketFactory extends SSLSocketFactory {
 	 */
 	@Override
 	public String[] getDefaultCipherSuites() {
-		return ciphers;
+		return Arrays.copyOf(ciphers, ciphers.length);
 	}
 
 	/*
@@ -84,7 +85,7 @@ public class TrustingSSLSocketFactory extends SSLSocketFactory {
 	 */
 	@Override
 	public String[] getSupportedCipherSuites() {
-		return ciphers;
+		return Arrays.copyOf(ciphers, ciphers.length);
 	}
 
 	/*

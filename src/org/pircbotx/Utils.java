@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,14 +10,18 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.FileTransferFinishedEvent;
 import org.pircbotx.hooks.events.FingerEvent;
@@ -153,5 +157,49 @@ public class Utils {
 		else if (event instanceof VoiceEvent)
 			return ((VoiceEvent) event).getSource();
 		return null;
+	}
+
+	public static String join(Collection<String> strings, String sep) {
+		StringBuilder builder = new StringBuilder();
+		Iterator<String> itr = strings.iterator();
+		while (itr.hasNext()) {
+			builder.append(itr.next());
+			if (itr.hasNext())
+				builder.append(sep);
+		}
+		return builder.toString();
+	}
+
+	/**
+	 * Tokenize IRC raw input into it's components, keeping the
+	 * 'sender' and 'message' fields intact.
+	 * @param input A string in the format [:]item [item] ... [:item [item] ...]
+	 * @return List of strings.
+	 */
+	public static List<String> tokenizeLine(String input) {
+		List<String> retn = new ArrayList<String>();
+
+		if (input == null || input.length() == 0)
+			return retn;
+
+		String temp = input;
+
+		while (true) {
+			if (temp.startsWith(":") && retn.size() > 0) {
+				retn.add(temp.substring(1));
+
+				return retn;
+			}
+
+			String[] split = temp.split(" ", 2);
+			retn.add(split[0]);
+
+			if (split.length > 1)
+				temp = split[1];
+			else
+				break;
+		}
+
+		return retn;
 	}
 }

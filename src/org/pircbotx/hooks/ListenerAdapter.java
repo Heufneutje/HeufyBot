@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.hooks;
 
@@ -25,71 +25,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.hooks.events.ActionEvent;
-import org.pircbotx.hooks.events.ChannelInfoEvent;
-import org.pircbotx.hooks.events.ConnectEvent;
-import org.pircbotx.hooks.events.DisconnectEvent;
-import org.pircbotx.hooks.events.FileTransferFinishedEvent;
-import org.pircbotx.hooks.events.FingerEvent;
-import org.pircbotx.hooks.events.HalfOpEvent;
-import org.pircbotx.hooks.events.IncomingChatRequestEvent;
-import org.pircbotx.hooks.events.IncomingFileTransferEvent;
-import org.pircbotx.hooks.events.InviteEvent;
-import org.pircbotx.hooks.events.JoinEvent;
-import org.pircbotx.hooks.events.KickEvent;
-import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.hooks.events.ModeEvent;
-import org.pircbotx.hooks.events.MotdEvent;
-import org.pircbotx.hooks.events.NickChangeEvent;
-import org.pircbotx.hooks.events.NoticeEvent;
-import org.pircbotx.hooks.events.OpEvent;
-import org.pircbotx.hooks.events.OwnerEvent;
-import org.pircbotx.hooks.events.PartEvent;
-import org.pircbotx.hooks.events.PingEvent;
-import org.pircbotx.hooks.events.PrivateMessageEvent;
-import org.pircbotx.hooks.events.QuitEvent;
-import org.pircbotx.hooks.events.RemoveChannelBanEvent;
-import org.pircbotx.hooks.events.RemoveChannelKeyEvent;
-import org.pircbotx.hooks.events.RemoveChannelLimitEvent;
-import org.pircbotx.hooks.events.RemoveInviteOnlyEvent;
-import org.pircbotx.hooks.events.RemoveModeratedEvent;
-import org.pircbotx.hooks.events.RemoveNoExternalMessagesEvent;
-import org.pircbotx.hooks.events.RemovePrivateEvent;
-import org.pircbotx.hooks.events.RemoveSecretEvent;
-import org.pircbotx.hooks.events.RemoveTopicProtectionEvent;
-import org.pircbotx.hooks.events.ServerPingEvent;
-import org.pircbotx.hooks.events.ServerResponseEvent;
-import org.pircbotx.hooks.events.SetChannelBanEvent;
-import org.pircbotx.hooks.events.SetChannelKeyEvent;
-import org.pircbotx.hooks.events.SetChannelLimitEvent;
-import org.pircbotx.hooks.events.SetInviteOnlyEvent;
-import org.pircbotx.hooks.events.SetModeratedEvent;
-import org.pircbotx.hooks.events.SetNoExternalMessagesEvent;
-import org.pircbotx.hooks.events.SetPrivateEvent;
-import org.pircbotx.hooks.events.SetSecretEvent;
-import org.pircbotx.hooks.events.SetTopicProtectionEvent;
-import org.pircbotx.hooks.events.SuperOpEvent;
-import org.pircbotx.hooks.events.TimeEvent;
-import org.pircbotx.hooks.events.TopicEvent;
-import org.pircbotx.hooks.events.UnknownEvent;
-import org.pircbotx.hooks.events.UserListEvent;
-import org.pircbotx.hooks.events.UserModeEvent;
-import org.pircbotx.hooks.events.VersionEvent;
-import org.pircbotx.hooks.events.VoiceEvent;
-import org.pircbotx.hooks.types.GenericCTCPCommand;
-import org.pircbotx.hooks.types.GenericChannelModeEvent;
-import org.pircbotx.hooks.types.GenericDCCEvent;
-import org.pircbotx.hooks.types.GenericMessageEvent;
-import org.pircbotx.hooks.types.GenericUserModeEvent;
+import org.pircbotx.hooks.events.*;
+import org.pircbotx.hooks.types.*;
 
 /**
  * Adapter that provides methods to capture each event separately, removing
  * the need to check, cast, and call your custom method for each event you want
- * to capture. 
+ * to capture.
  * <p>
- * To use, simply override the method that has the event you want to capture. 
+ * To use, simply override the method that has the event you want to capture.
  * <p>
- * <b>WARNING:</b> If you are going to be implementing {@link Listener}'s 
+ * <b>WARNING:</b> If you are going to be implementing {@link Listener}'s
  * {@link Listener#onEvent(org.pircbotx.hooks.Event) } method, you must call
  * <code>super.onEvent(event)</code>, otherwise none of the Adapter hook methods
  * will work!
@@ -99,32 +45,57 @@ public abstract class ListenerAdapter<T extends HeufyBot> implements Listener<T>
 	protected static final Map<Class<? extends Event>, Set<Method>> eventToMethod = new HashMap();
 
 	static {
+		updateEventMethodMapping(ListenerAdapter.class);
+	}
+
+	/**
+	 * Adds custom event listeners created by the specified class to the internal
+	 * event to method map so onEvent is aware of them. The methods must follow 
+	 * the same naming and parameter convention as the {@Link ListenerAdapter ListenerAdapter class} 
+	 * in order to guarantee they are added
+	 * <p>
+	 * This is needed because onEvent is only aware of methods that have been added
+	 * to its internal map. It is only needed to be called once on a class that
+	 * has the methods
+	 * @param clazz A class that has event listener methods that conform to the
+	 * ListenerAdapter class convention
+	 */
+	protected static void updateEventMethodMapping(Class<? extends ListenerAdapter> clazz) {
 		//Map events to methods
-		for (Method curMethod : ListenerAdapter.class.getDeclaredMethods()) {
-			if (curMethod.getName().equals("onEvent"))
+		for (Method curMethod : clazz.getDeclaredMethods()) {
+			//Filter out methods by basic criteria
+			if (curMethod.getName().equals("onEvent") || curMethod.getParameterTypes().length != 1 || curMethod.isSynthetic())
 				continue;
 			Class<?> curClass = curMethod.getParameterTypes()[0];
-			if (!curClass.isInterface()) {
-				Set methods = new HashSet();
-				methods.add(curMethod);
-				eventToMethod.put((Class<? extends Event>) curClass, methods);
-			}
+			//Filter out methods that don't have the right param or are already added
+			if (curClass.isAssignableFrom(Event.class) || curClass.isInterface()
+					|| (eventToMethod.containsKey(curClass) && eventToMethod.get(curClass).contains(curMethod)))
+				continue;
+			Set methods = new HashSet();
+			methods.add(curMethod);
+			eventToMethod.put((Class<? extends Event>) curClass, methods);
+
 		}
 		//Now that we have all the events, start mapping interfaces
-		for (Method curMethod : ListenerAdapter.class.getDeclaredMethods()) {
+		for (Method curMethod : clazz.getDeclaredMethods()) {
+			//Make sure this is an event method
+			if (curMethod.getParameterTypes().length != 1 || curMethod.isSynthetic())
+				continue;
 			Class<?> curClass = curMethod.getParameterTypes()[0];
-			if (curClass.isInterface())
-				//Add this interface method to all events that implement it
-				for (Class curEvent : eventToMethod.keySet())
-					if (curClass.isAssignableFrom(curEvent))
-						eventToMethod.get(curEvent).add(curMethod);
+			if (!curClass.isInterface() || !GenericEvent.class.isAssignableFrom(curClass))
+				continue;
+			//Add this interface method to all events that implement it
+			for (Class curEvent : eventToMethod.keySet())
+				if (curClass.isAssignableFrom(curEvent) && !eventToMethod.get(curEvent).contains(curMethod))
+					eventToMethod.get(curEvent).add(curMethod);
 		}
 	}
 
 	public void onEvent(Event<T> event) throws Exception {
 		try {
-			for (Method curMethod : eventToMethod.get(event.getClass()))
-				curMethod.invoke(this, event);
+			if (eventToMethod.containsKey(event.getClass()))
+				for (Method curMethod : eventToMethod.get(event.getClass()))
+					curMethod.invoke(this, event);
 		} catch (InvocationTargetException ex) {
 			Throwable cause = ex.getCause();
 			if (cause instanceof Exception)
@@ -203,6 +174,9 @@ public abstract class ListenerAdapter<T extends HeufyBot> implements Listener<T>
 	public void onQuit(QuitEvent<T> event) throws Exception {
 	}
 
+	public void onReconnect(ReconnectEvent<T> event) throws Exception {
+	}
+
 	public void onRemoveChannelBan(RemoveChannelBanEvent<T> event) throws Exception {
 	}
 
@@ -263,6 +237,9 @@ public abstract class ListenerAdapter<T extends HeufyBot> implements Listener<T>
 	public void onSetTopicProtection(SetTopicProtectionEvent<T> event) throws Exception {
 	}
 
+	public void onSocketConnect(SocketConnectEvent<T> event) throws Exception {
+	}
+
 	public void onSuperOp(SuperOpEvent<T> event) throws Exception {
 	}
 
@@ -286,19 +263,22 @@ public abstract class ListenerAdapter<T extends HeufyBot> implements Listener<T>
 
 	public void onVoice(VoiceEvent<T> event) throws Exception {
 	}
-	
+
+	public void onWhois(WhoisEvent<T> event) throws Exception {
+	}
+
 	public void onGenericCTCPCommand(GenericCTCPCommand<T> event) throws Exception {
 	}
-	
+
 	public void onGenericUserMode(GenericUserModeEvent<T> event) throws Exception {
 	}
-	
+
 	public void onGenericChannelMode(GenericChannelModeEvent<T> event) throws Exception {
 	}
-	
+
 	public void onGenericDCC(GenericDCCEvent<T> event) throws Exception {
 	}
-	
+
 	public void onGenericMessage(GenericMessageEvent<T> event) throws Exception {
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.hooks;
 
@@ -29,7 +29,7 @@ import org.pircbotx.HeufyBot;
  * will be removed.
  * <p>
  * Note: The reason the {@link #done()} method is used instead of automatically
- * removing is that you may need to check for something before executing. 
+ * removing is that you may need to check for something before executing.
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public class TemporaryListener extends ListenerAdapter {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.hooks.managers;
 
@@ -27,23 +27,23 @@ import org.pircbotx.hooks.Listener;
  * Manages everything about Listeners: adding, removing, and dispatching events
  * to appropriate listeners.
  * <p>
- * An important job of all methods in this class is to absorb and report <u>any</u> 
+ * An important job of all methods in this class is to absorb and report <u>any</u>
  * exceptions or errors before they reach {@link HeufyBot}. Failure to do so
  * could break many internal long running operations. It is therefor recommended
  * to catch {@link Throwable} and report with {@link HeufyBot#logException(java.lang.Throwable) }
  * <p>
  * Performance is another important job in implementations. Events can be dispatched
  * very quickly at times (eg a /WHO on all joined channels) so lots of expensive
- * calls can hurt performance of the entire bot. Therefor important methods like 
+ * calls can hurt performance of the entire bot. Therefor important methods like
  * {@link #dispatchEvent(org.pircbotx.hooks.Event) } should be as fast as possible
- * 
+ * <p/>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public interface ListenerManager<E extends HeufyBot> {
 	/**
 	 * Sends event to all appropriate listeners.
 	 * <p>
-	 * <b>For implementations:</b> Please read {@link ListenerManager important information} 
+	 * <b>For implementations:</b> Please read {@link ListenerManager important information}
 	 * on exception handling and performance.
 	 * @param event The event to send
 	 */
@@ -52,21 +52,21 @@ public interface ListenerManager<E extends HeufyBot> {
 	/**
 	 * Adds an listener to the list of listeners for an event.
 	 * <p>
-	 * <b>For implementations:</b> Please read {@link ListenerManager important information} 
+	 * <b>For implementations:</b> Please read {@link ListenerManager important information}
 	 * on exception handling and performance.
 	 * @param listener The listener to add
-	 * @return True if the listener was succesfully added, false if not
+	 * @return True if the listener was successfully added, false if not
 	 */
 	public boolean addListener(Listener listener);
 
 	/**
 	 * Removes the specified Listener
 	 * <p>
-	 * <b>For implementations:</b> Please read {@link ListenerManager important information} 
+	 * <b>For implementations:</b> Please read {@link ListenerManager important information}
 	 * on exception handling and performance.
 	 * @param listener A Listener to remove
 	 * @return True if the listener was removed, false if it didn't exist or wasn't
-	 *         removed
+	 * removed
 	 */
 	public boolean removeListener(Listener listener);
 
@@ -80,12 +80,12 @@ public interface ListenerManager<E extends HeufyBot> {
 	/**
 	 * Gets all listeners that are in this ListenerManager
 	 * <p>
-	 * <b>For implementations:</b> Please read {@link ListenerManager important information} 
+	 * <b>For implementations:</b> Please read {@link ListenerManager important information}
 	 * on exception handling and performance.
 	 * @return An <b>Immutable set</b> of all listeners that are in this ListenerManager
 	 */
 	public Set<Listener> getListeners();
-	
+
 	/**
 	 * Set the current id used by the ListenerManager
 	 * <p>
@@ -94,16 +94,16 @@ public interface ListenerManager<E extends HeufyBot> {
 	 * @param currentId The id to set this ListenerManager to
 	 */
 	public void setCurrentId(long currentId);
-	
+
 	/**
 	 * Gets the current id used by the ListenerManager
 	 * <p>
-	 * The current id is the id that's going to be handed out to an event. This 
+	 * The current id is the id that's going to be handed out to an event. This
 	 * means that this id has not been dispatched yet.
 	 * @return The current id
 	 */
 	public long getCurrentId();
-	
+
 	/**
 	 * Returns the current ID then increments by 1. This means that if the current
 	 * id is 0 and this method is called, this method returns 0 and {@link #getCurrentId()}

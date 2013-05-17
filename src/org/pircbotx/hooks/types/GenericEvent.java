@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,18 +10,18 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx.hooks.types;
 
 import org.pircbotx.HeufyBot;
 
 /**
- * Base interface that all Generic event interfaces must extend from. 
+ * Base interface that all Generic event interfaces must extend from.
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 public interface GenericEvent<T extends HeufyBot> {
@@ -30,7 +30,7 @@ public interface GenericEvent<T extends HeufyBot> {
 	 * @param response The response to send
 	 */
 	public void respond(String response);
-	
+
 	/**
 	 * Returns the {@link HeufyBot} instance that this event originally came from
 	 * @return A {@link HeufyBot} instance

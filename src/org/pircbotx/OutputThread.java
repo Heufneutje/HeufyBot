@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2010-2011 Leon Blakey <lord.quackstar at gmail.com>
+ * Copyright (C) 2010-2013 Leon Blakey <lord.quackstar at gmail.com>
  *
  * This file is part of PircBotX.
  *
@@ -10,11 +10,11 @@
  *
  * PircBotX is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with PircBotX.  If not, see <http://www.gnu.org/licenses/>.
+ * along with PircBotX. If not, see <http://www.gnu.org/licenses/>.
  */
 package org.pircbotx;
 
@@ -24,14 +24,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * A Thread which is responsible for sending messages to the IRC server.
  * Messages are obtained from the outgoing message queue and sent
- * immediately if possible.  If there is a flood of messages, then to
+ * immediately if possible. If there is a flood of messages, then to
  * avoid getting kicked from a channel, we put a small delay between
  * each one.
  *
- * @author  Origionally by:
- *          <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
- *          <p>Forked and Maintained by in <a href="http://pircbotx.googlecode.com">PircBotX</a>:
- *          Leon Blakey <lord.quackstar at gmail.com>
+ * @author Origionally by:
+ * <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
+ * <p>Forked and Maintained by Leon Blakey <lord.quackstar at gmail.com> in <a href="http://pircbotx.googlecode.com">PircBotX</a>
  */
 public class OutputThread extends Thread {
 	protected HeufyBot bot = null;
@@ -39,9 +38,9 @@ public class OutputThread extends Thread {
 	protected final BufferedWriter bwriter;
 
 	/**
-	 * Constructs an OutputThread for the underlying PircBotX.  All messages
+	 * Constructs an OutputThread for the underlying PircBotX. All messages
 	 * sent to the IRC server are sent by this OutputThread to avoid hammering
-	 * the server.  Messages are sent immediately if possible.  If there are
+	 * the server. Messages are sent immediately if possible. If there are
 	 * multiple messages queued, then there is a delay imposed.
 	 *
 	 * @param bot The underlying PircBotX instance.
@@ -58,15 +57,16 @@ public class OutputThread extends Thread {
 	 * @param line The line to be written. "\r\n" is appended to the end.
 	 */
 	public void sendRawLineNow(String line) {
-		failIfNotConnected();
 		if (line.length() > bot.getMaxLineLength() - 2)
 			line = line.substring(0, bot.getMaxLineLength() - 2);
 		synchronized (bwriter) {
+			failIfNotConnected();
 			try {
 				bwriter.write(line + "\r\n");
 				bwriter.flush();
 			} catch (Exception e) {
-				bot.logException(e);
+				//Not much else we can do, but this requires attention of whatever is calling this
+				throw new RuntimeException("Exception encountered when writing to socket", e);
 			}
 		}
 	}
