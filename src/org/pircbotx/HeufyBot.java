@@ -1854,8 +1854,14 @@ public class HeufyBot {
 			UserSnapshot snapshot = source.generateSnapshot();
 			// Someone has quit from the IRC server.
 			if (!sourceNick.equals(getNick())) 
-			//Someone else
-			userChanInfo.deleteB(source);
+			{
+				User user = getUser(sourceNick);
+				//Someone else
+				for (Channel channel2 : user.getChannels()) {
+					log("<< " + sourceNick + " (" + sourceLogin + "@" + sourceHostname + ") Quit (" + message + ")", channel2.getName());
+				}
+				userChanInfo.deleteB(source);
+			}
 			getListenerManager().dispatchEvent(new QuitEvent(this, snapshot, message));
 		} else if (command.equals("KICK")) {
 			// Somebody has been kicked from a channel.
@@ -1974,6 +1980,7 @@ public class HeufyBot {
 			Channel chan = getChannel(channel);
 			chan.setTopicTimestamp(date);
 			chan.setTopicSetter(setBy.getNick());
+			log("Set by " + setBy.getNick() + " on " + new Date(date).toString(), channel);
 			getListenerManager().dispatchEvent(new TopicEvent(this, chan, chan.getTopic(), setBy, date, false));
 		} else if (code == RPL_WHOREPLY) {
 			//EXAMPLE: PircBotX #aChannel ~someName 74.56.56.56.my.Hostmask wolfe.freenode.net someNick H :0 Full Name

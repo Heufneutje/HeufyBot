@@ -29,10 +29,9 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   {
 	  for (Feature feature : this.features)
 	    {
-	        if (feature.getType().equals("join"))
+	        if (feature.getType().equalsIgnoreCase("join"))
 	        {
-	        	feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" +
-	        			"");
+	        	feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" + "");
 	        }
 	    }
   }
@@ -61,7 +60,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 
     }
 
-    if (event.getMessage().startsWith(bot.getCommandPrefix() + "load"))
+    if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
     {
     	String source = event.getChannel().getName();
     	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().toLowerCase().equals("heufneutje"))
@@ -99,7 +98,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     else
     {
       String featureName;
-      if (event.getMessage().startsWith(bot.getCommandPrefix() + "unload"))
+      if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
       {
     	  String source = event.getChannel().getName();
     	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().toLowerCase().equals("heufneutje"))
@@ -141,7 +140,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     		  this.bot.sendMessage(source, "Only OPs can unload features!");
 	      }
       }
-      else if (event.getMessage().startsWith(bot.getCommandPrefix() + "help"))
+      else if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "help"))
       {
     	  String source = event.getChannel().getName();
     	  String metadata = event.getMessage().substring(5);

@@ -1,6 +1,8 @@
 package org.pircbotx.features;
 
+import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
+import org.pircbotx.User;
 
 public class Nick extends Feature
 {
@@ -19,14 +21,16 @@ public class Nick extends Feature
     }
     else if (metadata.startsWith(" "))
     {
-      if (triggerUser.toLowerCase().equals("heufneutje"))
-      {
-        this.bot.sendRawLine("NICK " + metadata.substring(1));
-      }
-      else
-      {
-        this.bot.sendMessage(source, "[Nick] Only my owner can change my nick!");
-      }
+    	User user = bot.getUser(triggerUser);
+  	  	Channel channel = bot.getChannel(source);
+  	  	if(user.isOped(channel) || triggerUser.equalsIgnoreCase("heufneutje"))
+  	  	{
+  	  		this.bot.sendRawLine("NICK " + metadata.substring(1));
+  	  	}
+  	  	else
+  	  	{
+  	  		this.bot.sendMessage(source, "[Nick] Only my owner and OPs can change my nick!");
+  	  	}
     }
   }
 

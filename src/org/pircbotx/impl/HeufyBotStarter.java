@@ -30,8 +30,8 @@ public class HeufyBotStarter
     	  bot = new HeufyBot(true);
       }
       
-      bot.setVersion("HeufyBot IRC Bot V1.1.0 (PircBotX 1.9)");
-      bot.getFeatureInterface().loadFeatures(new String[] {"Log", "Say", "Source", "Urlfollow", "Join", "Part", "Greet", "Event", "Uptime"});
+      bot.setVersion("HeufyBot IRC Bot V1.1.1 (PircBotX 1.9)");
+      bot.getFeatureInterface().loadFeatures(new String[] {"Log", "Say", "Source", "Urlfollow", "Join", "Part", "Greet", "Event", "Uptime", "Nick", "Quit"});
       
       while(true)
       {
