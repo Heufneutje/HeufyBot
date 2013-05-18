@@ -23,9 +23,9 @@ public class SettingsWindow extends JFrame
   
   private JTabbedPane tabbedPane;
   
-  private JTextField nicknameField, realnameField, usernameField, serverField, portField, channelsField, prefixField, featuresField;
+  private JTextField nicknameField, realnameField, usernameField, serverField, portField, channelsField, prefixField, featuresField, ownerField;
   private JPasswordField passwordField;
-  private JLabel nicknameLabel, realnameLabel, usernameLabel, serverLabel, portLabel, passwordLabel, authenticationtypeLabel, channelsLabel, prefixLabel, featuresLabel;
+  private JLabel nicknameLabel, realnameLabel, usernameLabel, serverLabel, portLabel, passwordLabel, authenticationtypeLabel, channelsLabel, prefixLabel, featuresLabel, ownerLabel;
   private JComboBox authenticationtypeBox;
   private JButton confirm, cancel;
 
@@ -53,6 +53,7 @@ public class SettingsWindow extends JFrame
     this.channelsField = new JTextField((String)settingsMap.get("channels"));
     this.prefixField = new JTextField((String)settingsMap.get("commandprefix"));
     this.featuresField = new JTextField((String)settingsMap.get("loadedfeatures"));
+    this.ownerField = new JTextField((String)settingsMap.get("botowner"));
 
     String[] authenticationTypes = { "None", "Server Password", "NickServ", "Q Auth" };
     this.authenticationtypeBox = new JComboBox(authenticationTypes);
@@ -68,6 +69,7 @@ public class SettingsWindow extends JFrame
     this.channelsLabel = new JLabel("Channels");
     this.prefixLabel = new JLabel("Command Prefix");
     this.featuresLabel = new JLabel("Load Features");
+    this.ownerLabel = new JLabel("Bot Owner");
 
     this.confirm = new JButton("OK");
     this.cancel = new JButton("Cancel");
@@ -82,6 +84,7 @@ public class SettingsWindow extends JFrame
     this.channelsLabel.setBounds(5, 180, 100, 20);
     this.prefixLabel.setBounds(5, 5, 100, 20);
     this.featuresLabel.setBounds(5, 30, 180, 20);
+    this.ownerLabel.setBounds(5, 55, 180, 20);
 
     this.nicknameField.setBounds(120, 5, 165, 20);
     this.realnameField.setBounds(120, 30, 165, 20);
@@ -93,6 +96,7 @@ public class SettingsWindow extends JFrame
     this.channelsField.setBounds(120, 180, 165, 20);
     this.prefixField.setBounds(120, 5, 165, 20);
     this.featuresField.setBounds(120, 30, 165, 20);
+    this.ownerField.setBounds(120, 55, 165, 20);
     
     ActionListener listener = new SettingsListener();
     this.authenticationtypeBox.addActionListener(listener);
@@ -127,9 +131,11 @@ public class SettingsWindow extends JFrame
     
     botSettingsPanel.add(prefixLabel);
     botSettingsPanel.add(featuresLabel);
+    botSettingsPanel.add(ownerLabel);
     
     botSettingsPanel.add(prefixField);
     botSettingsPanel.add(featuresField);
+    botSettingsPanel.add(ownerField);
 
     if (Integer.parseInt((String)settingsMap.get("authenticationtype")) == 0)
     {
@@ -186,6 +192,7 @@ public class SettingsWindow extends JFrame
 			settingsMap.put("channels", channelsField.getText());
 			settingsMap.put("commandprefix", prefixField.getText());
 			settingsMap.put("loadedfeatures", featuresField.getText().replaceAll("\\s",""));
+			settingsMap.put("botowner", ownerField.getText());
 			SettingsXMLIO.writeXML(settingsMap, "settings.xml");
 			dispose();
 	    }

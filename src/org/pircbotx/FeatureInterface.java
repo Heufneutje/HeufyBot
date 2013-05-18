@@ -63,7 +63,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
     {
     	String source = event.getChannel().getName();
-    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().toLowerCase().equals("heufneutje"))
+    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
     	{
 	      String metadata = event.getMessage().substring(5);
 	
@@ -90,10 +90,14 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	        }
 	      }
       }
-    	else
+    	else if(bot.getBotOwner().equals(""))
 	    {
     		this.bot.sendMessage(source, "Only OPs can load features!");
 	    }
+    	else
+    	{
+    		this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can load features!");
+    	}
     }
     else
     {
@@ -101,7 +105,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
       if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
       {
     	  String source = event.getChannel().getName();
-    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().toLowerCase().equals("heufneutje"))
+    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
     	  {
 	        String metadata = event.getMessage().substring(7);
 	
@@ -135,10 +139,14 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	          }
 	        }
         }
-    	  else
+    	  else if(bot.getBotOwner().equals(""))
 	      {
     		  this.bot.sendMessage(source, "Only OPs can unload features!");
 	      }
+    	  else
+    	  {
+    		  this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can unload features!");
+    	  }
       }
       else if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "help"))
       {
@@ -225,19 +233,19 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 
   public void loadFeatures(String[] featureNames)
   {
-    for (int i = 0; i < featureNames.length; i++)
-    {
-    	String featureName = Character.toUpperCase(featureNames[i].toLowerCase().charAt(0)) + featureNames[i].toLowerCase().substring(1);
-    	int status = loadFeature(featureName);
-    	if(status == 1)
-    	{
-    		bot.log("Feature '" + featureName + "' is already loaded", "server");
-    	}
-    	else if (status == 2)
-    	{
-    		bot.log("Feature '" + featureName + "' does not exist", "server");
-    	}
-    }
+	    for (int i = 0; i < featureNames.length; i++)
+	    {
+	    	String featureName = Character.toUpperCase(featureNames[i].toLowerCase().charAt(0)) + featureNames[i].toLowerCase().substring(1);
+	    	int status = loadFeature(featureName);
+	    	if(status == 1)
+	    	{
+	    		bot.log("Feature '" + featureName + "' is already loaded", "server");
+	    	}
+	    	else if (status == 2)
+	    	{
+	    		bot.log("Feature '" + featureName + "' does not exist", "server");
+	    	}
+	    }
   }
   
   public void reloadFeatures()

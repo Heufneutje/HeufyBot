@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import org.pircbotx.hooks.managers.GenericListenerManager;
 import org.pircbotx.hooks.managers.ThreadedListenerManager;
 /**
  * Represents a Channel that we're joined to. Contains all the available
@@ -200,7 +199,7 @@ public class Channel {
 	 */
 	public Set<User> getNormalUsers() {
 		//Build set
-		Set<User> normalUsers = new HashSet(bot.getUsers(this));
+		Set<User> normalUsers = new HashSet<User>(bot.getUsers(this));
 		normalUsers.removeAll(ops);
 		normalUsers.removeAll(voices);
 		normalUsers.removeAll(halfOps);

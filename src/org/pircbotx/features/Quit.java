@@ -17,13 +17,17 @@ public class Quit extends Feature
   {
 	  User user = bot.getUser(triggerUser);
 	  Channel channel = bot.getChannel(source);
-	  if(user.isOped(channel) || triggerUser.equalsIgnoreCase("heufneutje"))
+	  if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
 	  {
 		  this.bot.quitServer("Killed by " + triggerUser);
 	  }
+	  else if(bot.getBotOwner().equals(""))
+	  {
+		  this.bot.sendMessage(source, "[Quit] Only OPs can kill me!");
+	  }
 	  else
 	  {
-		  this.bot.sendMessage(source, "[Quit] Only my owner and OPs can kill me!");
+		  this.bot.sendMessage(source, "[Quit] Only my owner " + bot.getBotOwner() + " and OPs can kill me!");
 	  }
   }
 

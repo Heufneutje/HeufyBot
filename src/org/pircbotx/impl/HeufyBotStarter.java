@@ -1,7 +1,6 @@
 package org.pircbotx.impl;
 
 import javax.swing.UIManager;
-import org.pircbotx.ConsoleThread;
 import org.pircbotx.HeufyBot;
 
 public class HeufyBotStarter
@@ -28,8 +27,7 @@ public class HeufyBotStarter
     	  bot = new HeufyBot(true);
       }
       
-      bot.setVersion("HeufyBot IRC Bot V1.1.1 (PircBotX 1.9)");
-      bot.getFeatureInterface().loadFeatures(new String[] {"Log", "Say", "Source", "Urlfollow", "Join", "Part", "Greet", "Event", "Uptime", "Nick", "Quit"});
+      bot.setVersion("HeufyBot IRC Bot V1.1.2 (PircBotX 1.9)");
     }
     catch (Exception e)
     {

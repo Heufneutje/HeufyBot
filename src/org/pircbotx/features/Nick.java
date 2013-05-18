@@ -23,13 +23,17 @@ public class Nick extends Feature
     {
     	User user = bot.getUser(triggerUser);
   	  	Channel channel = bot.getChannel(source);
-  	  	if(user.isOped(channel) || triggerUser.equalsIgnoreCase("heufneutje"))
+  	  	if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
   	  	{
   	  		this.bot.sendRawLine("NICK " + metadata.substring(1));
   	  	}
+  	  	else if(bot.getBotOwner().equals(""))
+  	  	{
+  	  		this.bot.sendMessage(source, "[Nick] Only OPs can change my nick!");
+  	  	}
   	  	else
   	  	{
-  	  		this.bot.sendMessage(source, "[Nick] Only my owner and OPs can change my nick!");
+  	  		this.bot.sendMessage(source, "[Nick] Only my owner " + bot.getBotOwner() + " and OPs can change my nick!");
   	  	}
     }
   }
