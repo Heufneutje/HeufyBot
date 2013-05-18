@@ -139,6 +139,7 @@ public class HeufyBot {
 	protected String channelPrefixes = "#&+!";
 	private String commandPrefix = "~";
 	protected String networkName = null;
+	private String botOwner;
 	/**
 	 * The logging lock object preventing lines from being printed as other
 	 * lines are being printed
@@ -200,18 +201,20 @@ public class HeufyBot {
 			this.gui = new MainWindow(this);
 		}
 		this.featureInterface = new FeatureInterface(this);
-		if (XMLIO.readXML("settings.xml") == null) {
-			log("server", "!! The settings file is corrupted or missing.\nThe default settings file will be created.");
+		
+		SettingsXMLIO.readXML("settings.xml");
+		if (!(new File("settings.xml").exists()))
+		{
 			if(useGui)
 			{
 				PopupManager.showWarningMessage("Settings", "The settings file is corrupted or missing.\nThe default settings file will be created.");
 			}
 			else
 			{
-				log("server", "The settings file is corrupted or missing. The default settings file will be created.");
+				log("The settings file is corrupted or missing. The default settings file will be created.", "server");
 			}
 		}
-
+		
 		getListenerManager().addListener(getFeatureInterface());
 		consoleThread = new ConsoleThread(this);
 		consoleThread.start();
@@ -222,10 +225,7 @@ public class HeufyBot {
 			
 			public void run() {
 				try {
-					HashMap<String, String> settingsMap = XMLIO.readXML(filePath);
-					if (settingsMap == null) {
-						settingsMap = XMLIO.readXML(filePath);
-					}
+					HashMap<String, String> settingsMap = SettingsXMLIO.readXML(filePath);
 					name = ((String)settingsMap.get("nickname"));
 					realName = ((String)settingsMap.get("realname"));
 					login = ((String)settingsMap.get("username"));
@@ -236,7 +236,16 @@ public class HeufyBot {
 					String password = (String)settingsMap.get("password");
 					int authenticationtype = Integer.parseInt((String)settingsMap.get("authenticationtype"));
 					String channels = (String)settingsMap.get("channels");
-					setCommandPrefix((String)settingsMap.get("commandprefix"));
+					commandPrefix = (String)settingsMap.get("commandprefix");
+					botOwner = (String)settingsMap.get("botowner");
+					
+					String features = (String)settingsMap.get("loadedfeatures");
+					if(features.length() > 0)
+					{
+						featureInterface.unloadAllFeatures();
+						featureInterface.loadFeatures(features.split(","));
+					}
+					
 					switch (authenticationtype) {
 					case 1: 
 						connect(serverip, port, password);
@@ -276,7 +285,7 @@ public class HeufyBot {
 					}
 					else
 					{
-						log("server", "!! Host " + e1.getMessage() + " was not found.");
+						log("Host " + e1.getMessage() + " was not found.", "server");
 					}
 				} catch (ConnectException e1) 
 				{
@@ -287,7 +296,7 @@ public class HeufyBot {
 					}
 					else
 					{
-						log("server", "Connection was refused.");
+						log("Could not connect. Connection was refused.", "server");
 					}
 				}
 				catch (NumberFormatException e1) 
@@ -298,7 +307,7 @@ public class HeufyBot {
 					}
 					else
 					{
-						log("server", "Could not connect. The port is invalid.");
+						log("Could not connect. The port is invalid.", "server");
 					}
 				} catch (IrcException e1) 
 				{
@@ -308,7 +317,7 @@ public class HeufyBot {
 					}
 					else
 					{
-						log("server", "Could not connect. " + e1.getMessage());
+						log("Could not connect. " + e1.getMessage(), "server");
 					}
 				} catch (Exception e1)
 				{
@@ -318,7 +327,7 @@ public class HeufyBot {
 					}
 					else
 					{
-						log("server", "Could not connect. " + e1.getClass().getCanonicalName() + " " + e1.getMessage());
+						log("Could not connect. " + e1.getClass().getCanonicalName() + " " + e1.getMessage(), "server");
 					}
 				}
 			}
@@ -412,6 +421,7 @@ public class HeufyBot {
 			if (isConnected()) throw new IrcException("The PircBotX is already connected to an IRC server.  Disconnect first.");
 			// Clear everything we may have know about channels.
 			userChanInfo.clear();
+			
 			//Reset capabilities
 			enabledCapabilities = new ArrayList<String>();
 			// Connect to the server by DNS server
@@ -435,6 +445,7 @@ public class HeufyBot {
 			}
 			this.log("*** Connected to server.", "server");
 			inetAddress = socket.getLocalAddress();
+			new IdentServer(this, login);
 			InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream(), getEncoding());
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream(), getEncoding());
 			BufferedReader breader = new BufferedReader(inputStreamReader);
@@ -452,7 +463,7 @@ public class HeufyBot {
 			if (password != null && !password.trim().equals("")) outputThread.sendRawLineNow("PASS " + password);
 			String tempNick = getName();
 			outputThread.sendRawLineNow("NICK " + tempNick);
-			outputThread.sendRawLineNow("USER " + getLogin() + " 8 * :" + getVersion());
+			outputThread.sendRawLineNow("USER " + getLogin() + " 8 * :" + realName);
 			// Read stuff back from the server to see if we connected.
 			String line;
 			int tries = 1;
@@ -709,8 +720,7 @@ public class HeufyBot {
 		//As we might not immediatly part and you can't join a channel that your
 		//already joined to, wait for the PART event before rejoining
 		getListenerManager().addListener(new ListenerAdapter(){
-			
-			
+
 			@Override
 			public void onPart(PartEvent event) throws Exception {
 				//Make sure this bot is us to prevent nasty errors in multi bot sitations
@@ -3112,5 +3122,13 @@ public class HeufyBot {
 
 	public void setCommandPrefix(String commandPrefix) {
 		this.commandPrefix = commandPrefix;
+	}
+
+	public String getBotOwner() {
+		return botOwner;
+	}
+
+	public void setBotOwner(String botOwner) {
+		this.botOwner = botOwner;
 	}
 }
