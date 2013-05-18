@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class XMLIO
+public class SettingsXMLIO
 {
   public static HashMap<String, String> readXML(String filePath)
   {
@@ -64,6 +64,7 @@ public class XMLIO
           continue;
         Element eElement = (Element)nNode;
         settingsMap.put("commandprefix", getTagValue("commandprefix", eElement));
+        settingsMap.put("loadedfeatures", getTagValue("loadedfeatures", eElement));
       }
 
     }
@@ -77,10 +78,11 @@ public class XMLIO
       defaultSettings.put("port", "6667");
       defaultSettings.put("password", "");
       defaultSettings.put("authenticationtype", "0");
-      defaultSettings.put("channels", "#heufybot");
+      defaultSettings.put("channels", "#heufneutje");
       defaultSettings.put("commandprefix", "~");
+      defaultSettings.put("loadedfeatures", "Join,Part,Quit");
       writeXML(defaultSettings, filePath);
-      return null;
+      return defaultSettings;
     }
     return settingsMap;
   }
@@ -140,6 +142,10 @@ public class XMLIO
       Element commandprefix = doc.createElement("commandprefix");
       commandprefix.appendChild(doc.createTextNode((String)settingsMap.get("commandprefix")));
       botsettings.appendChild(commandprefix);
+      
+      Element loadedfeatures = doc.createElement("loadedfeatures");
+      loadedfeatures.appendChild(doc.createTextNode((String)settingsMap.get("loadedfeatures")));
+      botsettings.appendChild(loadedfeatures);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();

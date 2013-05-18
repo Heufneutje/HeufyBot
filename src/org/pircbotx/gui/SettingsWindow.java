@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import org.pircbotx.XMLIO;
+import org.pircbotx.SettingsXMLIO;
 
 public class SettingsWindow extends JFrame
 {
@@ -23,15 +23,15 @@ public class SettingsWindow extends JFrame
   
   private JTabbedPane tabbedPane;
   
-  private JTextField nicknameField, realnameField, usernameField, serverField, portField, channelsField, prefixField;
+  private JTextField nicknameField, realnameField, usernameField, serverField, portField, channelsField, prefixField, featuresField;
   private JPasswordField passwordField;
-  private JLabel nicknameLabel, realnameLabel, usernameLabel, serverLabel, portLabel, passwordLabel, authenticationtypeLabel, channelsLabel, prefixLabel;
+  private JLabel nicknameLabel, realnameLabel, usernameLabel, serverLabel, portLabel, passwordLabel, authenticationtypeLabel, channelsLabel, prefixLabel, featuresLabel;
   private JComboBox authenticationtypeBox;
   private JButton confirm, cancel;
 
   public SettingsWindow()
   {
-    HashMap<String, String> settingsMap = XMLIO.readXML("settings.xml");
+    HashMap<String, String> settingsMap = SettingsXMLIO.readXML("settings.xml");
 
     this.setLayout(new BorderLayout());
     
@@ -52,6 +52,7 @@ public class SettingsWindow extends JFrame
     this.passwordField = new JPasswordField((String)settingsMap.get("password"));
     this.channelsField = new JTextField((String)settingsMap.get("channels"));
     this.prefixField = new JTextField((String)settingsMap.get("commandprefix"));
+    this.featuresField = new JTextField((String)settingsMap.get("loadedfeatures"));
 
     String[] authenticationTypes = { "None", "Server Password", "NickServ", "Q Auth" };
     this.authenticationtypeBox = new JComboBox(authenticationTypes);
@@ -66,6 +67,7 @@ public class SettingsWindow extends JFrame
     this.authenticationtypeLabel = new JLabel("Authentication Type");
     this.channelsLabel = new JLabel("Channels");
     this.prefixLabel = new JLabel("Command Prefix");
+    this.featuresLabel = new JLabel("Load Features");
 
     this.confirm = new JButton("OK");
     this.cancel = new JButton("Cancel");
@@ -79,6 +81,7 @@ public class SettingsWindow extends JFrame
     this.authenticationtypeLabel.setBounds(5, 155, 100, 20);
     this.channelsLabel.setBounds(5, 180, 100, 20);
     this.prefixLabel.setBounds(5, 5, 100, 20);
+    this.featuresLabel.setBounds(5, 30, 180, 20);
 
     this.nicknameField.setBounds(120, 5, 165, 20);
     this.realnameField.setBounds(120, 30, 165, 20);
@@ -89,6 +92,7 @@ public class SettingsWindow extends JFrame
     this.authenticationtypeBox.setBounds(120, 155, 165, 20);
     this.channelsField.setBounds(120, 180, 165, 20);
     this.prefixField.setBounds(120, 5, 165, 20);
+    this.featuresField.setBounds(120, 30, 165, 20);
     
     ActionListener listener = new SettingsListener();
     this.authenticationtypeBox.addActionListener(listener);
@@ -122,7 +126,10 @@ public class SettingsWindow extends JFrame
     connectionSettingsPanel.add(this.channelsField);
     
     botSettingsPanel.add(prefixLabel);
+    botSettingsPanel.add(featuresLabel);
+    
     botSettingsPanel.add(prefixField);
+    botSettingsPanel.add(featuresField);
 
     if (Integer.parseInt((String)settingsMap.get("authenticationtype")) == 0)
     {
@@ -168,18 +175,19 @@ public class SettingsWindow extends JFrame
 	    		prefixField.setText("~");
 	    	}
 	    	
-	      HashMap<String, String> settingsMap = new HashMap<String, String>();
-	      settingsMap.put("nickname", nicknameField.getText());
-	      settingsMap.put("realname", realnameField.getText());
-	      settingsMap.put("username", usernameField.getText());
-	      settingsMap.put("serverip", serverField.getText());
-	      settingsMap.put("port", portField.getText());
-	      settingsMap.put("password", new String(passwordField.getPassword()));
-	      settingsMap.put("authenticationtype", "" + authenticationtypeBox.getSelectedIndex());
-	      settingsMap.put("channels", channelsField.getText());
-	      settingsMap.put("commandprefix", prefixField.getText());
-	      XMLIO.writeXML(settingsMap, "settings.xml");
-	      dispose();
+			HashMap<String, String> settingsMap = new HashMap<String, String>();
+			settingsMap.put("nickname", nicknameField.getText());
+			settingsMap.put("realname", realnameField.getText());
+			settingsMap.put("username", usernameField.getText());
+			settingsMap.put("serverip", serverField.getText());
+			settingsMap.put("port", portField.getText());
+			settingsMap.put("password", new String(passwordField.getPassword()));
+			settingsMap.put("authenticationtype", "" + authenticationtypeBox.getSelectedIndex());
+			settingsMap.put("channels", channelsField.getText());
+			settingsMap.put("commandprefix", prefixField.getText());
+			settingsMap.put("loadedfeatures", featuresField.getText().replaceAll("\\s",""));
+			SettingsXMLIO.writeXML(settingsMap, "settings.xml");
+			dispose();
 	    }
 	  }
   }
