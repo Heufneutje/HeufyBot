@@ -28,12 +28,12 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   public void onJoin(JoinEvent event)
   {
 	  for (Feature feature : this.features)
-	    {
-	        if (feature.getType().equalsIgnoreCase("join"))
-	        {
-	        	feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" + "");
-	        }
-	    }
+	  {
+	      if (feature.getType().equalsIgnoreCase("join"))
+	      {
+	    	  feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" + "");
+	      }
+	  }
   }
 
   @Override
@@ -74,7 +74,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	      else if (metadata.startsWith(" "))
 	      {
 	        String featureName = "";
-	        featureName = featureName + Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
+	        featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
 	
 	        switch (loadFeature(featureName)) {
 	        case 0:
@@ -121,7 +121,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	        else if (metadata.startsWith(" "))
 	        {
 	          featureName = "";
-	          featureName = featureName + Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
+	          featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
 	
 	          switch (unloadFeature(featureName)) 
 	          {
@@ -227,7 +227,16 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   {
     for (int i = 0; i < featureNames.length; i++)
     {
-      loadFeature(featureNames[i]);
+    	String featureName = Character.toUpperCase(featureNames[i].toLowerCase().charAt(0)) + featureNames[i].toLowerCase().substring(1);
+    	int status = loadFeature(featureName);
+    	if(status == 1)
+    	{
+    		bot.log("Feature '" + featureName + "' is already loaded", "server");
+    	}
+    	else if (status == 2)
+    	{
+    		bot.log("Feature '" + featureName + "' does not exist", "server");
+    	}
     }
   }
   
@@ -246,6 +255,11 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	  {
 		  loadFeature(featureNames[j]);
 	  }
+  }
+  
+  public void unloadAllFeatures()
+  {
+	  features.clear();
   }
   
   public void runConnectTriggers()

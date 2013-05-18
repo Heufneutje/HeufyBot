@@ -81,6 +81,7 @@ public class IdentServer extends Thread {
 
 		bot.log("*** Ident server running on port 113 for the next 60 seconds...", "server");
 		this.setName(this.getClass() + "-Thread");
+		this.start();
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class IdentServer extends Thread {
 	public void run() {
 		try {
 			Socket socket = ss.accept();
-			socket.setSoTimeout(60000);
+			socket.setSoTimeout(10000);
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
