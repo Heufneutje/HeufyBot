@@ -69,7 +69,6 @@ import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.*;
-import org.pircbotx.hooks.managers.GenericListenerManager;
 import org.pircbotx.hooks.managers.ListenerManager;
 import org.pircbotx.hooks.managers.ThreadedListenerManager;
 /**
@@ -105,6 +104,7 @@ public class HeufyBot {
 	// Connection stuff.
 	protected InputThread inputThread = null;
 	protected OutputThread outputThread = null;
+	protected ConsoleThread consoleThread = null;
 	protected Charset charset = Charset.defaultCharset();
 	protected InetAddress inetAddress = null;
 	// Details about the last server that we connected to.
@@ -151,7 +151,7 @@ public class HeufyBot {
 	 */
 	protected int socketTimeout;
 	protected final ServerInfo serverInfo = new ServerInfo(this);
-	protected final ListBuilder<ChannelListEntry> channelListBuilder = new ListBuilder();
+	protected final ListBuilder<ChannelListEntry> channelListBuilder = new ListBuilder<ChannelListEntry>();
 	protected SocketFactory socketFactory = null;
 	protected boolean loggedIn = false;
 	protected String webIrcUsername = null;
@@ -213,6 +213,8 @@ public class HeufyBot {
 		}
 
 		getListenerManager().addListener(getFeatureInterface());
+		consoleThread = new ConsoleThread(this);
+		consoleThread.start();
 	}
 	
 	public synchronized void connectWithSettings(final String filePath) {
@@ -411,7 +413,7 @@ public class HeufyBot {
 			// Clear everything we may have know about channels.
 			userChanInfo.clear();
 			//Reset capabilities
-			enabledCapabilities = new ArrayList();
+			enabledCapabilities = new ArrayList<String>();
 			// Connect to the server by DNS server
 			Throwable lastException = null;
 			for (InetAddress curAddress : InetAddress.getAllByName(hostname)) {
