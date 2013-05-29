@@ -1,4 +1,4 @@
 HeufyBot
 ========
 
-My IRC bot developed in Java, running on the PircBotX framwork
+My IRC bot developed in Java, running on the PircBotX framework.
