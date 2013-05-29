@@ -16,9 +16,12 @@ public class Time extends Feature
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
-    Date date = new Date();
-    DateFormat format = new SimpleDateFormat("hh:mm aa (z)");
-    this.bot.sendMessage(source, "[Time] The current time is " + format.format(date) + ".");
+	  if(metadata.equals("") || metadata.equals(" "))
+	  {
+	    Date date = new Date();
+	    DateFormat format = new SimpleDateFormat("hh:mm aa (z)");
+	    this.bot.sendMessage(source, "[Time] The current time is " + format.format(date) + ".");
+	  }
   }
 
 	@Override
