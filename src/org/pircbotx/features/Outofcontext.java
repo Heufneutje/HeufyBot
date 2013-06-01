@@ -33,7 +33,7 @@ public class Outofcontext extends Feature implements Runnable
 	@Override
 	public String getHelp()
 	{
-		return null;
+		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add, " + bot.getCommandPrefix() + "ooc search | Grab the OoC log, add an entry to it or search the log by providing a nickname.";
 	}
 
 	@Override
