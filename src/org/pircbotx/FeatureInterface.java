@@ -37,9 +37,18 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   }
 
   @Override
-  public void onMessage(MessageEvent event)
-    throws Exception
+  public void onMessage(MessageEvent event) throws Exception
   {
+	  boolean ignored = false;
+	  for(String ignore : bot.getIgnoreList())
+	  {
+		  if(ignore.equalsIgnoreCase(event.getUser().getNick()))
+		  {
+			  ignored = true;
+		  }
+	  }
+	  if(ignored == false)
+	  {
     for (Feature feature : this.features)
     {
       for (int i = 0; i < feature.getTriggers().length; i++)
@@ -57,6 +66,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     	        feature.process(event.getChannel().getName(), event.getMessage(), event.getUser().getNick(), null);
     	  }
       }
+    }
 
     }
 

@@ -140,6 +140,7 @@ public class HeufyBot {
 	private String commandPrefix = "~";
 	protected String networkName = null;
 	private String botOwner;
+	private ArrayList<String> ignoreList;
 	/**
 	 * The logging lock object preventing lines from being printed as other
 	 * lines are being printed
@@ -201,6 +202,7 @@ public class HeufyBot {
 			this.gui = new MainWindow(this);
 		}
 		this.featureInterface = new FeatureInterface(this);
+		this.ignoreList = new ArrayList<String>();
 		
 		SettingsXMLIO.readXML("settings.xml");
 		if (!(new File("settings.xml").exists()))
@@ -3130,5 +3132,15 @@ public class HeufyBot {
 
 	public void setBotOwner(String botOwner) {
 		this.botOwner = botOwner;
+	}
+
+	public ArrayList<String> getIgnoreList() 
+	{
+		return ignoreList;
+	}
+
+	public void setIgnoreList(ArrayList<String> ignoreList) 
+	{
+		this.ignoreList = ignoreList;
 	}
 }
