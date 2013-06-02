@@ -73,7 +73,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
     {
     	String source = event.getChannel().getName();
-    	if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+    	if(bot.checkAutorization(event.getUser(), event.getChannel()))
     	{
 	      String metadata = event.getMessage().substring(5);
 	
@@ -100,10 +100,6 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	        }
 	      }
       }
-    	else if(bot.getBotOwner().equals(""))
-	    {
-    		this.bot.sendMessage(source, "Only OPs can load features!");
-	    }
     	else
     	{
     		this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can load features!");
@@ -115,7 +111,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
       if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
       {
     	  String source = event.getChannel().getName();
-    	  if(event.getUser().isOped(event.getChannel()) || event.getUser().getNick().equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+    	  if(bot.checkAutorization(event.getUser(), event.getChannel()))
     	  {
 	        String metadata = event.getMessage().substring(7);
 	
@@ -149,10 +145,6 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	          }
 	        }
         }
-    	  else if(bot.getBotOwner().equals(""))
-	      {
-    		  this.bot.sendMessage(source, "Only OPs can unload features!");
-	      }
     	  else
     	  {
     		  this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can unload features!");

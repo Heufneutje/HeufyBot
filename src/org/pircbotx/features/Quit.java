@@ -17,13 +17,9 @@ public class Quit extends Feature
   {
 	  User user = bot.getUser(triggerUser);
 	  Channel channel = bot.getChannel(source);
-	  if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+	  if(bot.checkAutorization(user, channel))
 	  {
 		  this.bot.quitServer("Killed by " + triggerUser);
-	  }
-	  else if(bot.getBotOwner().equals(""))
-	  {
-		  this.bot.sendMessage(source, "[Quit] Only OPs can kill me!");
 	  }
 	  else
 	  {

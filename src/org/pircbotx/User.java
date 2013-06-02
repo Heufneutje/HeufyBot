@@ -87,6 +87,17 @@ public class User implements Comparable<User> {
 		}
 	}
 	
+	public String getAccountName()
+	{
+		try {
+			bot.sendRawLine("WHOIS " + getNick() + " " + getNick());
+			WhoisEvent event = getBot().waitFor(WhoisEvent.class);
+			return event.getRegisteredAs();
+		} catch (InterruptedException ex) {
+			throw new RuntimeException("Couldn\'t finish querying user for verified status", ex);
+		}
+	}
+	
 	public UserSnapshot generateSnapshot() {
 		return new UserSnapshot(this);
 	}

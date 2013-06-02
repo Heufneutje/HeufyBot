@@ -40,7 +40,7 @@ public class Ignore extends Feature
 		    {
 		    	User user = bot.getUser(triggerUser);
 		  	  	Channel channel = bot.getChannel(source);
-		  	  	if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+		  	  	if(bot.checkAutorization(user, channel))
 		  	  	{
 		  	  		String nick = metadata.substring(1);
 		  	  		
@@ -64,10 +64,6 @@ public class Ignore extends Feature
 		  	  			bot.sendMessage(source, "[Ignore] " + nick + " was added to the ignore list!");
 		  	  		}
 		  	  	}
-		  	  	else if(bot.getBotOwner().equals(""))
-		  	  	{
-		  	  		this.bot.sendMessage(source, "[Ignore] Only OPs can make me ignore someone!");
-		  	  	}
 		  	  	else
 		  	  	{
 		  	  		this.bot.sendMessage(source, "[Ignore] Only my owner " + bot.getBotOwner() + " and OPs can make me ignore someone!");
@@ -84,7 +80,7 @@ public class Ignore extends Feature
 		    {
 		    	User user = bot.getUser(triggerUser);
 		  	  	Channel channel = bot.getChannel(source);
-		  	  	if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+		  	  	if(bot.checkAutorization(user, channel))
 		  	  	{
 		  	  		String nick = metadata.substring(1);
 		  	  		
@@ -113,10 +109,6 @@ public class Ignore extends Feature
 		  	  		{
 		  	  			bot.sendMessage(source, "[Ignore] " + nick + " is not on the ignore list!");
 		  	  		}
-		  	  	}
-		  	  	else if(bot.getBotOwner().equals(""))
-		  	  	{
-		  	  		this.bot.sendMessage(source, "[Ignore] Only OPs can make me unignore someone!");
 		  	  	}
 		  	  	else
 		  	  	{

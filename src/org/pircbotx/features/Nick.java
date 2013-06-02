@@ -23,13 +23,10 @@ public class Nick extends Feature
     {
     	User user = bot.getUser(triggerUser);
   	  	Channel channel = bot.getChannel(source);
-  	  	if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+  	  	
+  	  	if(bot.checkAutorization(user, channel))
   	  	{
   	  		this.bot.sendRawLine("NICK " + metadata.substring(1));
-  	  	}
-  	  	else if(bot.getBotOwner().equals(""))
-  	  	{
-  	  		this.bot.sendMessage(source, "[Nick] Only OPs can change my nick!");
   	  	}
   	  	else
   	  	{

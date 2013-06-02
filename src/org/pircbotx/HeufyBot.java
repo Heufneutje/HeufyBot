@@ -167,6 +167,7 @@ public class HeufyBot {
 	protected Map<String, WhoisEvent.WhoisEventBuilder> whoisBuilder = new HashMap();
 	
 	protected boolean useGui;
+	protected boolean useNickServ;
 	private MainWindow gui;
 	private FeatureInterface featureInterface;
 	/**
@@ -255,6 +256,7 @@ public class HeufyBot {
 					
 					case 2: 
 						connect(serverip, port);
+						useNickServ = true;
 						identify(password);
 						break;
 					
@@ -3142,5 +3144,42 @@ public class HeufyBot {
 	public void setIgnoreList(ArrayList<String> ignoreList) 
 	{
 		this.ignoreList = ignoreList;
+	}
+	
+	public boolean checkAutorization(User user, Channel channel)
+	{
+		if(botOwner.equals("*") || user.isOped(channel))
+		{
+			return true;
+		}
+		else if(useNickServ)
+		{
+			if(user.isVerified())
+			{
+				if(user.getAccountName().equalsIgnoreCase(botOwner))
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			if(user.getNick().equalsIgnoreCase(botOwner))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 	}
 }

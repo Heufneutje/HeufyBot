@@ -43,7 +43,7 @@ public class Accesslist extends Feature
 	  {
 		  User user = bot.getUser(triggerUser);
 		  Channel channel = bot.getChannel(source);
-		  if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+		  if(bot.checkAutorization(user, channel))
 		  {
 			  if ((metadata.equals("")) || (metadata.equals(" ")))
 			  {
@@ -65,10 +65,6 @@ public class Accesslist extends Feature
 				  }
 			  }
 		  }
-		  else if(bot.getBotOwner().equals(""))
-	  	  	{
-	  	  		this.bot.sendMessage(source, "[AccessList] Only OPs can change the access list!");
-	  	  	}
 	  	  	else
 	  	  	{
 	  	  		this.bot.sendMessage(source, "[AccessList] Only my owner " + bot.getBotOwner() + " and OPs can change the access list!");
@@ -78,7 +74,7 @@ public class Accesslist extends Feature
 	  {
 		  User user = bot.getUser(triggerUser);
 		  Channel channel = bot.getChannel(source);
-		  if(user.isOped(channel) || triggerUser.equalsIgnoreCase(bot.getBotOwner()) || bot.getBotOwner().equals("*"))
+		  if(bot.checkAutorization(user, channel))
 		  {
 			  if ((metadata.equals("")) || (metadata.equals(" ")))
 			  {
@@ -108,10 +104,6 @@ public class Accesslist extends Feature
 				  }
 			  }
 		  }
-		  else if(bot.getBotOwner().equals(""))
-	  	  	{
-	  	  		this.bot.sendMessage(source, "[AccessList] Only OPs can change the access list!");
-	  	  	}
 	  	  	else
 	  	  	{
 	  	  		this.bot.sendMessage(source, "[AccessList] Only my owner " + bot.getBotOwner() + " and OPs can change the access list!");
