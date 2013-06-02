@@ -2,6 +2,8 @@ package org.pircbotx.features;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.User;
@@ -87,12 +89,13 @@ public class Accesslist extends Feature
 				  try
 				  {
 					  String[] args = metadata.substring(1).split(" ");
-					  for(String entry : accessList)
+					  for(Iterator<String> iter = accessList.iterator(); iter.hasNext();)
 					  {
+						  String entry = iter.next();
 						  String[] accessElement = entry.split(",");
 						  if(source.equalsIgnoreCase(accessElement[0]) && args[0].equalsIgnoreCase(accessElement[1]) && args[1].equalsIgnoreCase(accessElement[2]))
 						  {
-							  accessList.remove(entry);
+							  iter.remove();
 							  writeAccessList();
 							  this.bot.sendMessage(source, "[AccessList] Nickname " + args[0] + " was removed from the access list of " + source);
 						  }
