@@ -115,6 +115,10 @@ public class Outofcontext extends Feature implements Runnable
 					bot.sendMessage(source, "[OutOfContext] " + matches.get(quoteID));
 				}
 			}
+			else if(metadata.substring(1).equalsIgnoreCase("help"))
+			{
+				bot.sendMessage(source, "[Help: Outofcontext] " + getHelp());
+			}
 			else
 			{
 				bot.sendMessage(source, "[OutOfContext] Invalid operation. Please try again.");
