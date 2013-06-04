@@ -12,8 +12,10 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import org.pircbotx.Colors;
 import org.pircbotx.HeufyBot;
@@ -84,6 +86,8 @@ public class Outofcontext extends Feature implements Runnable
 				String[] quotes = quoteFile.split("\n");
 				ArrayList<String> matches = new ArrayList<String>();
 				
+				Pattern pattern = Pattern.compile(".*" + nick + ".*", Pattern.CASE_INSENSITIVE);
+				
 				for(int i = 0; i < quotes.length; i++)
 				{
 					if(quotes[i].contains("<") && quotes[i].contains(">"))
@@ -91,14 +95,17 @@ public class Outofcontext extends Feature implements Runnable
 						quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">")).toLowerCase();
 						nick.toLowerCase();
 						
-						if(quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">")).toLowerCase().contains(nick.toLowerCase()))
+						//System.err.println(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">"))).matches());
+						
+						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">"))).matches())
 						{
 							matches.add(quotes[i]);
 						}
 					}
 					else if(quotes[i].contains("* "))
 					{
-						if(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0].toLowerCase().contains(nick.toLowerCase()))
+						//if(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0].toLowerCase().contains(nick.toLowerCase()))
+						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
 						{
 							matches.add(quotes[i]);
 						}
@@ -111,6 +118,7 @@ public class Outofcontext extends Feature implements Runnable
 				}
 				else
 				{
+					bot.sendMessage(source, "[OutOfContext] Total matched quotes: " + matches.size());
 					int quoteID = (int) (Math.random() * matches.size());
 					bot.sendMessage(source, "[OutOfContext] " + matches.get(quoteID));
 				}
