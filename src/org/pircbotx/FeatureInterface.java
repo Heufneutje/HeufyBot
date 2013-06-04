@@ -3,6 +3,8 @@ package org.pircbotx;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import org.pircbotx.features.Feature;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -154,12 +156,19 @@ public class FeatureInterface extends ListenerAdapter implements Listener
       {
     	  String source = event.getChannel().getName();
     	  String metadata = event.getMessage().substring(5);
+    	  
     	  if ((metadata.equals("")) || (metadata.equals(" ")))
 	        {
+	    		ArrayList<String> featureNames = new ArrayList<String>();
+	        	for(Feature feature : this.features)
+	        	{
+	        		featureNames.add(feature.getName());
+	        	}
+	        	Collections.sort(featureNames);
     		  	String response = "Features loaded: ";
-    	        for (Feature feature : this.features)
+    	        for (String feature : featureNames)
     	        {
-    	          response = response + feature.getName() + " ";
+    	        	response = response + feature + " ";
     	        }
     	        this.bot.sendMessage(event.getChannel(), response);
 	        }
