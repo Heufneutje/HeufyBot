@@ -20,6 +20,8 @@ public class Quit extends Feature
 	  if(bot.checkAutorization(user, channel))
 	  {
 		  this.bot.quitServer("Killed by " + triggerUser);
+		  this.bot.shutdown(true);
+		  System.exit(0);
 	  }
 	  else
 	  {
