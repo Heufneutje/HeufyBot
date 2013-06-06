@@ -15,16 +15,7 @@ public class Quit extends Feature
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
   {
-	  User user = bot.getUser(triggerUser);
-	  Channel channel = bot.getChannel(source);
-	  if(bot.checkAutorization(user, channel))
-	  {
-		  this.bot.quitServer("Killed by " + triggerUser);
-	  }
-	  else
-	  {
-		  this.bot.sendMessage(source, "[Quit] Only my owner " + bot.getBotOwner() + " and OPs can kill me!");
-	  }
+	  this.bot.quitServer("Killed by " + triggerUser);
   }
 
 	@Override

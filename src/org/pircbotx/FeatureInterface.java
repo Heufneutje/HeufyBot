@@ -59,7 +59,21 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     	  {
     		  if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
     	          continue;
-    	        feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick(), feature.getTriggers()[i]);
+    		  if(feature.getAuthType() == AuthorizationType.OPs)
+    		  {
+    			  if(bot.checkAutorization(event.getUser(), event.getChannel()))
+    			  {
+    				  feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick(), feature.getTriggers()[i]);
+    			  }
+    			  else
+    			  {
+    				  this.bot.sendMessage(event.getChannel(), "[" + feature.getName() + "] Only my owner " + bot.getBotOwner() + " and OPs are authorized to use this command!");
+    			  }
+    		  }
+    		  else
+    		  {
+    			  feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick(), feature.getTriggers()[i]);
+    		  }
     	  }
     	  else
     	  {

@@ -41,73 +41,55 @@ public class Accesslist extends Feature
 	  
 	  else if(triggerCommand.equals(bot.getCommandPrefix() + "addaccess"))
 	  {
-		  User user = bot.getUser(triggerUser);
-		  Channel channel = bot.getChannel(source);
-		  if(bot.checkAutorization(user, channel))
+		  if ((metadata.equals("")) || (metadata.equals(" ")))
 		  {
-			  if ((metadata.equals("")) || (metadata.equals(" ")))
+		      this.bot.sendMessage(source, "[AccessList] Add what?");
+		  }
+		  else
+		  {
+			  try
 			  {
-			      this.bot.sendMessage(source, "[AccessList] Add what?");
+				  String[] args = metadata.substring(1).split(" ");
+				  accessList.add(source + "," + args[0] + "," + args[1]);
+				  writeAccessList();
+				  this.bot.sendMessage(source, "[AccessList] Nickname " + args[0] + " was added to the access list of " + source + " with mode +" + args[1]);
 			  }
-			  else
+			  catch(Exception e)
 			  {
-				  try
-				  {
-					  String[] args = metadata.substring(1).split(" ");
-					  accessList.add(source + "," + args[0] + "," + args[1]);
-					  writeAccessList();
-					  this.bot.sendMessage(source, "[AccessList] Nickname " + args[0] + " was added to the access list of " + source + " with mode +" + args[1]);
-				  }
-				  catch(Exception e)
-				  {
-					  e.printStackTrace();
-					  this.bot.sendMessage(source, "[AccessList] Access list could not be changed. Make sure you use addaccess <nick> <mode>");
-				  }
+				  e.printStackTrace();
+				  this.bot.sendMessage(source, "[AccessList] Access list could not be changed. Make sure you use addaccess <nick> <mode>");
 			  }
 		  }
-	  	  	else
-	  	  	{
-	  	  		this.bot.sendMessage(source, "[AccessList] Only my owner " + bot.getBotOwner() + " and OPs can change the access list!");
-	  	  	}
 	  }
 	  else if(triggerCommand.equals(bot.getCommandPrefix() + "remaccess"))
 	  {
-		  User user = bot.getUser(triggerUser);
-		  Channel channel = bot.getChannel(source);
-		  if(bot.checkAutorization(user, channel))
+		  if ((metadata.equals("")) || (metadata.equals(" ")))
 		  {
-			  if ((metadata.equals("")) || (metadata.equals(" ")))
+		      this.bot.sendMessage(source, "[AccessList] Remove what?");
+		  }
+		  else
+		  {
+			  try
 			  {
-			      this.bot.sendMessage(source, "[AccessList] Remove what?");
-			  }
-			  else
-			  {
-				  try
+				  String[] args = metadata.substring(1).split(" ");
+				  for(Iterator<String> iter = accessList.iterator(); iter.hasNext();)
 				  {
-					  String[] args = metadata.substring(1).split(" ");
-					  for(Iterator<String> iter = accessList.iterator(); iter.hasNext();)
+					  String entry = iter.next();
+					  String[] accessElement = entry.split(",");
+					  if(source.equalsIgnoreCase(accessElement[0]) && args[0].equalsIgnoreCase(accessElement[1]) && args[1].equalsIgnoreCase(accessElement[2]))
 					  {
-						  String entry = iter.next();
-						  String[] accessElement = entry.split(",");
-						  if(source.equalsIgnoreCase(accessElement[0]) && args[0].equalsIgnoreCase(accessElement[1]) && args[1].equalsIgnoreCase(accessElement[2]))
-						  {
-							  iter.remove();
-							  writeAccessList();
-							  this.bot.sendMessage(source, "[AccessList] Nickname " + args[0] + " was removed from the access list of " + source);
-						  }
+						  iter.remove();
+						  writeAccessList();
+						  this.bot.sendMessage(source, "[AccessList] Nickname " + args[0] + " was removed from the access list of " + source);
 					  }
 				  }
-				  catch(Exception e)
-				  {
-					  e.printStackTrace();
-					  this.bot.sendMessage(source, "[AccessList] Access list could not be changed. Make sure you use remaccess <nick> <mode>");
-				  }
+			  }
+			  catch(Exception e)
+			  {
+				  e.printStackTrace();
+				  this.bot.sendMessage(source, "[AccessList] Access list could not be changed. Make sure you use remaccess <nick> <mode>");
 			  }
 		  }
-	  	  	else
-	  	  	{
-	  	  		this.bot.sendMessage(source, "[AccessList] Only my owner " + bot.getBotOwner() + " and OPs can change the access list!");
-	  	  	}
 	  }
   }
 

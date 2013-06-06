@@ -1,5 +1,6 @@
 package org.pircbotx.features;
 
+import org.pircbotx.AuthorizationType;
 import org.pircbotx.HeufyBot;
 
 public abstract class Feature
@@ -9,6 +10,7 @@ public abstract class Feature
   protected String name;
   protected String featureType = "message";
   protected boolean messageMustStartWithTrigger = true;
+  protected AuthorizationType authType = AuthorizationType.Anyone;
 
   public Feature(HeufyBot bot, String name)
   {
@@ -35,6 +37,11 @@ public abstract class Feature
   public boolean mustStartWithTrigger()
   {
 	  return messageMustStartWithTrigger;
+  }
+  
+  public AuthorizationType getAuthType()
+  {
+	  return authType;
   }
   
   public abstract String getHelp();

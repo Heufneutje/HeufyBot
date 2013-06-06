@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.pircbotx.AuthorizationType;
 import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.User;
@@ -19,6 +20,7 @@ public class Ignore extends Feature
 		this.triggers = new String[2];
 		this.triggers[0] = bot.getCommandPrefix() + "ignore";
 		this.triggers[1] = bot.getCommandPrefix() + "unignore";
+		this.authType = AuthorizationType.OPs;
 	}
 
 	@Override
@@ -38,36 +40,27 @@ public class Ignore extends Feature
 		    }
 			else if (metadata.startsWith(" "))
 		    {
-		    	User user = bot.getUser(triggerUser);
-		  	  	Channel channel = bot.getChannel(source);
-		  	  	if(bot.checkAutorization(user, channel))
-		  	  	{
-		  	  		String nick = metadata.substring(1);
-		  	  		
-			  	  	boolean match = false;
-		  	  		for(String ignore : ignoreList)
-		  	  		{
-		  	  			if(ignore.equalsIgnoreCase(nick))
-		  	  			{
-		  	  				match = true;
-		  	  			}
-		  	  		}
-		  	  		if(match)
-		  	  		{
-		  	  			bot.sendMessage(source, "[Ignore] " + nick + " is already on the ignore list!");
-		  	  		}
-		  	  		else
-		  	  		{
-		  	  			ignoreList.add(nick);
-		  	  			bot.writeFileAppend(settingsPath, nick + "\n");
-		  	  			bot.getIgnoreList().add(nick);
-		  	  			bot.sendMessage(source, "[Ignore] " + nick + " was added to the ignore list!");
-		  	  		}
-		  	  	}
-		  	  	else
-		  	  	{
-		  	  		this.bot.sendMessage(source, "[Ignore] Only my owner " + bot.getBotOwner() + " and OPs can make me ignore someone!");
-		  	  	}
+	  	  		String nick = metadata.substring(1);
+	  	  		
+		  	  	boolean match = false;
+	  	  		for(String ignore : ignoreList)
+	  	  		{
+	  	  			if(ignore.equalsIgnoreCase(nick))
+	  	  			{
+	  	  				match = true;
+	  	  			}
+	  	  		}
+	  	  		if(match)
+	  	  		{
+	  	  			bot.sendMessage(source, "[Ignore] " + nick + " is already on the ignore list!");
+	  	  		}
+	  	  		else
+	  	  		{
+	  	  			ignoreList.add(nick);
+	  	  			bot.writeFileAppend(settingsPath, nick + "\n");
+	  	  			bot.getIgnoreList().add(nick);
+	  	  			bot.sendMessage(source, "[Ignore] " + nick + " was added to the ignore list!");
+	  	  		}
 		    }
 		}
 		else if(triggerCommand.equals(bot.getCommandPrefix() + "unignore"))
@@ -78,42 +71,33 @@ public class Ignore extends Feature
 		    }
 			else if (metadata.startsWith(" "))
 		    {
-		    	User user = bot.getUser(triggerUser);
-		  	  	Channel channel = bot.getChannel(source);
-		  	  	if(bot.checkAutorization(user, channel))
-		  	  	{
-		  	  		String nick = metadata.substring(1);
-		  	  		
-		  	  		boolean match = false;
-		  	  		for(Iterator<String> iter = ignoreList.iterator(); iter.hasNext();)
+	  	  		String nick = metadata.substring(1);
+	  	  		
+	  	  		boolean match = false;
+	  	  		for(Iterator<String> iter = ignoreList.iterator(); iter.hasNext();)
+	  	  		{
+	  	  			String ignore = iter.next();
+	  	  			if(ignore.equalsIgnoreCase(nick))
+	  	  			{
+	  	  				iter.remove();
+	  	  				match = true;
+	  	  			}
+	  	  		}
+	  	  		if(match)
+	  	  		{
+	  	  			new File(settingsPath).delete();
+		  	  		bot.writeFile(settingsPath, "");
+		  	  		for(String ignore : ignoreList)
 		  	  		{
-		  	  			String ignore = iter.next();
-		  	  			if(ignore.equalsIgnoreCase(nick))
-		  	  			{
-		  	  				iter.remove();
-		  	  				match = true;
-		  	  			}
+		  	  			bot.writeFileAppend(settingsPath, ignore + "\n");
 		  	  		}
-		  	  		if(match)
-		  	  		{
-		  	  			new File(settingsPath).delete();
-			  	  		bot.writeFile(settingsPath, "");
-			  	  		for(String ignore : ignoreList)
-			  	  		{
-			  	  			bot.writeFileAppend(settingsPath, ignore + "\n");
-			  	  		}
-			  	  		bot.setIgnoreList(ignoreList);
-			  	  		bot.sendMessage(source, "[Ignore] " + nick + " was removed from the ignore list!");
-		  	  		}
-		  	  		else
-		  	  		{
-		  	  			bot.sendMessage(source, "[Ignore] " + nick + " is not on the ignore list!");
-		  	  		}
-		  	  	}
-		  	  	else
-		  	  	{
-		  	  		this.bot.sendMessage(source, "[Ignore] Only my owner " + bot.getBotOwner() + " and OPs can make me unignore someone!");
-		  	  	}
+		  	  		bot.setIgnoreList(ignoreList);
+		  	  		bot.sendMessage(source, "[Ignore] " + nick + " was removed from the ignore list!");
+	  	  		}
+	  	  		else
+	  	  		{
+	  	  			bot.sendMessage(source, "[Ignore] " + nick + " is not on the ignore list!");
+	  	  		}
 		    }
 		}
 	}

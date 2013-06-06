@@ -1,5 +1,6 @@
 package org.pircbotx.features;
 
+import org.pircbotx.AuthorizationType;
 import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.User;
@@ -11,6 +12,7 @@ public class Nick extends Feature
     super(bot, name);
     this.triggers = new String[1];
     this.triggers[0] = bot.getCommandPrefix() + "nick";
+    this.authType = AuthorizationType.OPs;
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -21,17 +23,7 @@ public class Nick extends Feature
     }
     else if (metadata.startsWith(" "))
     {
-    	User user = bot.getUser(triggerUser);
-  	  	Channel channel = bot.getChannel(source);
-  	  	
-  	  	if(bot.checkAutorization(user, channel))
-  	  	{
-  	  		this.bot.sendRawLine("NICK " + metadata.substring(1));
-  	  	}
-  	  	else
-  	  	{
-  	  		this.bot.sendMessage(source, "[Nick] Only my owner " + bot.getBotOwner() + " and OPs can change my nick!");
-  	  	}
+    	bot.sendRawLine("NICK " + metadata.substring(1));
     }
   }
 
