@@ -1,5 +1,6 @@
 package org.pircbotx.features;
 
+import org.pircbotx.AuthorizationType;
 import org.pircbotx.HeufyBot;
 
 public class Quit extends Feature
@@ -9,6 +10,7 @@ public class Quit extends Feature
     super(bot, name);
     this.triggers = new String[1];
     this.triggers[0] = bot.getCommandPrefix() + "quit";
+    this.authType = AuthorizationType.OPs;
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
