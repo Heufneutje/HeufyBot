@@ -18,8 +18,8 @@ public class Quit extends Feature
 	  try
 	  {
 			this.bot.quitServer("Killed by " + triggerUser);
+			Thread.sleep(1000);
 			this.bot.shutdown(true);
-			Thread.sleep(100);
 			System.exit(0);
 	  } 
 	  catch (InterruptedException e) 

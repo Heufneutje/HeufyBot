@@ -38,6 +38,7 @@ public class ConsoleThread extends Thread
 		    			bot.quitServer();
 		    		}
 		    		Thread.sleep(1000);
+		    		bot.shutdown(true);
 		    		System.exit(0);
 		    	}
 		    	else if(command.startsWith("msg "))
