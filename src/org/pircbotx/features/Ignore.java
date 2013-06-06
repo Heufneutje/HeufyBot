@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.pircbotx.AuthorizationType;
-import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.User;
 
 public class Ignore extends Feature 
 {

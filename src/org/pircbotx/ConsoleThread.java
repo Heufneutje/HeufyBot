@@ -47,6 +47,16 @@ public class ConsoleThread extends Thread
 		    		String message = command.substring(destination.length() + 1);
 		    		bot.sendMessage(destination, message);
 		    	} 
+		    	else if(command.startsWith("join "))
+		    	{
+		    		command = command.substring(5);
+		    		bot.joinChannel(command.split(" ")[0]);
+		    	} 
+		    	else if(command.startsWith("part "))
+		    	{
+		    		command = command.substring(5);
+		    		bot.partChannel(command.split(" ")[0]);
+		    	} 
 			}
 			catch (Exception e)
 			{

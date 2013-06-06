@@ -4,9 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.User;
 
 public class Accesslist extends Feature
 {

@@ -12,7 +12,6 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Pattern;
