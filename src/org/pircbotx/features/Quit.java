@@ -1,8 +1,6 @@
 package org.pircbotx.features;
 
-import org.pircbotx.Channel;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.User;
 
 public class Quit extends Feature
 {
