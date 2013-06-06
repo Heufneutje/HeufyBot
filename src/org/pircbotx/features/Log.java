@@ -52,6 +52,9 @@ public class Log extends Feature implements Runnable
     		
     		this.dateString = metadata.substring(1);
     		this.source = source;
+    		
+    		this.bot.sendMessage(this.source, "[Log] Posting log... Please wait.");
+    		
     	    Thread thread = new Thread(this);
     	    thread.run();
     		
