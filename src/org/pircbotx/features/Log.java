@@ -53,8 +53,6 @@ public class Log extends Feature implements Runnable
     		this.dateString = metadata.substring(1);
     		this.source = source;
     		
-    		this.bot.sendMessage(this.source, "[Log] Posting log... Please wait.");
-    		
     	    Thread thread = new Thread(this);
     	    thread.run();
     		
@@ -70,6 +68,7 @@ public class Log extends Feature implements Runnable
   {
     try
     {
+    	this.bot.sendMessage(this.source, "[Log] Posting log... Please wait.");
       String log = "";
       File file = new File("logs/" + this.bot.getNetworkName() + "/" + this.source + "/" + this.dateString + ".txt");
 
