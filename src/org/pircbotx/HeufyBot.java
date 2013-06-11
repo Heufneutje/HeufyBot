@@ -1772,7 +1772,7 @@ public class HeufyBot {
 			else if (request.startsWith("ACTION ")) 
 			{
 				// ACTION request
-				if (target.equals(this.nick)) log(sourceNick + " " + request.substring(7), sourceNick); else log(sourceNick + " " + request.substring(7), target);
+				if (target.equals(this.nick)) log("* " + sourceNick + " " + request.substring(7), sourceNick); else log("* " + sourceNick + " " + request.substring(7), target);
 				getListenerManager().dispatchEvent(new ActionEvent(this, source, channel, request.substring(7))); 
 			}
 			else if (request.startsWith("PING ")) 
