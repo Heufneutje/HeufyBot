@@ -34,7 +34,7 @@ public class Outofcontext extends Feature implements Runnable
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add, " + bot.getCommandPrefix() + "ooc search | Grab the OoC log, add an entry to it or search the log by providing a nickname.";
+		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add, " + bot.getCommandPrefix() + "ooc search | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
 	}
 
 	@Override
@@ -50,74 +50,107 @@ public class Outofcontext extends Feature implements Runnable
 		{
 			if(metadata.substring(1).startsWith("add "))
 			{
-				String newQuote = metadata.substring(5);
+				String newQuote = Colors.removeFormattingAndColors(metadata.substring(5));
 				
-				DateFormat dateFormat = new SimpleDateFormat("[yyyy/MM/dd]");
+				DateFormat dateFormat = new SimpleDateFormat("[yyyy/MM/dd] [HH:mm]");
 			    Date date = new Date();
 			    String dateString = dateFormat.format(date);
 			    
-				if((newQuote.startsWith("<") && newQuote.contains(">")) || newQuote.startsWith("* "))
-				{
-					DateFormat dateFormat2 = new SimpleDateFormat("[hh:mm]");
-				    String timeString = dateFormat2.format(date);
-				    String newQuote2 = Colors.removeFormattingAndColors(dateString + " " + timeString + " " + newQuote);
-					
-					bot.writeFileAppend(settingsPath, newQuote2 + "\n");
+			    String toQuote = "";
+			    
+			    if(newQuote.matches("^<.*>.*") || newQuote.matches("^\\* .*") || newQuote.matches("^\\[.*\\] <.*>.*") || newQuote.matches("^\\[.*\\] \\* .*"))
+			    {
+				    if(newQuote.matches("^\\[.*\\] <.*>.*") || newQuote.matches("^\\[.*\\] \\* .*"))
+				    {
+				    	if(newQuote.matches("^\\[.*\\] \\* .*"))
+				    	{
+				    		toQuote = newQuote.substring(newQuote.indexOf("* ") + 2).split(" ")[0];
+				    		newQuote = dateString + " " + newQuote.substring(newQuote.indexOf("*"));
+				    	}
+				    	else
+				    	{
+				    		toQuote = newQuote.substring(newQuote.indexOf("<") + 1, newQuote.indexOf(">"));
+				    		newQuote = dateString + " " + newQuote.substring(newQuote.indexOf("<"));
+				    	}
+				    	
+				    }
+				    else if(newQuote.matches("^<.*>.*") || newQuote.matches("^\\* .*"))
+				    {
+				    	if(newQuote.matches("^\\* .*"))
+				    	{
+				    		toQuote = newQuote.substring(newQuote.indexOf("* ") + 2).split(" ")[0];
+				    	}
+				    	else
+				    	{
+				    		toQuote = newQuote.substring(newQuote.indexOf("<") + 1, newQuote.indexOf(">"));
+				    	}
+				    	newQuote = dateString + " " + newQuote;
+				    }
+			    
+				    if(toQuote.matches("^(\\+|%|@|&|~).*"))
+				    {
+				    	newQuote = newQuote.replace(toQuote, toQuote.substring(1));
+				    }
+				    
+				    bot.writeFileAppend(settingsPath, newQuote + "\n");
 					bot.sendMessage(source, "[OutOfContext] Quote was added to the log!");
-				}
-				else if ((newQuote.startsWith("[") && newQuote.contains("]")) && (newQuote.contains("<") && newQuote.contains(">")) || (newQuote.contains("* ")))
-				{
-				    String newQuote2 = Colors.removeFormattingAndColors(dateString + " " + newQuote);
-					
-					bot.writeFileAppend(settingsPath, newQuote2 + "\n");
-					bot.sendMessage(source, "[OutOfContext] Quote was added to the log!");
-				}
-				else
-				{
-					bot.sendMessage(source, "[OutOfContext] No nickname was found in this quote.");
-				}
+			    }
+			    else
+			    {
+			    	bot.sendMessage(source, "[OutOfContext] No nickname was found in this quote.");
+			    }
 			}
 			else if(metadata.substring(1).startsWith("search "))
 			{
-				String nick = metadata.substring(8);
+				String search = metadata.substring(8);
 				
 				String quoteFile = bot.readFile(settingsPath);
 				String[] quotes = quoteFile.split("\n");
 				ArrayList<String> matches = new ArrayList<String>();
 				
-				Pattern pattern = Pattern.compile(".*" + nick + ".*", Pattern.CASE_INSENSITIVE);
+				Pattern pattern = Pattern.compile(".*" + search + ".*", Pattern.CASE_INSENSITIVE);
+				String searchType = "";
 				
-				for(int i = 0; i < quotes.length; i++)
+				if(search.contains(" "))
 				{
-					if(quotes[i].contains("<") && quotes[i].contains(">"))
+					searchType = "Word Combination";
+					for(int i = 0; i < quotes.length; i++)
 					{
-						quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">")).toLowerCase();
-						nick.toLowerCase();
-						
-						//System.err.println(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">"))).matches());
-						
-						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<"), quotes[i].indexOf(">"))).matches())
+						if(pattern.matcher(quotes[i].substring(21)).matches())
 						{
 							matches.add(quotes[i]);
 						}
 					}
-					else if(quotes[i].contains("* "))
+				}
+				else
+				{
+					searchType = "Nickname";
+					for(int i = 0; i < quotes.length; i++)
 					{
-						//if(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0].toLowerCase().contains(nick.toLowerCase()))
-						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
+						if(quotes[i].substring(21).matches("^<.*>.*"))
 						{
-							matches.add(quotes[i]);
+							if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<") + 1, quotes[i].indexOf(">"))).matches())
+							{
+								matches.add(quotes[i]);
+							}
+						}
+						else if(quotes[i].substring(21).matches("^\\* .*"))
+						{
+							if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
+							{
+								matches.add(quotes[i]);
+							}
 						}
 					}
 				}
 				
 				if(matches.size() == 0)
 				{
-					bot.sendMessage(source, "[OutOfContext] No matches for '" + nick + "' found.");
+					bot.sendMessage(source, "[OutOfContext] Search Type: " + searchType + " | No matches for '" + search + "' found");
 				}
 				else
 				{
-					bot.sendMessage(source, "[OutOfContext] Total matched quotes: " + matches.size());
+					bot.sendMessage(source, "[OutOfContext] Search Type: " + searchType + " | Total matched quotes: " + matches.size());
 					int quoteID = (int) (Math.random() * matches.size());
 					bot.sendMessage(source, "[OutOfContext] " + matches.get(quoteID));
 				}
