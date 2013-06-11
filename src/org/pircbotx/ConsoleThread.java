@@ -36,9 +36,9 @@ public class ConsoleThread extends Thread
 		    		if(bot.isConnected())
 		    		{
 		    			bot.quitServer();
+		    			bot.shutdown(true);
 		    		}
 		    		Thread.sleep(1000);
-		    		bot.shutdown(true);
 		    		System.exit(0);
 		    	}
 		    	else if(command.startsWith("msg "))
