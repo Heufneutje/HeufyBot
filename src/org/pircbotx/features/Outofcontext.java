@@ -2,28 +2,22 @@
 
 package org.pircbotx.features;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.pircbotx.Colors;
 import org.pircbotx.HeufyBot;
+import org.pircbotx.Pastebin;
 
-public class Outofcontext extends Feature implements Runnable
+public class Outofcontext extends Feature
 {
 	private String settingsPath = "featuresettings/ooclog.txt";
-	private String source;
-	
+	private String sourceChannel;
+
 	public Outofcontext(HeufyBot bot, String name) 
 	{
 		super(bot, name);
@@ -34,17 +28,32 @@ public class Outofcontext extends Feature implements Runnable
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add, " + bot.getCommandPrefix() + "ooc search | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
+		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote/nick> | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
 	}
 
 	@Override
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)
 	{
+		this.sourceChannel = source;
 		if(metadata.equals(""))
 		{
-			this.source = source;
-		    Thread thread = new Thread(this);
-		    thread.run();
+			this.bot.sendMessage(source, "[OutOfContext] Attempting to post log... Please wait.");
+			Thread thread = new Thread(new Runnable()
+			{
+				public void run()
+				{
+					String result = Pastebin.post(settingsPath, "HeufyBot OutOfContext Log");
+					if(result != null)
+					{
+						bot.sendMessage(sourceChannel, "[OutOfContext] OoC Log posted: " + result  + " (Link expires in 10 minutes)");
+					}
+					else
+					{
+						bot.sendMessage(sourceChannel, "[OutOfContext] Error: OoC Log could not be posted");
+					}
+				}
+			});
+			thread.start();
 		}
 		else
 		{
@@ -174,63 +183,5 @@ public class Outofcontext extends Feature implements Runnable
 		{
 			bot.writeFile(settingsPath, null);
 		}
-	}
-	
-	public void run()
-	{
-		try
-	    {
-	      String log = "";
-	      File file = new File(settingsPath);
-
-	        Scanner fileScanner = new Scanner(file);
-
-	        while (fileScanner.hasNextLine())
-	        {
-	          log = log + fileScanner.nextLine() + "\n";
-	        }
-
-	        URL url = new URL("http://pastebin.com/api/api_post.php");
-	        URLConnection connection = url.openConnection();
-	        connection.setDoOutput(true);
-
-	        String api_dev_key = "103e700947c8d6782b3fb99c85ae4d9f";
-	        String api_option = "paste";
-	        String api_paste_code = log;
-
-	        String api_user_key = "";
-	        String api_paste_name = "HeufyBot OutOfContext Log";
-	        String api_paste_format = "text";
-	        String api_paste_private = "1";
-	        String api_paste_expire_date = "10M";
-
-	        String postData = URLEncoder.encode("api_dev_key", "UTF8") + "=" + URLEncoder.encode(api_dev_key, "UTF8") + "&" + 
-	          URLEncoder.encode("api_option", "UTF8") + "=" + URLEncoder.encode(api_option, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_code", "UTF8") + "=" + URLEncoder.encode(api_paste_code, "UTF8") + "&" + 
-	          URLEncoder.encode("api_user_key", "UTF8") + "=" + URLEncoder.encode(api_user_key, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_name", "UTF8") + "=" + URLEncoder.encode(api_paste_name, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_format", "UTF8") + "=" + URLEncoder.encode(api_paste_format, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_private", "UTF8") + "=" + URLEncoder.encode(api_paste_private, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_expire_date", "UTF8") + "=" + URLEncoder.encode(api_paste_expire_date, "UTF8");
-
-	        OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-	        out.write(postData);
-	        out.close();
-
-	        BufferedReader in = new BufferedReader(
-	          new InputStreamReader(
-	          connection.getInputStream()));
-	        String decodedString;
-	        while ((decodedString = in.readLine()) != null)
-	        {
-	          this.bot.sendMessage(this.source, "[OutOfContext] OoC Log posted: " + decodedString + " (Link expires in 10 minutes)");
-	        }
-	        in.close();
-	        fileScanner.close();
-	    }
-	    catch (Exception e)
-	    {
-	      e.printStackTrace();
-	    }
 	}
 }
