@@ -171,7 +171,7 @@ public class Urlfollow extends Feature
 	    	  else if(splitElements[i].matches("^media:description type='plain'.*"))
 	    	  {
 	    		  description = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-	    		  if(description.length() > 150)
+	    		  if(description.length() > 149)
 	    		  {
 	    			  description = description.substring(0, 147) + "...";
 	    		  }
