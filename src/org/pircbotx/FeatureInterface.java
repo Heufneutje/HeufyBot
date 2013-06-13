@@ -80,6 +80,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
     		  if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().contains(feature.getTriggers()[i]))
     	          continue;
     	        feature.process(event.getChannel().getName(), event.getMessage(), event.getUser().getNick(), null);
+    	        break;
     	  }
       }
     }
