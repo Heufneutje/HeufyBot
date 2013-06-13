@@ -193,7 +193,7 @@ public class Event extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "event (MM-DD-YYYY hh:mm) Event, " + bot.getCommandPrefix() + "timetill Event, " + bot.getCommandPrefix() + "remevent Event | Create an event that can be called using timetill or removed using remevent.";
+		return "Commands: " + bot.getCommandPrefix() + "event (MM-DD-YYYY hh:mm) <event>, " + bot.getCommandPrefix() + "timetill <event>, " + bot.getCommandPrefix() + "remevent <event> | Create an event that can be called using timetill or removed using remevent.";
 	}
 	
 	private void addEvent(String date, String event)
