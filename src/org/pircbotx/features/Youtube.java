@@ -1,10 +1,7 @@
 package org.pircbotx.features;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-
 import org.pircbotx.HeufyBot;
+import org.pircbotx.utilities.URLUtils;
 
 public class Youtube extends Feature 
 {
@@ -38,18 +35,7 @@ public class Youtube extends Feature
 	                    "&max-results=1" +
 	                    "&v=2" +
 	                    "&key=AIzaSyBqSIpLIvf4r2CNKa7xAAxe1sDB3DEfyOk";
-				URL url = new URL(urlString);
-				BufferedReader bufReader;
-				String line;
-				String videoData = "";
-			    bufReader = new BufferedReader( new InputStreamReader(url.openStream()));
-			     
-			    //read line by line
-			    while( (line = bufReader.readLine()) != null)
-			    {
-			    	videoData += line + " ";
-			    }
-			    bufReader.close();
+				String videoData = URLUtils.grab(urlString);
 			    String[] splitElements = videoData.split("<");
 			    String title = "";
 			    String description = "";

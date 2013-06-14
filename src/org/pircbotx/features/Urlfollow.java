@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.pircbotx.HeufyBot;
+import org.pircbotx.utilities.URLUtils;
 
 public class Urlfollow extends Feature
 {
@@ -144,19 +145,8 @@ public class Urlfollow extends Feature
 	public String followYouTubeURL(String videoID) throws IOException
 	{
 		 String urlString = "https://gdata.youtube.com/feeds/api/videos/" + videoID + "?v=2&key=AIzaSyBqSIpLIvf4r2CNKa7xAAxe1sDB3DEfyOk";
-		 URL url = new URL(urlString);
-		 BufferedReader bufReader;
-		 String line;
-		 String videoData = "";
-	      bufReader = new BufferedReader( new InputStreamReader(url.openStream()));
-	     
-	      //read line by line
-	      while( (line = bufReader.readLine()) != null)
-	      {
-	    	  videoData += line + " ";
-	      }
-	      bufReader.close();
-	      String[] splitElements = videoData.split("<");
+		 String data = URLUtils.grab(urlString);
+	      String[] splitElements = data.split("<");
 	      
 	      String title = "";
 	      String description = "";
