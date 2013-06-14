@@ -2,16 +2,16 @@
 
 package org.pircbotx.features;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Pattern;
 
-import org.pircbotx.Colors;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.Pastebin;
+import org.pircbotx.utilities.Colors;
+import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.PastebinUtils;
 
 public class Outofcontext extends Feature
 {
@@ -42,7 +42,7 @@ public class Outofcontext extends Feature
 			{
 				public void run()
 				{
-					String result = Pastebin.post(settingsPath, "HeufyBot OutOfContext Log");
+					String result = PastebinUtils.post(settingsPath, "HeufyBot OutOfContext Log");
 					if(result != null)
 					{
 						bot.sendMessage(sourceChannel, "[OutOfContext] OoC Log posted: " + result  + " (Link expires in 10 minutes)");
@@ -57,7 +57,7 @@ public class Outofcontext extends Feature
 		}
 		else
 		{
-			if(metadata.substring(1).startsWith("add "))
+			if(metadata.substring(1).toLowerCase().startsWith("add "))
 			{
 				String newQuote = Colors.removeFormattingAndColors(metadata.substring(5));
 				
@@ -101,7 +101,7 @@ public class Outofcontext extends Feature
 				    	newQuote = newQuote.replace(toQuote, toQuote.substring(1));
 				    }
 				    
-				    bot.writeFileAppend(settingsPath, newQuote + "\n");
+				    FileUtils.writeFileAppend(settingsPath, newQuote + "\n");
 					bot.sendMessage(source, "[OutOfContext] Quote was added to the log!");
 			    }
 			    else
@@ -109,11 +109,11 @@ public class Outofcontext extends Feature
 			    	bot.sendMessage(source, "[OutOfContext] No nickname was found in this quote.");
 			    }
 			}
-			else if(metadata.substring(1).startsWith("search "))
+			else if(metadata.substring(1).toLowerCase().startsWith("search "))
 			{
 				String search = metadata.substring(8);
 				
-				String quoteFile = bot.readFile(settingsPath);
+				String quoteFile = FileUtils.readFile(settingsPath);
 				String[] quotes = quoteFile.split("\n");
 				ArrayList<String> matches = new ArrayList<String>();
 				
@@ -178,10 +178,6 @@ public class Outofcontext extends Feature
 	@Override
 	public void connectTrigger()
 	{
-		File file = new File(settingsPath);
-		if(!file.exists())
-		{
-			bot.writeFile(settingsPath, null);
-		}
+		FileUtils.touchFile(settingsPath);
 	}
 }

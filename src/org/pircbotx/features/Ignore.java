@@ -1,11 +1,11 @@
 package org.pircbotx.features;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.pircbotx.AuthorizationType;
 import org.pircbotx.HeufyBot;
+import org.pircbotx.utilities.AuthorizationType;
+import org.pircbotx.utilities.FileUtils;
 
 public class Ignore extends Feature 
 {
@@ -55,8 +55,7 @@ public class Ignore extends Feature
 	  	  		else
 	  	  		{
 	  	  			ignoreList.add(nick);
-	  	  			bot.writeFileAppend(settingsPath, nick + "\n");
-	  	  			bot.getIgnoreList().add(nick);
+	  	  			FileUtils.writeFileAppend(settingsPath, nick + "\n");
 	  	  			bot.sendMessage(source, "[Ignore] " + nick + " was added to the ignore list!");
 	  	  		}
 		    }
@@ -83,13 +82,13 @@ public class Ignore extends Feature
 	  	  		}
 	  	  		if(match)
 	  	  		{
-	  	  			new File(settingsPath).delete();
-		  	  		bot.writeFile(settingsPath, "");
+	  	  			FileUtils.deleteFile(settingsPath);
+	  	  			FileUtils.touchFile(settingsPath);
 		  	  		for(String ignore : ignoreList)
 		  	  		{
-		  	  			bot.writeFileAppend(settingsPath, ignore + "\n");
+		  	  			FileUtils.writeFileAppend(settingsPath, ignore + "\n");
 		  	  		}
-		  	  		bot.setIgnoreList(ignoreList);
+		  	  		//bot.setIgnoreList(ignoreList);
 		  	  		bot.sendMessage(source, "[Ignore] " + nick + " was removed from the ignore list!");
 	  	  		}
 	  	  		else
@@ -103,12 +102,8 @@ public class Ignore extends Feature
 	@Override
 	public void connectTrigger() 
 	{
-		File file = new File(settingsPath);
-		if(!file.exists())
-		{
-			bot.writeFile(settingsPath, "");
-		}
-		String[] ignores = bot.readFile(settingsPath).split("\n");
+		FileUtils.touchFile(settingsPath);
+		String[] ignores = FileUtils.readFile(settingsPath).split("\n");
 		for(int i = 0; i < ignores.length; i++)
 		{
 			ignoreList.add(ignores[i]);
