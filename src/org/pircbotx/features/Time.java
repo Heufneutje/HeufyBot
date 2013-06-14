@@ -36,7 +36,7 @@ public class Time extends Feature
 			}
 			else
 			{
-				String urlString = "http://api.worldweatheronline.com/free/v1/tz.ashx?q=" + metadata.substring(1) + 
+				String urlString = "http://api.worldweatheronline.com/free/v1/tz.ashx?q=" + metadata.substring(1).replaceAll(" ", "") + 
 						"&format=xml" + 
 						"&key=" + apiKey;
 				String data = URLUtils.grab(urlString);
