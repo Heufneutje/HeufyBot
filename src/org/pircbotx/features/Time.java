@@ -75,7 +75,7 @@ public class Time extends Feature
 					{
 						date = dt.parse(localtime);
 						SimpleDateFormat dt1 = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
-						bot.sendMessage(source, "Local time is " + dt1.format(date) + " | " + type + " | " + query);
+						bot.sendMessage(source, "Local time is " + dt1.format(date) + " | " + type + ": " + query);
 					}
 					catch (ParseException e)
 					{
