@@ -11,7 +11,7 @@ import org.pircbotx.utilities.URLUtils;
 
 public class Time extends Feature
 {
-	private String settingsPath = "featuresettings/timeapikey.txt";
+	private String settingsPath = "featuresettings/worldweatherapikey.txt";
 	public Time(HeufyBot bot, String name)
 	{
 		super(bot, name);
@@ -95,6 +95,6 @@ public class Time extends Feature
 	@Override
 	public String getHelp() 
 	{
-		return "Commands: " + bot.getCommandPrefix() + "time | Displays the time of the computer the bot is currently running on.";
+		return "Commands: " + bot.getCommandPrefix() + "time <location> | Displays the time of a given location. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude or city name.";
 	}
 }
