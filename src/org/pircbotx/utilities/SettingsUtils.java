@@ -1,4 +1,4 @@
-package org.pircbotx;
+package org.pircbotx.utilities;
 
 import java.io.File;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class SettingsXMLIO
+public class SettingsUtils
 {
   public static HashMap<String, String> readXML(String filePath)
   {

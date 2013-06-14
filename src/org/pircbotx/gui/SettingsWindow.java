@@ -13,7 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import org.pircbotx.SettingsXMLIO;
+
+import org.pircbotx.utilities.SettingsUtils;
 
 public class SettingsWindow extends JFrame
 {
@@ -31,7 +32,7 @@ public class SettingsWindow extends JFrame
 
   public SettingsWindow()
   {
-    HashMap<String, String> settingsMap = SettingsXMLIO.readXML("settings.xml");
+    HashMap<String, String> settingsMap = SettingsUtils.readXML("settings.xml");
 
     this.setLayout(new BorderLayout());
     
@@ -193,7 +194,7 @@ public class SettingsWindow extends JFrame
 			settingsMap.put("commandprefix", prefixField.getText());
 			settingsMap.put("loadedfeatures", featuresField.getText().replaceAll("\\s",""));
 			settingsMap.put("botowner", ownerField.getText());
-			SettingsXMLIO.writeXML(settingsMap, "settings.xml");
+			SettingsUtils.writeXML(settingsMap, "settings.xml");
 			dispose();
 	    }
 	  }

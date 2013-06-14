@@ -1,4 +1,4 @@
-package org.pircbotx;
+package org.pircbotx.utilities;
 
 import java.util.Arrays;
 

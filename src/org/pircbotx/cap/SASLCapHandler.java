@@ -20,10 +20,10 @@
 package org.pircbotx.cap;
 
 import java.io.UnsupportedEncodingException;
-import org.pircbotx.Base64;
 import java.util.List;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.exception.CAPException;
+import org.pircbotx.utilities.Base64;
 /**
  *
  * @author Leon Blakey <lord.quackstar at gmail.com>

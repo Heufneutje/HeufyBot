@@ -1,4 +1,4 @@
-package org.pircbotx;
+package org.pircbotx.utilities;
 
 public enum AuthorizationType 
 {

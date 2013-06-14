@@ -1,4 +1,4 @@
-package org.pircbotx;
+package org.pircbotx.utilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Scanner;
 
-public class Pastebin
+public class PastebinUtils
 {
 	public static String post(final String filePath, final String title)
 	{

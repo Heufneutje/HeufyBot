@@ -20,8 +20,8 @@
 package org.pircbotx.hooks.events;
 
 import org.pircbotx.hooks.Event;
+import org.pircbotx.utilities.ReplyConstants;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.ReplyConstants;
 /**
  * This is called when we receive a numeric response from the
  * IRC server.
