@@ -1,10 +1,10 @@
 package org.pircbotx.features;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.pircbotx.HeufyBot;
+import org.pircbotx.utilities.FileUtils;
 
 public class Accesslist extends Feature
 {
@@ -95,14 +95,9 @@ public class Accesslist extends Feature
 	public void connectTrigger()
 	{
 		this.accessList = new ArrayList<String>();
-		File file = new File(settingsPath);
-		if(!file.exists())
+		if(FileUtils.touchFile(settingsPath))
 		{
-			bot.writeFile(settingsPath, null);
-		}
-		else
-		{
-			String[] readEntries = bot.readFile(settingsPath).split("\n");
+			String[] readEntries = FileUtils.readFile(settingsPath).split("\n");
 			for(int i = 0; i < readEntries.length; i++)
 			{
 				accessList.add(readEntries[i]);
@@ -117,7 +112,7 @@ public class Accesslist extends Feature
 		{
 			accessString += entry + "\n";
 		}
-		bot.writeFile(settingsPath, accessString);
+		FileUtils.writeFile(settingsPath, accessString);
 	}
 
 	@Override

@@ -96,7 +96,7 @@ public class Urlfollow extends Feature
 	      
 	      while( (line = bufReader.readLine()) != null && !foundEndTag)
 	      {
-	        //System.out.println(line);
+	        System.out.println(line);
 	      
 	        //search for title start tag (convert to lower case before searhing)
 	        if( !foundStartTag && (startIndex = line.toLowerCase().indexOf(startTag)) != -1 )

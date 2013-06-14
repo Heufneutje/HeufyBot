@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import org.pircbotx.HeufyBot;
-import org.pircbotx.Pastebin;
+import org.pircbotx.utilities.PastebinUtils;
 
 public class Log extends Feature
 {
@@ -62,7 +62,7 @@ public class Log extends Feature
 		{
 			public void run()
 			{
-				String result = Pastebin.post("logs/" + bot.getNetworkName() + "/" + source + "/" + dateString + ".txt", "Log for " + source + " on " + dateString);
+				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + source + "/" + dateString + ".txt", "Log for " + source + " on " + dateString);
 				if(result != null)
 				{
 					if(result.equals("NotFound"))

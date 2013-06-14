@@ -1,6 +1,5 @@
 package org.pircbotx.features;
 
-import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.pircbotx.HeufyBot;
+import org.pircbotx.utilities.FileUtils;
 
 public class Event extends Feature
 {
@@ -56,7 +56,7 @@ public class Event extends Feature
 	  }
 	  else if(triggerCommand.equals(bot.getCommandPrefix() + "timetill"))
 	  {
-		  String events = bot.readFile(settingsPath);
+		  String events = FileUtils.readFile(settingsPath);
 		  String[] eventsArray = events.split("\n");
 		  
 		  boolean firstResult = false;
@@ -122,7 +122,7 @@ public class Event extends Feature
 	  }
 	  else
 	  {
-		  String events = bot.readFile(settingsPath);
+		  String events = FileUtils.readFile(settingsPath);
 		  String[] eventsArray = events.split("\n");
 		  ArrayList<String> eventsList = new ArrayList<String>();
 		  
@@ -157,7 +157,7 @@ public class Event extends Feature
 				  {
 					  newList += event + "\n";
 				  }
-				  bot.writeFile(settingsPath, newList);
+				  FileUtils.writeFile(settingsPath, newList);
 				  bot.sendMessage(source, "[Event] '" + firstEvent + "' was removed from the events list.");
 			  }
 			  else
@@ -183,11 +183,7 @@ public class Event extends Feature
 	@Override
 	public void connectTrigger()
 	{
-		File file = new File(settingsPath);
-		if(!file.exists())
-		{
-			bot.writeFile(settingsPath, "");
-		}
+		FileUtils.touchFile(settingsPath);
 	}
 
 	@Override
@@ -198,7 +194,7 @@ public class Event extends Feature
 	
 	private void addEvent(String date, String event)
 	{
-		bot.writeFileAppend(settingsPath, date + "_" + event + "\n");
+		FileUtils.writeFileAppend(settingsPath, date + "_" + event + "\n");
 	}
 	
 	private int elapsed(Calendar before, Calendar after, int field) 

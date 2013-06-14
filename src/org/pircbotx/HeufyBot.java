@@ -21,11 +21,7 @@ package org.pircbotx;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -55,7 +51,8 @@ import java.util.StringTokenizer;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.net.SocketFactory;
-import static org.pircbotx.ReplyConstants.*;
+
+import org.pircbotx.utilities.ReplyConstants;
 
 import org.pircbotx.cap.CapHandler;
 import org.pircbotx.cap.EnableCapHandler;
@@ -71,6 +68,10 @@ import org.pircbotx.hooks.WaitForQueue;
 import org.pircbotx.hooks.events.*;
 import org.pircbotx.hooks.managers.ListenerManager;
 import org.pircbotx.hooks.managers.ThreadedListenerManager;
+import org.pircbotx.utilities.Colors;
+import org.pircbotx.utilities.LoggingUtils;
+import org.pircbotx.utilities.SettingsUtils;
+import org.pircbotx.utilities.Utils;
 /**
  * PircBotX is a Java framework for writing IRC bots quickly and easily.
  * <p>
@@ -205,7 +206,7 @@ public class HeufyBot {
 		this.featureInterface = new FeatureInterface(this);
 		this.ignoreList = new ArrayList<String>();
 		
-		SettingsXMLIO.readXML("settings.xml");
+		SettingsUtils.readXML("settings.xml");
 		if (!(new File("settings.xml").exists()))
 		{
 			if(useGui)
@@ -228,7 +229,7 @@ public class HeufyBot {
 			
 			public void run() {
 				try {
-					HashMap<String, String> settingsMap = SettingsXMLIO.readXML(filePath);
+					HashMap<String, String> settingsMap = SettingsUtils.readXML(filePath);
 					name = ((String)settingsMap.get("nickname"));
 					realName = ((String)settingsMap.get("realname"));
 					login = ((String)settingsMap.get("username"));
@@ -1222,56 +1223,6 @@ public class HeufyBot {
 	 *
 	 */
 	
-	public String readFile(String filePath) {
-		try {
-			FileInputStream fstream = new FileInputStream(filePath);
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String result = "";
-			String read = "";
-			while ((read = br.readLine()) != null) {
-				result += read += "\n";
-			}
-			in.close();
-			return result;
-		} catch (FileNotFoundException e) {
-			return null;
-		} catch (IOException e) {
-			return null;
-		}
-	}
-	
-	public void writeFile(String filePath, String text) {
-		File file = new File(filePath);
-		if (file.exists()) {
-			file.delete();
-		}
-		FileWriter writer;
-		try {
-			writer = new FileWriter(filePath, true);
-			BufferedWriter bw = new BufferedWriter(writer);
-			bw.write(text);
-			bw.flush();
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void writeFileAppend(String filePath, String text)
-	{
-		FileWriter writer;
-		try {
-			writer = new FileWriter(filePath, true);
-			BufferedWriter bw = new BufferedWriter(writer);
-			bw.write(text);
-			bw.flush();
-			bw.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public void sendInvite(String nick, String channel) {
 		if (nick == null) throw new IllegalArgumentException("Can\'t send invite to null nick");
 		if (channel == null) throw new IllegalArgumentException("Can\'t send invite to null channel");
@@ -1642,7 +1593,7 @@ public class HeufyBot {
 				}
 				if(this.getNetworkName() != null)
 				{
-					Logger.write(logLine, this.getNetworkName(), target);
+					LoggingUtils.write(logLine, this.getNetworkName(), target);
 				}
 			}
 		}
@@ -1946,10 +1897,10 @@ public class HeufyBot {
 		if (response == null) throw new IllegalArgumentException("Can\'t process null response");
 		//NOTE: Update tests if adding support for a new code
 		String[] parsed = response.split(" ");
-		if (code == RPL_LISTSTART) 
+		if (code == ReplyConstants.RPL_LISTSTART) 
 		//EXAMPLE: 321 Channel :Users Name (actual text)
 		//A channel list is about to be sent
-		channelListBuilder.setRunning(true); else if (code == RPL_LIST) {
+		channelListBuilder.setRunning(true); else if (code == ReplyConstants.RPL_LIST) {
 			//This is part of a full channel listing as part of /LIST
 			//EXAMPLE: 322 lordquackstar #xomb 12 :xomb exokernel project @ www.xomb.org
 			int firstSpace = response.indexOf(' ');
@@ -1965,12 +1916,12 @@ public class HeufyBot {
 			}
 			String topic = response.substring(colon + 1);
 			channelListBuilder.add(new ChannelListEntry(channel, userCount, topic));
-		} else if (code == RPL_LISTEND) {
+		} else if (code == ReplyConstants.RPL_LISTEND) {
 			//EXAMPLE: 323 :End of /LIST
 			//End of channel list, dispatch event
 			getListenerManager().dispatchEvent(new ChannelInfoEvent(this, channelListBuilder.finish()));
 			channelListBuilder.setRunning(false);
-		} else if (code == RPL_TOPIC) {
+		} else if (code == ReplyConstants.RPL_TOPIC) {
 			//EXAMPLE: 332 PircBotX #aChannel :I'm some random topic
 			//This is topic about a channel we've just joined. From /JOIN or /TOPIC
 			parsed = response.split(" ", 3);
@@ -1982,7 +1933,7 @@ public class HeufyBot {
 				gui.setChannelTopic(channel, topic);
 			}
 			getChannel(channel).setTopic(topic);
-		} else if (code == RPL_TOPICINFO) {
+		} else if (code == ReplyConstants.RPL_TOPICINFO) {
 			//EXAMPLE: 333 PircBotX #aChannel ISetTopic 1564842512
 			//This is information on the topic of the channel we've just joined. From /JOIN or /TOPIC
 			String channel = parsed[1];
@@ -1998,7 +1949,7 @@ public class HeufyBot {
 			chan.setTopicSetter(setBy.getNick());
 			log("Set by " + setBy.getNick() + " on " + new Date(date).toString(), channel);
 			getListenerManager().dispatchEvent(new TopicEvent(this, chan, chan.getTopic(), setBy, date, false));
-		} else if (code == RPL_WHOREPLY) {
+		} else if (code == ReplyConstants.RPL_WHOREPLY) {
 			//EXAMPLE: PircBotX #aChannel ~someName 74.56.56.56.my.Hostmask wolfe.freenode.net someNick H :0 Full Name
 			//Part of a WHO reply on information on individual users
 			parsed = response.split(" ", 9);
@@ -2014,12 +1965,12 @@ public class HeufyBot {
 			curUser.setRealName(parsed[8]);
 			//Associate with channel
 			userChanInfo.put(chan, curUser);
-		} else if (code == RPL_ENDOFWHO) {
+		} else if (code == ReplyConstants.RPL_ENDOFWHO) {
 			//EXAMPLE: PircBotX #aChannel :End of /WHO list
 			//End of the WHO reply
 			Channel channel = getChannel(response.split(" ")[1]);
 			getListenerManager().dispatchEvent(new UserListEvent(this, channel, getUsers(channel)));
-		} else if (code == RPL_CHANNELMODEIS) 
+		} else if (code == ReplyConstants.RPL_CHANNELMODEIS) 
 		//EXAMPLE: PircBotX #aChannel +cnt
 		//Full channel mode (In response to MODE <channel>)
 		getChannel(parsed[1]).setMode(parsed[2]); else if (code == 329) {
@@ -2039,21 +1990,21 @@ public class HeufyBot {
 			}
 			//Set in channel
 			getChannel(channel).setCreateTimestamp(createDate);
-		} else if (code == RPL_MOTDSTART) 
+		} else if (code == ReplyConstants.RPL_MOTDSTART) 
 		{
 			log(response.split(" :")[1], "server");
 			//Example: 375 PircBotX :- wolfe.freenode.net Message of the Day -
 			//Motd is starting, reset the StringBuilder
 			getServerInfo().setMotd(""); 
 		}
-		else if (code == RPL_MOTD) 
+		else if (code == ReplyConstants.RPL_MOTD) 
 		{
 			//Example: PircBotX :- Welcome to wolfe.freenode.net in Manchester, England, Uk!  Thanks to
 			//This is part of the MOTD, add a new line
 			log(response.split(" :")[1], "server");
 			getServerInfo().setMotd(getServerInfo().getMotd() + response.split(" ", 3)[2].trim() + "\n");
 		}
-		else if (code == RPL_ENDOFMOTD) 
+		else if (code == ReplyConstants.RPL_ENDOFMOTD) 
 		{
 			//Example: PircBotX :End of /MOTD command.
 			//End of MOTD, clean it and dispatch MotdEvent
@@ -2063,7 +2014,7 @@ public class HeufyBot {
 		} else if (code == 4 || code == 5) 
 		//Example: 004 PircBotX sendak.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQbcefgijklmnopqrstvz bkloveqjfI
 		//Server info line, let ServerInfo class parse it
-		getServerInfo().parse(code, response); else if (code == RPL_WHOISUSER) {
+		getServerInfo().parse(code, response); else if (code == ReplyConstants.RPL_WHOISUSER) {
 			//New whois is starting
 			//311 TheLQ Plazma ~Plazma freenode/staff/plazma * :Plazma Rooolz!
 			String[] parts = response.split(" ", 6);
@@ -2073,7 +2024,7 @@ public class HeufyBot {
 			builder.setHostname(parts[3]);
 			builder.setRealname(parts[5].substring(1));
 			whoisBuilder.put(parsed[1], builder);
-		} else if (code == RPL_WELCOME) {
+		} else if (code == ReplyConstants.RPL_WELCOME) {
 			String response2 = response.split(" :")[1];
 			try
 			{
@@ -2088,27 +2039,27 @@ public class HeufyBot {
 				this.gui.setNetworkName(getNetworkName());
 			}
 			log(response2, "server");
-		} else if ((code == RPL_YOURHOST) || (code == RPL_CREATED)) {
+		} else if ((code == ReplyConstants.RPL_YOURHOST) || (code == ReplyConstants.RPL_CREATED)) {
 			log(response.split(" :")[1], "server");
-		} else if ((code == RPL_MYINFO) || (code == RPL_BOUNCE) || ((code > 400) && (code < 503))) {
+		} else if ((code == ReplyConstants.RPL_MYINFO) || (code == ReplyConstants.RPL_BOUNCE) || ((code > 400) && (code < 503))) {
 			try {
 				log(response.split(this.nick + " ")[1], "server");
 			} catch (ArrayIndexOutOfBoundsException e) {
 				
 			}
 		}
-		else if (code == RPL_WHOISCHANNELS) {
+		else if (code == ReplyConstants.RPL_WHOISCHANNELS) {
 			//Channel list from whois
 			//319 TheLQ Plazma :+#freenode
 			String chans = response.split(" ", 3)[2].substring(1);
 			whoisBuilder.get(parsed[1]).setChannels(Arrays.asList(chans.split(" ")));
-		} else if (code == RPL_WHOISSERVER) {
+		} else if (code == ReplyConstants.RPL_WHOISSERVER) {
 			//Server info from whois
 			//312 TheLQ Plazma leguin.freenode.net :Ume?, SE, EU
 			String[] info = response.split(" ", 4);
 			whoisBuilder.get(parsed[1]).setServer(info[2]);
 			whoisBuilder.get(parsed[1]).setServerInfo(info[3].substring(1));
-		} else if (code == RPL_WHOISIDLE) {
+		} else if (code == ReplyConstants.RPL_WHOISIDLE) {
 			//Idle time from whois
 			//317 TheLQ md_5 6077 1347373349 :seconds idle, signon time
 			whoisBuilder.get(parsed[1]).setIdleSeconds(Long.parseLong(parsed[2]));
@@ -2116,7 +2067,7 @@ public class HeufyBot {
 		} else if (code == 330) 
 		//RPL_WHOISACCOUNT: Extra Whois info
 		//330 TheLQ Utoxin Utoxin :is logged in as
-		whoisBuilder.get(parsed[1]).setRegisteredAs(parsed[2]); else if (code == RPL_ENDOFWHOIS) {
+		whoisBuilder.get(parsed[1]).setRegisteredAs(parsed[2]); else if (code == ReplyConstants.RPL_ENDOFWHOIS) {
 			//End of whois
 			//318 TheLQ Plazma :End of /WHOIS list.
 			getListenerManager().dispatchEvent(whoisBuilder.get(parsed[1]).generateEvent(this));

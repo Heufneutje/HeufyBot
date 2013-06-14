@@ -1,7 +1,7 @@
 package org.pircbotx.features;
 
-import org.pircbotx.AuthorizationType;
 import org.pircbotx.HeufyBot;
+import org.pircbotx.utilities.AuthorizationType;
 
 public class Quit extends Feature
 {
