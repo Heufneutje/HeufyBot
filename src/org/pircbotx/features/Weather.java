@@ -132,6 +132,10 @@ public class Weather extends Feature
 					else
 					{
 						String[] splitElements = data.split("</weather>");
+						for(int i = 0; i < splitElements.length; i++)
+						{
+							
+						}
 					}
 				}
 			}

@@ -23,64 +23,80 @@ public class Time extends Feature
 	{
 		if(metadata.equals("") || metadata.equals(" "))
 		{
-			Date date = new Date();
-			DateFormat format = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
-			this.bot.sendMessage(source, "[Time] Local time is " + format.format(date) + " | No location specified, returned the bot's local time instead");
-		}
-		else
-		{
-			String apiKey = FileUtils.readFile(settingsPath);
-			if(apiKey.equals(""))
+			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + triggerUser;
+			String data = URLUtils.grab(urlString);
+			
+			if(data.equals(","))
 			{
-				this.bot.sendMessage(source, "[Time] Error: No API key for worldweatheronline provided");
+				Date date = new Date();
+				DateFormat format = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
+				this.bot.sendMessage(source, "[Time] Local time is " + format.format(date) + " | You are not registed on the chatmap, returned the bot's local time instead");
 			}
 			else
 			{
-				String urlString = "http://api.worldweatheronline.com/free/v1/tz.ashx?q=" + metadata.substring(1).replaceAll(" ", "") + 
-						"&format=xml" + 
-						"&key=" + apiKey;
-				String data = URLUtils.grab(urlString);
-				if(data.equals("ERROR"))
+				bot.sendMessage(source, this.lookupTime(data));
+			}
+		}
+		else
+		{
+			this.bot.sendMessage(source, this.lookupTime(metadata.substring(1)));
+		}
+	}
+	
+	private String lookupTime(String timeQuery)
+	{
+		String apiKey = FileUtils.readFile(settingsPath);
+		if(apiKey.equals(""))
+		{
+			return "[Time] Error: No API key for worldweatheronline provided";
+		}
+		else
+		{
+			String urlString = "http://api.worldweatheronline.com/free/v1/tz.ashx?q=" + timeQuery.replaceAll(" ", "") + 
+					"&format=xml" + 
+					"&key=" + apiKey;
+			String data = URLUtils.grab(urlString);
+			if(data.equals("ERROR"))
+			{
+				return "[Time] Error: Invalid location";
+			}
+			else
+			{
+				String[] splitElements = data.split("<");
+				String type = "";
+				String query = "";
+				String localtime = "";
+				for(int i = 0; i < splitElements.length; i++)
 				{
-					this.bot.sendMessage(source, "[Time] Error: Invalid location");
+					if(splitElements[i].matches("^error.*"))
+					{
+						return "[Time] Error: Invalid location";
+					}
+					else if(splitElements[i].matches("^type.*"))
+					{
+						type = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^query.*"))
+					{
+						query = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^localtime.*"))
+					{
+						localtime = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
 				}
-				else
+				SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+				Date date;
+				try 
 				{
-					String[] splitElements = data.split("<");
-					String type = "";
-					String query = "";
-					String localtime = "";
-					for(int i = 0; i < splitElements.length; i++)
-					{
-						if(splitElements[i].matches("^error.*"))
-						{
-							this.bot.sendMessage(source, "[Time] Error: Invalid location");
-						}
-						else if(splitElements[i].matches("^type.*"))
-						{
-							type = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-						}
-						else if(splitElements[i].matches("^query.*"))
-						{
-							query = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-						}
-						else if(splitElements[i].matches("^localtime.*"))
-						{
-							localtime = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-						}
-					}
-					SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
-					Date date;
-					try 
-					{
-						date = dt.parse(localtime);
-						SimpleDateFormat dt1 = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
-						bot.sendMessage(source, "Local time is " + dt1.format(date) + " | " + type + ": " + query);
-					}
-					catch (ParseException e)
-					{
-						e.printStackTrace();
-					} 
+					date = dt.parse(localtime);
+					SimpleDateFormat dt1 = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
+					return "Local time is " + dt1.format(date) + " | " + type + ": " + query;
+				}
+				catch (ParseException e)
+				{
+					e.printStackTrace();
+					return null;
 				}
 			}
 		}
@@ -95,6 +111,6 @@ public class Time extends Feature
 	@Override
 	public String getHelp() 
 	{
-		return "Commands: " + bot.getCommandPrefix() + "time <location> | Displays the time of a given location. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude or city name.";
+		return "Commands: " + bot.getCommandPrefix() + "time <location> | Displays the time of a given location. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude, IATA (airport code) or city name.";
 	}
 }
