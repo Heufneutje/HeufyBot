@@ -69,10 +69,10 @@ public class Weather extends Feature
 			String location = weatherQuery.replaceAll(" ", "");
 			String urlString = "http://api.worldweatheronline.com/free/v1/weather.ashx?q=" + location.replaceAll(" ", "") + 
 					"&format=xml" + 
+					"&extra=localObsTime" +
 					"&num_of_days=1" + 
 					"&key=" + apiKey;
 			String data = URLUtils.grab(urlString);
-			System.err.println(data);
 			
 			if(data.equals("ERROR"))
 			{
@@ -82,6 +82,7 @@ public class Weather extends Feature
 			{
 				String type = "";
 				String query = "";
+				String lastUpdate = "";
 				
 				String[] splitElements = data.split("</current_condition>")[0].split("<");
 				
@@ -139,8 +140,12 @@ public class Weather extends Feature
 					{
 						humidity = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
 					}
+					else if(splitElements[i].matches("^localObsDateTime.*"))
+					{
+						lastUpdate = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
 				}
-				return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir;
+				return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir + " (Local Observation Time: " + lastUpdate + ")";
 			}
 		}
 	}
