@@ -1,15 +1,8 @@
 package org.pircbotx.features;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
 import org.pircbotx.HeufyBot;
 import org.pircbotx.utilities.FileUtils;
 import org.pircbotx.utilities.URLUtils;
-import org.w3c.dom.Document;
 
 public class Weather extends Feature
 {
@@ -24,7 +17,7 @@ public class Weather extends Feature
 	@Override
 	public String getHelp() 
 	{
-		return null;
+		return "Commands: " + bot.getCommandPrefix() + "weather <location/nick> | Displays the weather of a given location or a user on the chatmap. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude, IATA or city name.";
 	}
 
 	@Override
@@ -32,112 +25,28 @@ public class Weather extends Feature
 	{
 		if(metadata.equals("") || metadata.equals(" "))
 		{
-			this.bot.sendMessage(source, "[Weather] No location specified");
-		}
-		else
-		{
-			String apiKey = FileUtils.readFile(settingsPath);
-			if(apiKey.equals(""))
+			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + triggerUser;
+			String data = URLUtils.grab(urlString);
+			if(data.equals(", "))
 			{
-				this.bot.sendMessage(source, "[Weather] Error: No API key for worldweatheronline provided");
+				bot.sendMessage(source, "[Weather] You are not registered on the chatmap");
 			}
 			else
 			{
-				int numberOfDays = 1;
-				String location = metadata.substring(1);
-				
-				if(metadata.substring(1).toLowerCase().startsWith("forecast "))
-				{
-					location = metadata.split("forecast ")[1];
-					numberOfDays = 4;
-				}
-				
-				String urlString = "http://api.worldweatheronline.com/free/v1/weather.ashx?q=" + location.replaceAll(" ", "") + 
-						"&format=xml" + 
-						"&num_of_days=" + numberOfDays + 
-						"&key=" + apiKey;
-				String data = URLUtils.grab(urlString);
-				System.err.println(data);
-				
-				if(data.equals("ERROR"))
-				{
-					this.bot.sendMessage(source, "[Time] Error: Invalid location");
-				}
-				else
-				{
-					String type = "";
-					String query = "";
-					
-					if(numberOfDays == 1)
-					{
-						String[] splitElements = data.split("</current_condition>")[0].split("<");
-						
-						String tempC = "";
-						String tempF = "";
-						String weatherDesc = "";
-						String winddir = "";
-						String windSpeedMiles = "";
-						String windSpeedKm = "";
-						String humidity = "";
-						
-						for(int i = 0; i < splitElements.length; i++)
-						{
-							if(splitElements[i].matches("^error.*"))
-							{
-								this.bot.sendMessage(source, "[Weather] Error: Invalid location");
-							}
-							else if(splitElements[i].matches("^type.*"))
-							{
-								type = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^query.*"))
-							{
-								query = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^temp_C.*"))
-							{
-								tempC = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^temp_F.*"))
-							{
-								tempF = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^\\!\\[CDATA\\[.*") && (!splitElements[i].contains("http")))
-							{
-								weatherDesc = splitElements[i].substring(splitElements[i].indexOf("[", 5) + 1, splitElements[i].indexOf(" ]"));
-							}
-							else if(splitElements[i].matches("^windspeedMiles.*"))
-							{
-								windSpeedMiles = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^windspeedKmph.*"))
-							{
-								windSpeedKm = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^windspeedKmph.*"))
-							{
-								windSpeedKm = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^winddir16Point.*"))
-							{
-								winddir = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-							else if(splitElements[i].matches("^humidity.*"))
-							{
-								humidity = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
-							}
-						}
-						bot.sendMessage(source, "[Weather] " + type + ": " + query + " | " + "Temperature: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir);
-					}
-					else
-					{
-						String[] splitElements = data.split("</weather>");
-						for(int i = 0; i < splitElements.length; i++)
-						{
-							
-						}
-					}
-				}
+				bot.sendMessage(source, this.lookupWeather(data));
+			}
+		}
+		else
+		{
+			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.substring(1);
+			String data = URLUtils.grab(urlString);
+			if(data.equals(", "))
+			{
+				bot.sendMessage(source, this.lookupWeather(metadata.substring(1)));
+			}
+			else
+			{
+				bot.sendMessage(source, this.lookupWeather(data));
 			}
 		}
 	}
@@ -146,5 +55,93 @@ public class Weather extends Feature
 	public void connectTrigger()
 	{
 		FileUtils.touchFile(settingsPath);
+	}
+	
+	private String lookupWeather(String weatherQuery)
+	{
+		String apiKey = FileUtils.readFile(settingsPath);
+		if(apiKey.equals(""))
+		{
+			return "[Weather] Error: No API key for worldweatheronline provided";
+		}
+		else
+		{
+			String location = weatherQuery.replaceAll(" ", "");
+			String urlString = "http://api.worldweatheronline.com/free/v1/weather.ashx?q=" + location.replaceAll(" ", "") + 
+					"&format=xml" + 
+					"&num_of_days=1" + 
+					"&key=" + apiKey;
+			String data = URLUtils.grab(urlString);
+			System.err.println(data);
+			
+			if(data.equals("ERROR"))
+			{
+				return "[Weather] Error: Invalid location";
+			}
+			else
+			{
+				String type = "";
+				String query = "";
+				
+				String[] splitElements = data.split("</current_condition>")[0].split("<");
+				
+				String tempC = "";
+				String tempF = "";
+				String weatherDesc = "";
+				String winddir = "";
+				String windSpeedMiles = "";
+				String windSpeedKm = "";
+				String humidity = "";
+				
+				for(int i = 0; i < splitElements.length; i++)
+				{
+					if(splitElements[i].matches("^error.*"))
+					{
+						return "[Weather] Error: Invalid location";
+					}
+					else if(splitElements[i].matches("^type.*"))
+					{
+						type = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^query.*"))
+					{
+						query = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^temp_C.*"))
+					{
+						tempC = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^temp_F.*"))
+					{
+						tempF = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^\\!\\[CDATA\\[.*") && (!splitElements[i].contains("http")))
+					{
+						weatherDesc = splitElements[i].substring(splitElements[i].indexOf("[", 5) + 1, splitElements[i].indexOf("]"));
+					}
+					else if(splitElements[i].matches("^windspeedMiles.*"))
+					{
+						windSpeedMiles = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^windspeedKmph.*"))
+					{
+						windSpeedKm = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^windspeedKmph.*"))
+					{
+						windSpeedKm = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^winddir16Point.*"))
+					{
+						winddir = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+					else if(splitElements[i].matches("^humidity.*"))
+					{
+						humidity = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
+					}
+				}
+				return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir;
+			}
+		}
 	}
 }

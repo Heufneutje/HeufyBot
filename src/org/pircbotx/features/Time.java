@@ -26,7 +26,7 @@ public class Time extends Feature
 			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + triggerUser;
 			String data = URLUtils.grab(urlString);
 			
-			if(data.equals(","))
+			if(data.equals(", "))
 			{
 				Date date = new Date();
 				DateFormat format = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
@@ -39,7 +39,17 @@ public class Time extends Feature
 		}
 		else
 		{
-			this.bot.sendMessage(source, this.lookupTime(metadata.substring(1)));
+			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.substring(1);
+			String data = URLUtils.grab(urlString);
+			
+			if(data.equals(", "))
+			{
+				this.bot.sendMessage(source, this.lookupTime(metadata.substring(1)));
+			}
+			else
+			{
+				this.bot.sendMessage(source, this.lookupTime(data));
+			}
 		}
 	}
 	
@@ -111,6 +121,6 @@ public class Time extends Feature
 	@Override
 	public String getHelp() 
 	{
-		return "Commands: " + bot.getCommandPrefix() + "time <location> | Displays the time of a given location. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude, IATA (airport code) or city name.";
+		return "Commands: " + bot.getCommandPrefix() + "time <location/nick> | Displays the time of a given location or a user on the chatmap. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude, IATA or city name.";
 	}
 }
