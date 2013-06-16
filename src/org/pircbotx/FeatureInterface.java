@@ -23,7 +23,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	public FeatureInterface(HeufyBot bot)
 	{
 		this.bot = bot;
-		File file = new File("featuresettings");
+		File file = new File("featuredata");
 		if(!file.exists())
 		{
 			file.mkdir();
