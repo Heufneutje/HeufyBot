@@ -26,6 +26,7 @@ import java.util.List;
  *
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class HookUtils {
 	private static final List<Class<? extends Event>> allEvents = new ArrayList();
 

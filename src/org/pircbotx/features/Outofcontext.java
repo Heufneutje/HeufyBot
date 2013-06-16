@@ -1,5 +1,3 @@
-//TODO: Multiline support
-
 package org.pircbotx.features;
 
 import java.text.DateFormat;
@@ -9,18 +7,24 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 import org.pircbotx.HeufyBot;
+import org.pircbotx.features.types.AuthType;
+import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.Colors;
 import org.pircbotx.utilities.FileUtils;
 import org.pircbotx.utilities.PastebinUtils;
 
 public class Outofcontext extends Feature
 {
-	private String settingsPath = "featuresettings/ooclog.txt";
 	private String sourceChannel;
 
 	public Outofcontext(HeufyBot bot, String name) 
 	{
 		super(bot, name);
+		this.settingsPath = "featuresettings/ooclog.txt";
+		
+		this.triggerType = TriggerType.Message;
+		this.authType = AuthType.Anyone;
+		
 	    this.triggers = new String[1];
 	    this.triggers[0] = bot.getCommandPrefix() + "ooc";
 	}
@@ -176,8 +180,13 @@ public class Outofcontext extends Feature
 	}
 
 	@Override
-	public void connectTrigger()
+	public void onLoad()
 	{
 		FileUtils.touchFile(settingsPath);
+	}
+
+	@Override
+	public void onUnload() 
+	{
 	}
 }

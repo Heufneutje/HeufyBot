@@ -19,7 +19,6 @@
  */
 package org.pircbotx.cap;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.exception.CAPException;

@@ -19,8 +19,6 @@
  */
 package org.pircbotx.hooks.events;
 
-import org.pircbotx.Channel;
-import org.pircbotx.User;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.HeufyBot;
 /**

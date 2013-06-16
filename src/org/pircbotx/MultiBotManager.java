@@ -46,6 +46,7 @@ import org.pircbotx.hooks.managers.ListenerManager;
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class MultiBotManager {
 	protected final Set<BotEntry> bots = new HashSet();
 	protected final HeufyBot dummyBot;

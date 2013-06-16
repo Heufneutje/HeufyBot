@@ -45,6 +45,7 @@ import org.pircbotx.HeufyBot;
  * @see ThreadedListenerManager
  */
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 @Deprecated
 public class GenericListenerManager<E extends HeufyBot> implements ListenerManager<E> {
 	

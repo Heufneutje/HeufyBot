@@ -1,15 +1,21 @@
 package org.pircbotx.features;
 
 import org.pircbotx.HeufyBot;
+import org.pircbotx.features.types.AuthType;
+import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
 import org.pircbotx.utilities.URLUtils;
 
 public class Weather extends Feature
 {
-	private String settingsPath = "featuresettings/worldweatherapikey.txt";
 	public Weather(HeufyBot bot, String name) 
 	{
 		super(bot, name);
+		this.settingsPath = "featuresettings/worldweatherapikey.txt";
+		
+		this.triggerType = TriggerType.Message;
+		this.authType = AuthType.Anyone;
+		
 		this.triggers = new String[1];
 	    this.triggers[0] = bot.getCommandPrefix() + "weather";
 	}
@@ -50,16 +56,10 @@ public class Weather extends Feature
 			}
 		}
 	}
-
-	@Override
-	public void connectTrigger()
-	{
-		FileUtils.touchFile(settingsPath);
-	}
 	
 	private String lookupWeather(String weatherQuery)
 	{
-		String apiKey = FileUtils.readFile(settingsPath);
+		String apiKey = FileUtils.readFile(getSettingsPath());
 		if(apiKey.equals(""))
 		{
 			return "[Weather] Error: No API key for worldweatheronline provided";
@@ -148,5 +148,16 @@ public class Weather extends Feature
 				return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir + " (Local Observation Time: " + lastUpdate + ")";
 			}
 		}
+	}
+	
+	@Override
+	public void onLoad()
+	{
+		FileUtils.touchFile(getSettingsPath());
+	}
+	
+	@Override
+	public void onUnload()
+	{
 	}
 }

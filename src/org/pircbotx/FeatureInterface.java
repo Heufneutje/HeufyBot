@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.pircbotx.features.Feature;
+import org.pircbotx.features.types.AuthType;
+import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
-import org.pircbotx.utilities.AuthorizationType;
 
+@SuppressWarnings("rawtypes")
 public class FeatureInterface extends ListenerAdapter implements Listener
 {
 	private ArrayList<Feature> features = new ArrayList<Feature>();
@@ -32,7 +34,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	{
 		for (Feature feature : this.features)
 		{
-			if (feature.getType().equalsIgnoreCase("join"))
+			if (feature.getType() == TriggerType.Join)
 			{
 				feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" + "");
 			}
@@ -60,7 +62,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 					{
 						if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
 							continue;
-						if(feature.getAuthType() == AuthorizationType.OPs)
+						if(feature.getAuthType() == AuthType.OPs)
 						{
 							if(bot.checkAutorization(event.getUser(), event.getChannel()))
 							{
@@ -226,7 +228,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			Feature feature = (Feature)ctor.newInstance(new Object[] { this.bot, featureName });
 
 			this.features.add(feature);
-			feature.connectTrigger();
+			feature.onLoad();
 		}
 		catch (Exception e)
 		{
@@ -303,7 +305,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	{
 		for(Feature feature : features)
 		{
-			feature.connectTrigger();
+			feature.onLoad();
 		}
 	}
 }

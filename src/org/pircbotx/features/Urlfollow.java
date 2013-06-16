@@ -9,17 +9,23 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import org.pircbotx.HeufyBot;
+import org.pircbotx.features.types.AuthType;
+import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.URLUtils;
 
 public class Urlfollow extends Feature
 {
   public Urlfollow(HeufyBot bot, String name)
   {
-    super(bot, name);
-    this.triggers = new String[2];
-    this.triggers[0] = "http://";
-    this.triggers[1] = "https://";
-    this.messageMustStartWithTrigger = false;
+	  super(bot, name);
+	  
+	  this.triggerType = TriggerType.Message;
+	  this.authType = AuthType.Anyone;
+	  
+	  this.triggers = new String[2];
+	  this.triggers[0] = "http://";
+	  this.triggers[1] = "https://";
+	  this.messageMustStartWithTrigger = false;
   }
 
   public void process(String source, String metadata, String triggerUser, String triggerCommand)
@@ -42,7 +48,6 @@ public class Urlfollow extends Feature
 		    	if(urlstring.contains("http://www.youtube.com/watch"))
 		    	{
 		    		String videoID = urlstring.split("watch\\?v=")[1];
-		    		System.out.println(videoID);
 		    		bot.sendMessage(source, "[URLFollow] " + followYouTubeURL(videoID));
 		    	}
 		    	else
@@ -70,11 +75,6 @@ public class Urlfollow extends Feature
   	}
 
 	@Override
-	public void connectTrigger()
-	{
-	}
-
-	@Override
 	public String getHelp()
 	{
 		return "Commands: None | Looks up and posts the title of a URL when posted.";
@@ -97,8 +97,6 @@ public class Urlfollow extends Feature
 	      
 	      while( (line = bufReader.readLine()) != null && !foundEndTag)
 	      {
-	        System.out.println(line);
-	      
 	        //search for title start tag (convert to lower case before searhing)
 	        if( !foundStartTag && (startIndex = line.toLowerCase().indexOf(startTag)) != -1 )
 	        {
@@ -183,5 +181,15 @@ public class Urlfollow extends Feature
 	    	  }
 	      }
 	      return "Video Title: " + title + " | " + duration + " | " + description;
+	}
+	
+	@Override
+	public void onLoad()
+	{
+	}
+
+	@Override
+	public void onUnload()
+	{
 	}
 }

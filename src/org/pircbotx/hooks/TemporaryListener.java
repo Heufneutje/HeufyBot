@@ -32,6 +32,7 @@ import org.pircbotx.HeufyBot;
  * removing is that you may need to check for something before executing.
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class TemporaryListener extends ListenerAdapter {
 	protected final HeufyBot bot;
 

@@ -94,6 +94,7 @@ import org.pircbotx.utilities.Utils;
  * <p>Forked and Maintained by Leon Blakey <lord.quackstar at gmail.com> in <a href="http://pircbotx.googlecode.com">PircBotX</a>
  */
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class HeufyBot {
 	/**
 	 * The definitive version number of this release of PircBotX.
@@ -477,6 +478,7 @@ public class HeufyBot {
 				handleLine(line);
 				List<String> params = Utils.tokenizeLine(line);
 				if (params.size() >= 2) {
+					@SuppressWarnings("unused")
 					String sender = "";
 					if (params.get(0).startsWith(":")) sender = params.remove(0);
 					String code = params.remove(0);
@@ -2587,6 +2589,7 @@ public class HeufyBot {
 	 * Gets all the name's of all the channels that we are connected to
 	 * @return An <i>Unmodifiable</i> set of Channel names
 	 */
+	@SuppressWarnings("serial")
 	public Set<String> getChannelsNames() {
 		return Collections.unmodifiableSet(new HashSet<String>(){
 			

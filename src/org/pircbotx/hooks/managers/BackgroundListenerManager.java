@@ -42,6 +42,7 @@ import org.pircbotx.hooks.Listener;
  * with isBackground set to true
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class BackgroundListenerManager extends ThreadedListenerManager {
 	protected Map<Listener, ExecutorService> backgroundListeners = new HashMap();
 	protected AtomicInteger backgroundCount = new AtomicInteger();

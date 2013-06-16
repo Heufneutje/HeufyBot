@@ -39,6 +39,7 @@ import org.pircbotx.hooks.Listener;
  * <p/>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings("rawtypes")
 public interface ListenerManager<E extends HeufyBot> {
 	/**
 	 * Sends event to all appropriate listeners.

@@ -24,6 +24,7 @@ import org.pircbotx.hooks.Event;
  *
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"serial", "rawtypes"})
 public class UnknownEventException extends RuntimeException {
 	public UnknownEventException(Event event, Throwable cause) {
 		super("Unknown Event " + event.getClass().toString(), cause);

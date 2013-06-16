@@ -26,7 +26,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import org.pircbotx.HeufyBot;
@@ -46,7 +45,7 @@ import org.pircbotx.hooks.Listener;
  * </ul>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
-
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ThreadedListenerManager<E extends HeufyBot> implements ListenerManager<E> {
 	protected ExecutorService pool;
 	protected Set<Listener> listeners = Collections.synchronizedSet(new HashSet<Listener>());

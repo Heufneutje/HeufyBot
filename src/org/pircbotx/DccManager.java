@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,7 @@ import org.pircbotx.hooks.events.IncomingFileTransferEvent;
  * <a href="http://www.jibble.org/">Paul James Mutton</a> for <a href="http://www.jibble.org/pircbot.php">PircBot</a>
  * <p>Forked and Maintained by Leon Blakey <lord.quackstar at gmail.com> in <a href="http://pircbotx.googlecode.com">PircBotX</a>
  */
-
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DccManager implements Closeable {
 	protected HeufyBot bot;
 	protected List<DccFileTransfer> awaitingResume = Collections.synchronizedList(new ArrayList<DccFileTransfer>());
@@ -98,7 +97,7 @@ public class DccManager implements Closeable {
 			//We are resuming sending a file to someone, this is them acknowledging
 			//Example: DCC ACCEPT <filename> <port> <position>
 			int port = Integer.parseInt(tokenizer.nextToken());
-			long progress = Long.parseLong(tokenizer.nextToken());
+			//long progress = Long.parseLong(tokenizer.nextToken());
 			DccFileTransfer transfer = removeAwaitingResume(source, port);
 			if (transfer == null) throw new DccException("No Dcc File Transfer to resume sending (filename: " + filename + ", source: " + source + ", port: " + port + ")");
 			transfer.doReceive(true);

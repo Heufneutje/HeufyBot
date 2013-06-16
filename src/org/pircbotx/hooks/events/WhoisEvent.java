@@ -30,6 +30,7 @@ import org.pircbotx.hooks.Event;
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class WhoisEvent<T extends HeufyBot> extends Event<T> {
 	protected WhoisEventBuilder builder;
 	

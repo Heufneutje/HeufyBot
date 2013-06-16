@@ -22,6 +22,7 @@ package org.pircbotx.exception;
  * A general exception dealing with Dcc errors
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings("serial")
 public class DccException extends RuntimeException {
 	public DccException(String message, Throwable cause) {
 		super(message, cause);

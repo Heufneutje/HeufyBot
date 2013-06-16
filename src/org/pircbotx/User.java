@@ -34,6 +34,7 @@ import org.pircbotx.hooks.events.WhoisEvent;
  * <p>Forked and Maintained by Leon Blakey <lord.quackstar at gmail.com> in <a href="http://pircbotx.googlecode.com">PircBotX</a>
  */
 
+@SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
 public class User implements Comparable<User> {
 	private String nick;
 	private String realName = "";

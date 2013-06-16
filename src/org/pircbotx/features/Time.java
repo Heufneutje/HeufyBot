@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import org.pircbotx.HeufyBot;
+import org.pircbotx.features.types.AuthType;
+import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
 import org.pircbotx.utilities.URLUtils;
 
@@ -15,6 +17,10 @@ public class Time extends Feature
 	public Time(HeufyBot bot, String name)
 	{
 		super(bot, name);
+		
+		this.triggerType = TriggerType.Message;
+		this.authType = AuthType.Anyone;
+		
 	    this.triggers = new String[1];
 	    this.triggers[0] = bot.getCommandPrefix() + "time";
 	}
@@ -111,16 +117,21 @@ public class Time extends Feature
 			}
 		}
 	}
+	
+	@Override
+	public String getHelp() 
+	{
+		return "Commands: " + bot.getCommandPrefix() + "time <location/nick> | Displays the time of a given location or a user on the chatmap. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude, IATA or city name.";
+	}
 
 	@Override
-	public void connectTrigger()
+	public void onLoad()
 	{
 		FileUtils.touchFile(settingsPath);
 	}
 
 	@Override
-	public String getHelp() 
+	public void onUnload()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "time <location/nick> | Displays the time of a given location or a user on the chatmap. Location can be US Zipcode, UK Postcode, Canada Postalcode, IP address, Latitude/Longitude, IATA or city name.";
 	}
 }

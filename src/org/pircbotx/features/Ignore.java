@@ -4,21 +4,25 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.pircbotx.HeufyBot;
-import org.pircbotx.utilities.AuthorizationType;
+import org.pircbotx.features.types.AuthType;
+import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
 
 public class Ignore extends Feature 
 {
-	private String settingsPath = "featuresettings/ignore.txt";
 	private ArrayList<String> ignoreList = new ArrayList<String>();
 	
 	public Ignore(HeufyBot bot, String name) 
 	{
 		super(bot, name);
+		this.settingsPath = "featuresettings/ignore.txt";
+		
+		this.triggerType = TriggerType.Message;
+		this.authType = AuthType.OPs;
+		
 		this.triggers = new String[2];
 		this.triggers[0] = bot.getCommandPrefix() + "ignore";
 		this.triggers[1] = bot.getCommandPrefix() + "unignore";
-		this.authType = AuthorizationType.OPs;
 	}
 
 	@Override
@@ -100,7 +104,7 @@ public class Ignore extends Feature
 	}
 
 	@Override
-	public void connectTrigger() 
+	public void onLoad() 
 	{
 		FileUtils.touchFile(settingsPath);
 		String[] ignores = FileUtils.readFile(settingsPath).split("\n");
@@ -109,5 +113,11 @@ public class Ignore extends Feature
 			ignoreList.add(ignores[i]);
 		}
 		bot.setIgnoreList(ignoreList);
+	}
+
+	@Override
+	public void onUnload()
+	{
+		ignoreList.clear();
 	}
 }

@@ -37,6 +37,7 @@ import org.pircbotx.hooks.managers.ListenerManager;
  * <p/>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings("rawtypes")
 public class CoreHooks implements Listener {
 	public void onFinger(FingerEvent event) {
 		event.getBot().sendCTCPResponse(event.getUser(), "FINGER " + event.getBot().getFinger());

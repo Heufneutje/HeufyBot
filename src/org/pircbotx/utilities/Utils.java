@@ -70,6 +70,7 @@ import org.pircbotx.hooks.Event;
  *
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings("rawtypes")
 public class Utils {
 	/**
 	 * Extract the source user from any Event. <b>Warning:</b> This will not work

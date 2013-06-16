@@ -38,6 +38,7 @@ import java.util.Set;
  * This class is internally synchronized and fully thread safe.
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class ManyToManyMap<A, B> {
 	protected final Map<A, Set<B>> AMap = new HashMap<A, Set<B>>();
 	protected final Map<B, Set<A>> BMap = new HashMap<B, Set<A>>();

@@ -41,6 +41,7 @@ import org.pircbotx.hooks.types.*;
  * will work!
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public abstract class ListenerAdapter<T extends HeufyBot> implements Listener<T> {
 	protected static final Map<Class<? extends Event>, Set<Method>> eventToMethod = new HashMap();
 

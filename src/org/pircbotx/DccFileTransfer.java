@@ -41,6 +41,7 @@ import org.pircbotx.hooks.events.FileTransferFinishedEvent;
  * <p>Forked and Maintained by Leon Blakey <lord.quackstar at gmail.com> in <a href="http://pircbotx.googlecode.com">PircBotX</a>
  */
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class DccFileTransfer implements Closeable {
 	/**
 	 * The default buffer size to use when sending and receiving files.

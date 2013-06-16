@@ -38,6 +38,7 @@ import org.pircbotx.HeufyBot;
  * </code>
  * @author Leon Blakey <lord.quackstar at gmail.com>
  */
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class WaitForQueue implements Closeable {
 	protected final HeufyBot bot;
 	protected BlockingQueue<Event> eventQueue = new LinkedBlockingQueue<Event>();
