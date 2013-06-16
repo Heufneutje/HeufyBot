@@ -46,6 +46,6 @@ public class Boop extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: None | Greets every user that says hi to the bot.";
+		return "Commands: None | Shows a random booping picture whenever boop is said in either message or action.";
 	}
 }
