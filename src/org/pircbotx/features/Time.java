@@ -13,10 +13,10 @@ import org.pircbotx.utilities.URLUtils;
 
 public class Time extends Feature
 {
-	private String settingsPath = "featuresettings/worldweatherapikey.txt";
 	public Time(HeufyBot bot, String name)
 	{
 		super(bot, name);
+		this.settingsPath = "featuredata/worldweatherapikey.txt";
 		
 		this.triggerType = TriggerType.Message;
 		this.authType = AuthType.Anyone;

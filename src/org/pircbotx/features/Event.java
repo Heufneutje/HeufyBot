@@ -14,7 +14,7 @@ import org.pircbotx.utilities.FileUtils;
 
 public class Event extends Feature
 {
-	private String settingsPath = "featuresettings/events.txt";
+	private String settingsPath = "featuredata/events.txt";
 	
 	public Event(HeufyBot bot, String name)
 	{

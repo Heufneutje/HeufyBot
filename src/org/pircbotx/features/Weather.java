@@ -11,7 +11,7 @@ public class Weather extends Feature
 	public Weather(HeufyBot bot, String name) 
 	{
 		super(bot, name);
-		this.settingsPath = "featuresettings/worldweatherapikey.txt";
+		this.settingsPath = "featuredata/worldweatherapikey.txt";
 		
 		this.triggerType = TriggerType.Message;
 		this.authType = AuthType.Anyone;

@@ -20,7 +20,7 @@ public class Outofcontext extends Feature
 	public Outofcontext(HeufyBot bot, String name) 
 	{
 		super(bot, name);
-		this.settingsPath = "featuresettings/ooclog.txt";
+		this.settingsPath = "featuredata/ooclog.txt";
 		
 		this.triggerType = TriggerType.Message;
 		this.authType = AuthType.Anyone;

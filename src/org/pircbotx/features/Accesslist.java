@@ -15,7 +15,7 @@ public class Accesslist extends Feature
 	public Accesslist(HeufyBot bot, String name)
 	{
 	    super(bot, name);
-	    this.settingsPath = "featuresettings/accesslist.txt";
+	    this.settingsPath = "featuredata/accesslist.txt";
 	    
 	    this.triggerType = TriggerType.Join;
 	    this.authType = AuthType.OPs;

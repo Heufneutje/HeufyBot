@@ -244,6 +244,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		{
 			if (!((Feature)this.features.get(i)).getClass().getName().equals(className))
 				continue;
+			this.features.get(i).onUnload();
 			this.features.remove(this.features.get(i));
 			return 0;
 		}
@@ -301,7 +302,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		features.clear();
 	}
   
-	public void runConnectTriggers()
+	public void runLoads()
 	{
 		for(Feature feature : features)
 		{

@@ -15,7 +15,7 @@ public class Ignore extends Feature
 	public Ignore(HeufyBot bot, String name) 
 	{
 		super(bot, name);
-		this.settingsPath = "featuresettings/ignore.txt";
+		this.settingsPath = "featuredata/ignore.txt";
 		
 		this.triggerType = TriggerType.Message;
 		this.authType = AuthType.OPs;
