@@ -20,7 +20,7 @@ public class Greet extends Feature
 
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)
 	{
-		if(metadata.toLowerCase().matches("^hi|hai|hey|sup|greeting|hello|howdy|yo.*"))
+		if(metadata.toLowerCase().matches("^(hi|hai|hey|sup|greeting|hello|howdy|yo).*"))
 		{
 			this.bot.sendMessage(source, "Hi, " + triggerUser + "!");
 		}
