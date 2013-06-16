@@ -19,6 +19,7 @@ public class Boop extends Feature
 		this.triggers = new String[1];
 		this.triggers[0] = "boop";
 		this.messageMustStartWithTrigger = false;
+		this.triggerOnAction = true;
 	}
 
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)

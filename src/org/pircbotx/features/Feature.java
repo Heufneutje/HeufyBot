@@ -12,6 +12,7 @@ public abstract class Feature
 	protected TriggerType triggerType;
 	protected AuthType authType;
 	protected boolean messageMustStartWithTrigger = true;
+	protected boolean triggerOnAction = false;
 
 	public Feature(HeufyBot bot, String name)
 	{
@@ -48,6 +49,11 @@ public abstract class Feature
 	public String getSettingsPath()
 	{
 		return settingsPath;
+	}
+	
+	public boolean triggersOnAction()
+	{
+		return triggerOnAction;
 	}
   
 	public abstract String getHelp();

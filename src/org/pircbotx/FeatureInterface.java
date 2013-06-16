@@ -10,6 +10,7 @@ import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.hooks.Listener;
 import org.pircbotx.hooks.ListenerAdapter;
+import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 
@@ -40,14 +41,24 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			}
 		}
 	}
+	
+	public void onAction(ActionEvent event)
+	{
+		handleMessage(event.getMessage(), event.getUser(), event.getChannel(), true);
+	}
 
 	@Override
 	public void onMessage(MessageEvent event) throws Exception
 	{
+		handleMessage(event.getMessage(), event.getUser(), event.getChannel(), false);
+	}
+	
+	private void handleMessage(String message, User user, Channel channel, boolean triggerOnAction)
+	{
 		boolean ignored = false;
 		for(String ignore : bot.getIgnoreList())
 		{
-			if(ignore.equalsIgnoreCase(event.getUser().getNick()))
+			if(ignore.equalsIgnoreCase(user.getNick()))
 			{
 				ignored = true;
 			}
@@ -58,42 +69,42 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			{
 				for (int i = 0; i < feature.getTriggers().length; i++)
 				{
-					if(feature.mustStartWithTrigger())
+					if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerOnAction || !triggerOnAction))
 					{
-						if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().startsWith(feature.getTriggers()[i]))
+						if (feature.getTriggers().length > 0 && !message.toLowerCase().startsWith(feature.getTriggers()[i]))
 							continue;
 						if(feature.getAuthType() == AuthType.OPs)
 						{
-							if(bot.checkAutorization(event.getUser(), event.getChannel()))
+							if(bot.checkAutorization(user, channel))
 							{
-								feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick(), feature.getTriggers()[i]);
+								feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
 							}
 							else
 							{
-								this.bot.sendMessage(event.getChannel(), "[" + feature.getName() + "] Only my owner " + bot.getBotOwner() + " and OPs are authorized to use this command!");
+								this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owner " + bot.getBotOwner() + " and OPs are authorized to use this command!");
 							}
 						}
 						else
 						{
-							feature.process(event.getChannel().getName(), event.getMessage().substring(feature.getTriggers()[i].length()), event.getUser().getNick(), feature.getTriggers()[i]);
+							feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
 						}
 					}
 					else
 					{
-						if (feature.getTriggers().length > 0 && !event.getMessage().toLowerCase().contains(feature.getTriggers()[i]))
+						if (feature.getTriggers().length > 0 && !message.toLowerCase().contains(feature.getTriggers()[i]))
 							continue;
-						feature.process(event.getChannel().getName(), event.getMessage(), event.getUser().getNick(), null);
+						feature.process(channel.getName(), message, user.getNick(), null);
 							break;
 					}
 				}
 			}
 			
-			if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
+			if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
 			{
-				String source = event.getChannel().getName();
-				if(bot.checkAutorization(event.getUser(), event.getChannel()))
+				String source = channel.getName();
+				if(bot.checkAutorization(user, channel))
 				{
-					String metadata = event.getMessage().substring(5);
+					String metadata = message.substring(5);
 	
 					if ((metadata.equals("")) || (metadata.equals(" ")))
 					{
@@ -126,12 +137,12 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			else
 			{
 				String featureName;
-				if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
+				if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
 				{
-					String source = event.getChannel().getName();
-					if(bot.checkAutorization(event.getUser(), event.getChannel()))
+					String source = channel.getName();
+					if(bot.checkAutorization(user, channel))
 					{
-						String metadata = event.getMessage().substring(7);
+						String metadata = message.substring(7);
 	
 						if ((metadata.equals("")) || (metadata.equals(" ")))
 						{
@@ -169,10 +180,10 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 						this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can unload features!");
 					}
 				}
-				else if (event.getMessage().toLowerCase().startsWith(bot.getCommandPrefix() + "help"))
+				else if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "help"))
 				{
-					String source = event.getChannel().getName();
-					String metadata = event.getMessage().substring(5);
+					String source = channel.getName();
+					String metadata = message.substring(5);
     	  
 					if ((metadata.equals("")) || (metadata.equals(" ")))
 					{
@@ -191,7 +202,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 								response += ", ";
 							}
 						}
-						this.bot.sendMessage(event.getChannel(), response);
+						this.bot.sendMessage(channel, response);
 					}
 					else if (metadata.startsWith(" "))
 					{
