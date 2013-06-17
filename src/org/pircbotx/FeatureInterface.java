@@ -117,7 +117,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	
 						switch (loadFeature(featureName)) {
 						case 0:
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" was succesfully loaded!");
+							this.bot.sendMessage(source, "Feature \"" + featureName + "\" was successfully loaded!");
 							break;
 						case 1:
 							this.bot.sendMessage(source, "Feature \"" + featureName + "\" is already loaded!");
@@ -165,7 +165,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 							switch (unloadFeature(featureName)) 
 							{
 							case 0:
-								this.bot.sendMessage(source, "Feature \"" + featureName + "\" was succesfully unloaded!");
+								this.bot.sendMessage(source, "Feature \"" + featureName + "\" was successfully unloaded!");
 								break;
 							case 1:
 								this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
