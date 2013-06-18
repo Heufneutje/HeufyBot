@@ -3,7 +3,6 @@ package org.pircbotx;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.pircbotx.features.Feature;
 import org.pircbotx.features.types.AuthType;
@@ -65,40 +64,6 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		}
 		if(ignored == false)
 		{
-			for (Feature feature : this.features)
-			{
-				for (int i = 0; i < feature.getTriggers().length; i++)
-				{
-					if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerOnAction || !triggerOnAction))
-					{
-						if (feature.getTriggers().length > 0 && !message.toLowerCase().startsWith(feature.getTriggers()[i]))
-							continue;
-						if(feature.getAuthType() == AuthType.OPs)
-						{
-							if(bot.checkAutorization(user, channel))
-							{
-								feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
-							}
-							else
-							{
-								this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owner " + bot.getBotOwner() + " and OPs are authorized to use this command!");
-							}
-						}
-						else
-						{
-							feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
-						}
-					}
-					else
-					{
-						if (feature.getTriggers().length > 0 && !message.toLowerCase().contains(feature.getTriggers()[i]))
-							continue;
-						feature.process(channel.getName(), message, user.getNick(), null);
-							break;
-					}
-				}
-			}
-			
 			if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
 			{
 				String source = channel.getName();
@@ -134,87 +99,81 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 					this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can load features!");
 				}
 			}
-			else
+			else if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
 			{
-				String featureName;
-				if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
+				String source = channel.getName();
+				if(bot.checkAutorization(user, channel))
 				{
-					String source = channel.getName();
-					if(bot.checkAutorization(user, channel))
-					{
-						String metadata = message.substring(7);
-	
-						if ((metadata.equals("")) || (metadata.equals(" ")))
-						{
-							this.bot.sendMessage(source, "Unload what?");
-						}
-						else if (metadata.equals(" *"))
-						{
-							int featureCount = features.size();
-							for(int i = 0; i < featureCount; i++)
-							{
-								unloadFeature(features.get(0).getName());
-							}
-							this.bot.sendMessage(source, "All features have been unloaded.");
-						}
-						else if (metadata.startsWith(" "))
-						{
-							featureName = "";
-							featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
-	
-							switch (unloadFeature(featureName)) 
-							{
-							case 0:
-								this.bot.sendMessage(source, "Feature \"" + featureName + "\" was successfully unloaded!");
-								break;
-							case 1:
-								this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
-								break;
-							default:
-								break;
-							}
-						}
-					}
-					else
-					{
-						this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can unload features!");
-					}
-				}
-				else if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "help"))
-				{
-					String source = channel.getName();
-					String metadata = message.substring(5);
-    	  
+					String metadata = message.substring(7);
+
 					if ((metadata.equals("")) || (metadata.equals(" ")))
 					{
-						ArrayList<String> featureNames = new ArrayList<String>();
-						for(Feature feature : this.features)
+						this.bot.sendMessage(source, "Unload what?");
+					}
+					else if (metadata.equals(" *"))
+					{
+						int featureCount = features.size();
+						for(int i = 0; i < featureCount; i++)
 						{
-							featureNames.add(feature.getName());
+							unloadFeature(features.get(0).getName());
 						}
-						Collections.sort(featureNames);
-						String response = "Features loaded: ";
-						for (String feature : featureNames)
-						{
-							response += feature;
-							if(!featureNames.get(featureNames.size() - 1).equals(feature))
-							{
-								response += ", ";
-							}
-						}
-						this.bot.sendMessage(channel, response);
+						this.bot.sendMessage(source, "All features have been unloaded.");
 					}
 					else if (metadata.startsWith(" "))
 					{
-						featureName = Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
-						String help = this.getFeatureHelp(featureName);
-						if(help != null)
+						String featureName = "";
+						featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
+
+						switch (unloadFeature(featureName)) 
 						{
-							this.bot.sendMessage(source, "[Help: " + featureName + "] " + help);
+						case 0:
+							this.bot.sendMessage(source, "Feature \"" + featureName + "\" was successfully unloaded!");
+							break;
+						case 1:
+							this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
+							break;
+						default:
+							break;
+						}
+					}
+				}
+				else
+				{
+					this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can unload features!");
+				}
+			}
+			else
+			{
+				for (Feature feature : this.features)
+				{
+					for (int i = 0; i < feature.getTriggers().length; i++)
+					{
+						if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerOnAction || !triggerOnAction))
+						{
+							if (feature.getTriggers().length > 0 && !message.toLowerCase().startsWith(feature.getTriggers()[i]))
+								continue;
+							if(feature.getAuthType() == AuthType.OPs)
+							{
+								if(bot.checkAutorization(user, channel))
+								{
+									feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
+								}
+								else
+								{
+									this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owner " + bot.getBotOwner() + " and OPs are authorized to use this command!");
+								}
+							}
+							else
+							{
+								feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
+							}
 						}
 						else
 						{
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
+							if (feature.getTriggers().length > 0 && !message.toLowerCase().contains(feature.getTriggers()[i]))
+								continue;
+							feature.process(channel.getName(), message, user.getNick(), null);
+								break;
 						}
 					}
 				}
@@ -319,5 +278,10 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		{
 			feature.onLoad();
 		}
+	}
+	
+	public ArrayList<Feature> getFeatures()
+	{
+		return features;
 	}
 }
