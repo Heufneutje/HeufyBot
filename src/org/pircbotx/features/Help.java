@@ -59,7 +59,7 @@ public class Help extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "say <message> | Makes the bot say the given line.";
+		return "Commands: " + bot.getCommandPrefix() + "help, " + bot.getCommandPrefix() + "help <feature> | Shows all features that are currently loaded or shows help for a given feature.";
 	}
 
 	@Override
