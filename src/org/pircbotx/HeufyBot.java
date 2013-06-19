@@ -451,7 +451,9 @@ public class HeufyBot {
 			}
 			this.log("*** Connected to server.", "server");
 			inetAddress = socket.getLocalAddress();
-			new IdentServer(this, login);
+			
+			this.startIdentServer();
+			
 			InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream(), getEncoding());
 			OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream(), getEncoding());
 			BufferedReader breader = new BufferedReader(inputStreamReader);
