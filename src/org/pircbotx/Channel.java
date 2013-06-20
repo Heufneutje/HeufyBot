@@ -104,8 +104,8 @@ public class Channel {
 			//We have known good mode from server, now return
 			return mode;
 		} catch (InterruptedException e) {
-			bot.logException(e); //("Waiting for mode response interrupted", e);
-			return null;
+			//bot.logException(e);
+			throw new RuntimeException("Waiting for mode response interrupted", e);
 		}
 	}
 	

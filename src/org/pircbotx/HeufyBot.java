@@ -59,7 +59,6 @@ import org.pircbotx.cap.EnableCapHandler;
 import org.pircbotx.exception.IrcException;
 import org.pircbotx.exception.NickAlreadyInUseException;
 import org.pircbotx.gui.MainWindow;
-import org.pircbotx.gui.PopupManager;
 import org.pircbotx.hooks.CoreHooks;
 import org.pircbotx.hooks.Event;
 import org.pircbotx.hooks.Listener;
@@ -116,7 +115,7 @@ public class HeufyBot {
 	protected long messageDelay;
 	/*
 	 * A Many to Many map that links Users to Channels and channels to users. Modified
-	 * to remove each channel's and user's internal refrences to each other.
+	 * to remove each channel's and user's internal references to each other.
 	 */
 	protected ManyToManyMap<Channel, User> userChanInfo = new UserChannelMap();
 	/**
@@ -169,7 +168,7 @@ public class HeufyBot {
 	protected Map<String, WhoisEvent.WhoisEventBuilder> whoisBuilder = new HashMap();
 	
 	protected boolean useGui;
-	protected boolean useNickServ;
+	protected int authenticationType;
 	private MainWindow gui;
 	private FeatureInterface featureInterface;
 	/**
@@ -195,7 +194,7 @@ public class HeufyBot {
 		getCapHandlers().add(new EnableCapHandler("multi-prefix", true));
 		socketTimeout = 6000 * 10 * 5;
 		autoNickChange = true;
-		autoReconnect = true;
+		autoReconnect = false;
 		autoReconnectChannels = true;
 		verbose = true;
 		capEnabled = false;
@@ -212,14 +211,7 @@ public class HeufyBot {
 		SettingsUtils.readXML("settings.xml");
 		if (!(new File("settings.xml").exists()))
 		{
-			if(useGui)
-			{
-				PopupManager.showWarningMessage("Settings", "The settings file is corrupted or missing.\nThe default settings file will be created.");
-			}
-			else
-			{
-				log("The settings file is corrupted or missing. The default settings file will be created.", "server");
-			}
+			log("!!! The settings file is corrupted or missing. The default settings file will be created.", "server");
 		}
 		
 		getListenerManager().addListener(getFeatureInterface());
@@ -241,7 +233,7 @@ public class HeufyBot {
 					String serverip = (String)settingsMap.get("serverip");
 					int port = Integer.parseInt((String)settingsMap.get("port"));
 					String password = (String)settingsMap.get("password");
-					int authenticationtype = Integer.parseInt((String)settingsMap.get("authenticationtype"));
+					authenticationType = Integer.parseInt((String)settingsMap.get("authenticationtype"));
 					String channels = (String)settingsMap.get("channels");
 					commandPrefix = (String)settingsMap.get("commandprefix");
 					botOwner = (String)settingsMap.get("botowner");
@@ -253,14 +245,13 @@ public class HeufyBot {
 						featureInterface.loadFeatures(features.split(","));
 					}
 					
-					switch (authenticationtype) {
+					switch (authenticationType) {
 					case 1: 
 						connect(serverip, port, password);
 						break;
 					
 					case 2: 
 						connect(serverip, port);
-						useNickServ = true;
 						identify(password);
 						break;
 					
@@ -287,56 +278,23 @@ public class HeufyBot {
 					//featureInterface.runConnectTriggers();
 				} catch (UnknownHostException e1) 
 				{
-					if(useGui)
-					{
-						PopupManager.showErrorMessage("Could not connect", "Host " + e1.getMessage() + " was not found.");
-					}
-					else
-					{
-						log("Host " + e1.getMessage() + " was not found.", "server");
-					}
+					log("!!! Host " + e1.getMessage() + " was not found.", "server");
 				} catch (ConnectException e1) 
 				{
 					e1.printStackTrace();
-					if(useGui)
-					{
-						PopupManager.showErrorMessage("Could not connect", "Connection was refused.");
-					}
-					else
-					{
-						log("Could not connect. Connection was refused.", "server");
-					}
+					log("!!! Could not connect. Connection was refused.", "server");
 				}
 				catch (NumberFormatException e1) 
 				{
-					if(useGui)
-					{
-						PopupManager.showErrorMessage("Could not connect", "The port is invalid.");
-					}
-					else
-					{
-						log("Could not connect. The port is invalid.", "server");
-					}
-				} catch (IrcException e1) 
+					log("!!! Could not connect. The port is invalid.", "server");
+				} 
+				catch (IrcException e1) 
 				{
-					if(useGui)
-					{
-						PopupManager.showErrorMessage("Could not connect", e1.getMessage());
-					}
-					else
-					{
-						log("Could not connect. " + e1.getMessage(), "server");
-					}
-				} catch (Exception e1)
+					log("!!! Could not connect. " + e1.getMessage(), "server");
+				}
+				catch (Exception e1)
 				{
-					if(useGui)
-					{
-						PopupManager.showErrorMessage("Could not connect", e1.getClass().getCanonicalName() + "\n" + e1.getMessage());
-					}
-					else
-					{
-						log("Could not connect. " + e1.getClass().getCanonicalName() + " " + e1.getMessage(), "server");
-					}
+					log("!!! Could not connect. " + e1.getClass().getCanonicalName() + " " + e1.getMessage(), "server");
 				}
 			}
 		};
@@ -580,15 +538,36 @@ public class HeufyBot {
 	public synchronized void reconnect() throws IOException, IrcException, NickAlreadyInUseException {
 		if (getServer() == null) throw new IrcException("Cannot reconnect to an IRC server because we were never connected to one previously!");
 		try {
-			connect(getServer(), getPort(), getPassword(), getSocketFactory());
+			switch (authenticationType) {
+			case 1: 
+				connect(server, port, password);
+				break;
+			
+			case 2: 
+				connect(server, port);
+				identify(password);
+				break;
+			
+			case 3: 
+				connect(server, port);
+				sendRawLine("AUTH " + name + " " + password);
+				break;
+			
+			default: 
+				connect(server, port);
+			
+			}
 		} catch (IOException e) {
 			getListenerManager().dispatchEvent(new ReconnectEvent(this, false, e));
+			e.printStackTrace();
 			throw e;
 		} catch (IrcException e) {
 			getListenerManager().dispatchEvent(new ReconnectEvent(this, false, e));
+			e.printStackTrace();
 			throw e;
 		} catch (RuntimeException e) {
 			getListenerManager().dispatchEvent(new ReconnectEvent(this, false, e));
+			e.printStackTrace();
 			throw e;
 		}
 		//Should be good
@@ -2755,7 +2734,8 @@ public class HeufyBot {
 	/**
 	 * Calls shutdown allowing reconnect
 	 */
-	public void shutdown() {
+	public void shutdown()
+	{
 		shutdown(false);
 	}
 	/**
@@ -2766,8 +2746,17 @@ public class HeufyBot {
 	 * @param noReconnect Toggle whether to reconnect if enabled. Set to true to
 	 * 100% shutdown the bot
 	 */
-	public void shutdown(boolean noReconnect) {
-		try {
+	public void shutdown(boolean noReconnect)
+	{
+		//Cache channels for possible next reconnect
+		final Map<String, String> previousChannels = new HashMap();
+		try
+		{
+			for (Channel curChannel : getChannels())
+			{
+				String key = (curChannel.getChannelKey() == null) ? "" : curChannel.getChannelKey();
+				previousChannels.put(curChannel.getName(), key);
+			}
 			outputThread.interrupt();
 			inputThread.interrupt();
 		} catch (Exception e) {
@@ -2787,12 +2776,7 @@ public class HeufyBot {
 			//Not much we can do with it here. And throwing it would not let other things shutdown
 			logException(ex);
 		}
-		//Cache channels for possible next reconnect
-		final Map<String, String> previousChannels = new HashMap();
-		for (Channel curChannel : getChannels()) {
-			String key = (curChannel.getChannelKey() == null) ? "" : curChannel.getChannelKey();
-			previousChannels.put(curChannel.getName(), key);
-		}
+		
 		//Clear relevant variables of information
 		userChanInfo.clear();
 		userNickMap.clear();
@@ -2804,41 +2788,33 @@ public class HeufyBot {
 		//Dispatch event
 		if (autoReconnect && !noReconnect)
 		{
-			Thread reconThread = new Thread()
+			int connectionAttempts = 0;
+			boolean success = false;
+			while(connectionAttempts < 30 && !success)
 			{
-				@Override
-				public void run()
+				connectionAttempts++;
+				log("*** Reconnect attempt #" + connectionAttempts + "...", "server");
+				try 
 				{
-					int connectionAttempts = 0;
-					while(connectionAttempts < 30)
-					{
-						connectionAttempts++;
-						log("*** Reconnect attempt #" + connectionAttempts + "...", "server");
-						try 
-						{
-							reconnect();
-							if (autoReconnectChannels) for (Map.Entry<String, String> curEntry : previousChannels.entrySet()) joinChannel(curEntry.getKey(), curEntry.getValue());
-							this.interrupt();
-						}
-						catch (Exception e) 
-						{
-							log("*** Reconnecting failed, trying again in 60 seconds.", "server");
-							try
-							{
-								Thread.sleep(60000);
-							}
-							catch (InterruptedException e1)
-							{
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							//Not much we can do with it
-							//throw new RuntimeException("Can\'t reconnect to server", e);
-						}
-					}
+					reconnect();
+					if (autoReconnectChannels) for (Map.Entry<String, String> curEntry : previousChannels.entrySet()) joinChannel(curEntry.getKey(), curEntry.getValue());
+					success = true;
 				}
-			};
-			reconThread.start();
+				catch (Exception e) 
+				{
+					log("*** Reconnecting failed, trying again in 60 seconds.", "server");
+					try
+					{
+						Thread.sleep(60000);
+					}
+					catch (InterruptedException e1)
+					{
+						e1.printStackTrace();
+					}
+					//Not much we can do with it
+					//throw new RuntimeException("Can\'t reconnect to server", e);
+				}
+			}
 		}
 		else
 		{
@@ -3120,7 +3096,7 @@ public class HeufyBot {
 		{
 			return true;
 		}
-		else if(useNickServ)
+		else if(authenticationType == 1)
 		{
 			if(user.isVerified())
 			{

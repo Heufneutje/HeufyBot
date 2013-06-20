@@ -100,7 +100,7 @@ public class InputThread extends Thread {
 				continue;
 			} catch (Exception e) {
 				//Something is wrong. Assume its bad and begin disconnect
-				//bot.logException(e);
+				bot.logException(e);
 				line = null;
 			}
 

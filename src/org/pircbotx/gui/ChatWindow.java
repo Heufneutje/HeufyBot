@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -84,7 +86,7 @@ public class ChatWindow extends JPanel
   			}
   			else
   			{
-			  	String newTopic = PopupManager.showInputMessage("New Topic", "Enter the new topic", topic.getText());
+			  	String newTopic = (String) JOptionPane.showInputDialog(new JFrame(), "Enter the new topic", "New Topic",  JOptionPane.PLAIN_MESSAGE, null, null, topic.getText()); //PopupManager.showInputMessage("New Topic", "Enter the new topic", topic.getText());
 			  	if(newTopic != null)
 			  	{
 				  	gui.sendText("/topic " + name + " :" + newTopic, name);
