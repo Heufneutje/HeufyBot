@@ -195,6 +195,8 @@ public class HeufyBot {
 		getCapHandlers().add(new EnableCapHandler("multi-prefix", true));
 		socketTimeout = 6000 * 10 * 5;
 		autoNickChange = true;
+		autoReconnect = true;
+		autoReconnectChannels = true;
 		verbose = true;
 		capEnabled = false;
 		messageDelay = 1000;
@@ -604,10 +606,6 @@ public class HeufyBot {
 	public synchronized void disconnect() {
 		featureInterface.reloadFeatures();
 		quitServer();
-		if(useGui)
-		{
-			gui.reset();
-		}
 	}
 	/**
 	 * Enable CAP ability for this instance of the bot.
@@ -1624,30 +1622,7 @@ public class HeufyBot {
 			while (tokenizer.hasMoreTokens()) log("### " + tokenizer.nextToken(), "server");
 		}
 	}
-	
-	/*public boolean isOped(Channel channel) {
-		for (User user : channel.getHalfOps()) {
-			if (user.getNick().equals(name)) {
-				return true;
-			}
-		}
-		for (User user : channel.getOps()) {
-			if (user.getNick().equals(name)) {
-				return true;
-			}
-		}
-		for (User user : channel.getSuperOps()) {
-			if (user.getNick().equals(name)) {
-				return true;
-			}
-		}
-		for (User user : channel.getOwners()) {
-			if (user.getNick().equals(nick)) {
-				return true;
-			}
-		}
-		return false;
-	}*/
+
 	/**
 	 * This method handles events when any line of text arrives from the server,
 	 * then calling the appropriate method in the PircBotX. This method is
@@ -1657,7 +1632,6 @@ public class HeufyBot {
 	 */
 	protected void handleLine(String line) throws IOException {
 		if (line == null) throw new IllegalArgumentException("Can\'t process null line");
-		//log("<<<" + line, "");
 		List<String> parts = Utils.tokenizeLine(line);
 		String senderInfo = "";
 		if (parts.get(0).startsWith(":")) senderInfo = parts.remove(0);
@@ -1669,7 +1643,8 @@ public class HeufyBot {
 			return;
 		} else if (line.startsWith("ERROR ")) {
 			//Server is shutting us down
-			shutdown(true);
+			log(line.substring(6), "server");
+			shutdown();
 			return;
 		}
 		String sourceNick = "";
@@ -2813,7 +2788,7 @@ public class HeufyBot {
 			logException(ex);
 		}
 		//Cache channels for possible next reconnect
-		Map<String, String> previousChannels = new HashMap();
+		final Map<String, String> previousChannels = new HashMap();
 		for (Channel curChannel : getChannels()) {
 			String key = (curChannel.getChannelKey() == null) ? "" : curChannel.getChannelKey();
 			previousChannels.put(curChannel.getName(), key);
@@ -2822,14 +2797,51 @@ public class HeufyBot {
 		userChanInfo.clear();
 		userNickMap.clear();
 		channelListBuilder.finish();
+		if(useGui)
+		{
+			gui.reset();
+		}
 		//Dispatch event
-		if (autoReconnect && !noReconnect) try {
-			reconnect();
-			if (autoReconnectChannels) for (Map.Entry<String, String> curEntry : previousChannels.entrySet()) joinChannel(curEntry.getKey(), curEntry.getValue());
-		} catch (Exception e) {
-			//Not much we can do with it
-			throw new RuntimeException("Can\'t reconnect to server", e);
-		} else {
+		if (autoReconnect && !noReconnect)
+		{
+			Thread reconThread = new Thread()
+			{
+				@Override
+				public void run()
+				{
+					int connectionAttempts = 0;
+					while(connectionAttempts < 30)
+					{
+						connectionAttempts++;
+						log("*** Reconnect attempt #" + connectionAttempts + "...", "server");
+						try 
+						{
+							reconnect();
+							if (autoReconnectChannels) for (Map.Entry<String, String> curEntry : previousChannels.entrySet()) joinChannel(curEntry.getKey(), curEntry.getValue());
+							this.interrupt();
+						}
+						catch (Exception e) 
+						{
+							log("*** Reconnecting failed, trying again in 60 seconds.", "server");
+							try
+							{
+								Thread.sleep(60000);
+							}
+							catch (InterruptedException e1)
+							{
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							//Not much we can do with it
+							//throw new RuntimeException("Can\'t reconnect to server", e);
+						}
+					}
+				}
+			};
+			reconThread.start();
+		}
+		else
+		{
 			getListenerManager().dispatchEvent(new DisconnectEvent(this));
 			log("*** Disconnected.", "server");
 		}
