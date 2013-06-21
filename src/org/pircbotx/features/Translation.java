@@ -26,8 +26,7 @@ public class Translation extends Feature {
 	@Override
 	public String getHelp()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return "Commands: " + bot.getCommandPrefix() + "translate <tolanguage> <sentence>, " + bot.getCommandPrefix() + "translate (<fromlanguage>/<tolanguage>) <sentence> | Translates a sentence to a different language";
 	}
 
 	@Override
@@ -44,7 +43,7 @@ public class Translation extends Feature {
 			String textToTranslate = "";
 			try
 			{
-				toLanguage = metadata.substring(0, metadata.indexOf(" "));
+				toLanguage = metadata.substring(0, metadata.indexOf(" ")).toLowerCase();
 				textToTranslate  = metadata.substring(metadata.indexOf(" ") + 1);
 			}
 			catch (StringIndexOutOfBoundsException e)
@@ -76,7 +75,7 @@ public class Translation extends Feature {
 			try
 			{
 				Language sourceLanguage = Detect.execute(textToTranslate);
-				String translatedText = Translate.execute(textToTranslate, Language.fromString(toLanguage.toLowerCase()));
+				String translatedText = Translate.execute(textToTranslate, Language.fromString(toLanguage));
 				bot.sendMessage(source, "[Translation] Source Language: " + sourceLanguage.toString() + " | " + translatedText);
 			} 
 			catch (Exception e)
