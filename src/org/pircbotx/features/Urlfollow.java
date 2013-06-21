@@ -42,37 +42,39 @@ public class Urlfollow extends Feature
 	  
 	  for(String urlstring : urls)
 	  {		    
-		    try
-		    {
-		    	//Try to open YouTube video
-		    	if(urlstring.contains("http://www.youtube.com/watch"))
-		    	{
-		    		String videoID = urlstring.split("watch\\?v=")[1];
-		    		bot.sendMessage(source, "[URLFollow] " + followYouTubeURL(videoID));
-		    	}
-		    	else
-		    	{
-		    		bot.sendMessage(source, "[URLFollow] " + followNormalURL(urlstring));
-		    	}
-		    }
-		    catch(IllegalArgumentException e)
-		    {
-		     	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
-		    }
-		    catch(UnknownHostException e1)
-		    {
-		    	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL. Host " + e1.getMessage() + " was not found.");
-		    }
-		    catch(FileNotFoundException e2)
-		    {
-		    	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
-		    }
-		    catch(IOException e3)
-		    {
-		    	this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
-		    }
+		  try
+		  {
+			  if(!urlstring.matches(".*(jpe?g|gif|png|bmp)"))
+			  {
+				  if(urlstring.contains("http://www.youtube.com/watch"))
+				  {
+					  String videoID = urlstring.split("watch\\?v=")[1];
+					  bot.sendMessage(source, "[URLFollow] " + followYouTubeURL(videoID));
+				  }
+				  else
+				  {
+					  bot.sendMessage(source, "[URLFollow] " + followNormalURL(urlstring));
+				  }
+			  }
 		  }
-  	}
+		  catch(IllegalArgumentException e)
+		  {
+			  this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
+		  }
+		  catch(UnknownHostException e1)
+		  {
+			  this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL. Host " + e1.getMessage() + " was not found.");
+		  }
+		  catch(FileNotFoundException e2)
+		  {
+			  this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
+		  }
+		  catch(IOException e3)
+		  {
+			  this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
+		  }
+	  }
+	}
 
 	@Override
 	public String getHelp()

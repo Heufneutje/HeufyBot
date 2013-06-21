@@ -62,7 +62,6 @@ public class Log extends Feature
   
 	public void post()
 	{
-		this.bot.sendMessage(this.source, "[Log] Attempting to post log... Please wait.");
 		Thread thread = new Thread(new Runnable()
 		{
 			public void run()

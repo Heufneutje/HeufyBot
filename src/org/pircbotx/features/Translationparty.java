@@ -7,7 +7,6 @@ import org.pircbotx.utilities.FileUtils;
 
 import com.memetix.mst.language.Language;
 import com.memetix.mst.translate.Translate;
-import com.memetix.mst.detect.Detect;
 
 public class Translationparty extends Feature
 {
@@ -54,9 +53,6 @@ public class Translationparty extends Feature
 			{
 				Translate.setClientId(authCredentials[0]);
 				Translate.setClientSecret(authCredentials[1]);
-				
-				Detect.setClientId(authCredentials[0]);
-				Detect.setClientSecret(authCredentials[1]);
 			}
 			catch(IndexOutOfBoundsException e)
 			{

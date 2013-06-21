@@ -41,7 +41,6 @@ public class Outofcontext extends Feature
 		this.sourceChannel = source;
 		if(metadata.equals(""))
 		{
-			this.bot.sendMessage(source, "[OutOfContext] Attempting to post log... Please wait.");
 			Thread thread = new Thread(new Runnable()
 			{
 				public void run()
