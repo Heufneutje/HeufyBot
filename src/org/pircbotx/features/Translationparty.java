@@ -71,7 +71,7 @@ public class Translationparty extends Feature
 					{
 						String newText = textToTranslate;
 						String lastEnglishEntry = textToTranslate;
-						for(int tries = 0; tries < 11; tries++)
+						for(int tries = 0; tries < 21; tries++)
 						{
 							if(newText.length() > 99)
 							{
