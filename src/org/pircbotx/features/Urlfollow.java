@@ -46,9 +46,18 @@ public class Urlfollow extends Feature
 		  {
 			  if(!urlstring.matches(".*(jpe?g|gif|png|bmp)"))
 			  {
-				  if(urlstring.contains("http://www.youtube.com/watch"))
+				  String fullHostname = URLUtils.getFullHostname(urlstring);
+				  if(fullHostname.contains("http://www.youtube.com/watch"))
 				  {
-					  String videoID = urlstring.split("watch\\?v=")[1];
+					  String videoID = "";
+					  if(fullHostname.contains("&"))
+					  {
+						  videoID = fullHostname.split("watch\\?v=")[1].substring(0, fullHostname.split("watch\\?v=")[1].indexOf("&"));
+					  }
+					  else
+					  {
+						  videoID = fullHostname.split("watch\\?v=")[1];
+					  }
 					  bot.sendMessage(source, "[URLFollow] " + followYouTubeURL(videoID));
 				  }
 				  else

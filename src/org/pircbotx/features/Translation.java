@@ -26,7 +26,7 @@ public class Translation extends Feature {
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "translate <tolanguage> <sentence>, " + bot.getCommandPrefix() + "translate (<fromlanguage>/<tolanguage>) <sentence> | Translates a sentence to a different language";
+		return "Commands: " + bot.getCommandPrefix() + "translate <tolanguage> <sentence>, " + bot.getCommandPrefix() + "translate <fromlanguage>/<tolanguage> <sentence> | Translates a sentence to a different language through Bing Translate.";
 	}
 
 	@Override
@@ -39,11 +39,11 @@ public class Translation extends Feature {
 		else
 		{
 			metadata = metadata.substring(1);
-			String toLanguage = "";
+			String languageParam = "";
 			String textToTranslate = "";
 			try
 			{
-				toLanguage = metadata.substring(0, metadata.indexOf(" ")).toLowerCase();
+				languageParam = metadata.substring(0, metadata.indexOf(" ")).toLowerCase();
 				textToTranslate  = metadata.substring(metadata.indexOf(" ") + 1);
 			}
 			catch (StringIndexOutOfBoundsException e)
@@ -58,7 +58,8 @@ public class Translation extends Feature {
 			}
 			
 			String[] authCredentials = FileUtils.readFile(settingsPath).split("\n");
-			try
+			
+			if(authCredentials.length > 1)
 			{
 				Translate.setClientId(authCredentials[0]);
 				Translate.setClientSecret(authCredentials[1]);
@@ -66,7 +67,7 @@ public class Translation extends Feature {
 				Detect.setClientId(authCredentials[0]);
 				Detect.setClientSecret(authCredentials[1]);
 			}
-			catch(IndexOutOfBoundsException e)
+			else
 			{
 				this.bot.sendMessage(source, "[Translation] Error: No MS Azure login credentials were provided.");
 				return;
@@ -74,9 +75,20 @@ public class Translation extends Feature {
 			
 			try
 			{
-				Language sourceLanguage = Detect.execute(textToTranslate);
-				String translatedText = Translate.execute(textToTranslate, Language.fromString(toLanguage));
-				bot.sendMessage(source, "[Translation] Source Language: " + sourceLanguage.toString() + " | " + translatedText);
+				if(languageParam.contains("/") && languageParam.length() == 5)
+				{
+					String fromLanguage = languageParam.substring(0, 2);
+					String toLanguage = languageParam.substring(3, 5);
+					System.out.println(fromLanguage + "\n" + toLanguage);
+					String translatedText = Translate.execute(textToTranslate, Language.fromString(fromLanguage), Language.fromString(toLanguage));
+					bot.sendMessage(source, "[Translation] Source Language: " + fromLanguage + " | " + translatedText);
+				}
+				else
+				{
+					Language sourceLanguage = Detect.execute(textToTranslate);
+					String translatedText = Translate.execute(textToTranslate, Language.fromString(languageParam));
+					bot.sendMessage(source, "[Translation] Source Language: Auto-Detect (" + sourceLanguage.toString() + ") | " + translatedText);
+				}			
 			} 
 			catch (Exception e)
 			{
