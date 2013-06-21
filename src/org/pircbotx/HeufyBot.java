@@ -115,7 +115,7 @@ public class HeufyBot {
 	protected long messageDelay;
 	/*
 	 * A Many to Many map that links Users to Channels and channels to users. Modified
-	 * to remove each channel's and user's internal references to each other.
+	 * to remove each channel's and user's internal refrences to each other.
 	 */
 	protected ManyToManyMap<Channel, User> userChanInfo = new UserChannelMap();
 	/**
@@ -168,7 +168,7 @@ public class HeufyBot {
 	protected Map<String, WhoisEvent.WhoisEventBuilder> whoisBuilder = new HashMap();
 	
 	protected boolean useGui;
-	protected int authenticationType;
+	protected boolean useNickServ;
 	private MainWindow gui;
 	private FeatureInterface featureInterface;
 	/**
@@ -194,8 +194,6 @@ public class HeufyBot {
 		getCapHandlers().add(new EnableCapHandler("multi-prefix", true));
 		socketTimeout = 6000 * 10 * 5;
 		autoNickChange = true;
-		autoReconnect = false;
-		autoReconnectChannels = true;
 		verbose = true;
 		capEnabled = false;
 		messageDelay = 1000;
@@ -233,7 +231,7 @@ public class HeufyBot {
 					String serverip = (String)settingsMap.get("serverip");
 					int port = Integer.parseInt((String)settingsMap.get("port"));
 					String password = (String)settingsMap.get("password");
-					authenticationType = Integer.parseInt((String)settingsMap.get("authenticationtype"));
+					int authenticationtype = Integer.parseInt((String)settingsMap.get("authenticationtype"));
 					String channels = (String)settingsMap.get("channels");
 					commandPrefix = (String)settingsMap.get("commandprefix");
 					botOwner = (String)settingsMap.get("botowner");
@@ -245,13 +243,14 @@ public class HeufyBot {
 						featureInterface.loadFeatures(features.split(","));
 					}
 					
-					switch (authenticationType) {
+					switch (authenticationtype) {
 					case 1: 
 						connect(serverip, port, password);
 						break;
 					
 					case 2: 
 						connect(serverip, port);
+						useNickServ = true;
 						identify(password);
 						break;
 					
@@ -276,18 +275,19 @@ public class HeufyBot {
 						}
 					}
 					//featureInterface.runConnectTriggers();
-				} catch (UnknownHostException e1) 
+				}
+				catch (UnknownHostException e1) 
 				{
 					log("!!! Host " + e1.getMessage() + " was not found.", "server");
-				} catch (ConnectException e1) 
+				}
+				catch (ConnectException e1) 
 				{
-					e1.printStackTrace();
 					log("!!! Could not connect. Connection was refused.", "server");
 				}
 				catch (NumberFormatException e1) 
 				{
 					log("!!! Could not connect. The port is invalid.", "server");
-				} 
+				}
 				catch (IrcException e1) 
 				{
 					log("!!! Could not connect. " + e1.getMessage(), "server");
@@ -538,36 +538,15 @@ public class HeufyBot {
 	public synchronized void reconnect() throws IOException, IrcException, NickAlreadyInUseException {
 		if (getServer() == null) throw new IrcException("Cannot reconnect to an IRC server because we were never connected to one previously!");
 		try {
-			switch (authenticationType) {
-			case 1: 
-				connect(server, port, password);
-				break;
-			
-			case 2: 
-				connect(server, port);
-				identify(password);
-				break;
-			
-			case 3: 
-				connect(server, port);
-				sendRawLine("AUTH " + name + " " + password);
-				break;
-			
-			default: 
-				connect(server, port);
-			
-			}
+			connect(getServer(), getPort(), getPassword(), getSocketFactory());
 		} catch (IOException e) {
 			getListenerManager().dispatchEvent(new ReconnectEvent(this, false, e));
-			e.printStackTrace();
 			throw e;
 		} catch (IrcException e) {
 			getListenerManager().dispatchEvent(new ReconnectEvent(this, false, e));
-			e.printStackTrace();
 			throw e;
 		} catch (RuntimeException e) {
 			getListenerManager().dispatchEvent(new ReconnectEvent(this, false, e));
-			e.printStackTrace();
 			throw e;
 		}
 		//Should be good
@@ -1601,7 +1580,30 @@ public class HeufyBot {
 			while (tokenizer.hasMoreTokens()) log("### " + tokenizer.nextToken(), "server");
 		}
 	}
-
+	
+	/*public boolean isOped(Channel channel) {
+		for (User user : channel.getHalfOps()) {
+			if (user.getNick().equals(name)) {
+				return true;
+			}
+		}
+		for (User user : channel.getOps()) {
+			if (user.getNick().equals(name)) {
+				return true;
+			}
+		}
+		for (User user : channel.getSuperOps()) {
+			if (user.getNick().equals(name)) {
+				return true;
+			}
+		}
+		for (User user : channel.getOwners()) {
+			if (user.getNick().equals(nick)) {
+				return true;
+			}
+		}
+		return false;
+	}*/
 	/**
 	 * This method handles events when any line of text arrives from the server,
 	 * then calling the appropriate method in the PircBotX. This method is
@@ -1611,6 +1613,7 @@ public class HeufyBot {
 	 */
 	protected void handleLine(String line) throws IOException {
 		if (line == null) throw new IllegalArgumentException("Can\'t process null line");
+		//log("<<<" + line, "");
 		List<String> parts = Utils.tokenizeLine(line);
 		String senderInfo = "";
 		if (parts.get(0).startsWith(":")) senderInfo = parts.remove(0);
@@ -1622,8 +1625,7 @@ public class HeufyBot {
 			return;
 		} else if (line.startsWith("ERROR ")) {
 			//Server is shutting us down
-			log(line.substring(6), "server");
-			shutdown();
+			shutdown(true);
 			return;
 		}
 		String sourceNick = "";
@@ -2734,8 +2736,7 @@ public class HeufyBot {
 	/**
 	 * Calls shutdown allowing reconnect
 	 */
-	public void shutdown()
-	{
+	public void shutdown() {
 		shutdown(false);
 	}
 	/**
@@ -2748,15 +2749,11 @@ public class HeufyBot {
 	 */
 	public void shutdown(boolean noReconnect)
 	{
-		//Cache channels for possible next reconnect
-		final Map<String, String> previousChannels = new HashMap();
-		try
+		if(useGui)
 		{
-			for (Channel curChannel : getChannels())
-			{
-				String key = (curChannel.getChannelKey() == null) ? "" : curChannel.getChannelKey();
-				previousChannels.put(curChannel.getName(), key);
-			}
+			gui.reset();
+		}
+		try {
 			outputThread.interrupt();
 			inputThread.interrupt();
 		} catch (Exception e) {
@@ -2776,48 +2773,24 @@ public class HeufyBot {
 			//Not much we can do with it here. And throwing it would not let other things shutdown
 			logException(ex);
 		}
-		
+		//Cache channels for possible next reconnect
+		Map<String, String> previousChannels = new HashMap();
+		for (Channel curChannel : getChannels()) {
+			String key = (curChannel.getChannelKey() == null) ? "" : curChannel.getChannelKey();
+			previousChannels.put(curChannel.getName(), key);
+		}
 		//Clear relevant variables of information
 		userChanInfo.clear();
 		userNickMap.clear();
 		channelListBuilder.finish();
-		if(useGui)
-		{
-			gui.reset();
-		}
 		//Dispatch event
-		if (autoReconnect && !noReconnect)
-		{
-			int connectionAttempts = 0;
-			boolean success = false;
-			while(connectionAttempts < 30 && !success)
-			{
-				connectionAttempts++;
-				log("*** Reconnect attempt #" + connectionAttempts + "...", "server");
-				try 
-				{
-					reconnect();
-					if (autoReconnectChannels) for (Map.Entry<String, String> curEntry : previousChannels.entrySet()) joinChannel(curEntry.getKey(), curEntry.getValue());
-					success = true;
-				}
-				catch (Exception e) 
-				{
-					log("*** Reconnecting failed, trying again in 60 seconds.", "server");
-					try
-					{
-						Thread.sleep(60000);
-					}
-					catch (InterruptedException e1)
-					{
-						e1.printStackTrace();
-					}
-					//Not much we can do with it
-					//throw new RuntimeException("Can\'t reconnect to server", e);
-				}
-			}
-		}
-		else
-		{
+		if (autoReconnect && !noReconnect) try {
+			reconnect();
+			if (autoReconnectChannels) for (Map.Entry<String, String> curEntry : previousChannels.entrySet()) joinChannel(curEntry.getKey(), curEntry.getValue());
+		} catch (Exception e) {
+			//Not much we can do with it
+			throw new RuntimeException("Can\'t reconnect to server", e);
+		} else {
 			getListenerManager().dispatchEvent(new DisconnectEvent(this));
 			log("*** Disconnected.", "server");
 		}
@@ -3096,7 +3069,7 @@ public class HeufyBot {
 		{
 			return true;
 		}
-		else if(authenticationType == 1)
+		else if(useNickServ)
 		{
 			if(user.isVerified())
 			{
