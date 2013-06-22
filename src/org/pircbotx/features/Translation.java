@@ -9,8 +9,8 @@ import com.memetix.mst.language.Language;
 import com.memetix.mst.translate.Translate;
 import com.memetix.mst.detect.Detect;
 
-public class Translation extends Feature {
-
+public class Translation extends Feature 
+{
 	public Translation(HeufyBot bot, String name) 
 	{
 		super(bot, name);
@@ -81,13 +81,13 @@ public class Translation extends Feature {
 					String toLanguage = languageParam.substring(3, 5);
 					System.out.println(fromLanguage + "\n" + toLanguage);
 					String translatedText = Translate.execute(textToTranslate, Language.fromString(fromLanguage), Language.fromString(toLanguage));
-					bot.sendMessage(source, "[Translation] Source Language: " + fromLanguage + " | " + translatedText);
+					bot.sendMessage(source, "[Translation] " + translatedText + " | Source Language: " + fromLanguage);
 				}
 				else
 				{
 					Language sourceLanguage = Detect.execute(textToTranslate);
 					String translatedText = Translate.execute(textToTranslate, Language.fromString(languageParam));
-					bot.sendMessage(source, "[Translation] Source Language: Auto-Detect (" + sourceLanguage.toString() + ") | " + translatedText);
+					bot.sendMessage(source, "[Translation] " + translatedText +  " | Source Language: Auto-Detect (" + sourceLanguage.toString() + ")");
 				}			
 			} 
 			catch (Exception e)
