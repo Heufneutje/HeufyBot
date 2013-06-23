@@ -285,22 +285,7 @@ public class Channel {
 	public boolean isOp(User user) {
 		return ops.contains(user);
 	}
-	/**
-	 * Attempts to give Operator status to the given user in this channel. Simply
-	 * calls {@link HeufyBot#op(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to Op
-	 */
-	public void op(User user) {
-		bot.op(this, user);
-	}
-	/**
-	 * Attempts to remove Operator status from the given user in this channel.
-	 * Simply calls {@link HeufyBot#deOp(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to remove Operator status from
-	 */
-	public void deOp(User user) {
-		bot.deOp(this, user);
-	}
+	
 	/**
 	 * Checks if the given user has Voice in this channel
 	 * @return True if the user has Voice, false if not
@@ -308,30 +293,7 @@ public class Channel {
 	public boolean hasVoice(User user) {
 		return voices.contains(user);
 	}
-	/**
-	 * Attempts to give Voice status to the given user in this channel. Simply
-	 * calls {@link HeufyBot#voice(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to voice
-	 */
-	public void voice(User user) {
-		bot.voice(this, user);
-	}
-	/**
-	 * Attempts to remove Voice status from the given user in this channel. Simply
-	 * calls {@link HeufyBot#deVoice(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to remove Voice from
-	 */
-	public void deVoice(User user) {
-		bot.deVoice(this, user);
-	}
-	/**
-	 * Attempts to give Super Operator status to the given user in this channel. Simply
-	 * calls {@link HeufyBot#superOp(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to give Super Operator status
-	 */
-	public void superOp(User user) {
-		bot.superOp(this, user);
-	}
+
 	/**
 	 * Checks if the given user is a Super Operator in this channel
 	 * @return True if the user is a Super Operator, false if not
@@ -339,22 +301,7 @@ public class Channel {
 	public boolean isSuperOp(User user) {
 		return superOps.contains(user);
 	}
-	/**
-	 * Attempts to remove Super Operator status from the given user in this channel.
-	 * Simply calls {@link HeufyBot#deSuperOp(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to remove Super Operator status from
-	 */
-	public void deSuperOp(User user) {
-		bot.deSuperOp(this, user);
-	}
-	/**
-	 * Attempts to give Owner status to the given user in this channel. Simply
-	 * calls {@link HeufyBot#owner(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to give Owner status to
-	 */
-	public void owner(User user) {
-		bot.owner(this, user);
-	}
+
 	/**
 	 * Checks if the given user is an Owner in this channel
 	 * @return True if the user is an Owner, false if not
@@ -362,22 +309,7 @@ public class Channel {
 	public boolean isOwner(User user) {
 		return owners.contains(user);
 	}
-	/**
-	 * Attempts to remove Owner status from the given user in this channel.
-	 * Simply calls {@link HeufyBot#deOwner(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to remove Owner status from
-	 */
-	public void deOwner(User user) {
-		bot.deOwner(this, user);
-	}
-	/**
-	 * Attempts to give Half Operator status to the given user in this channel. Simply
-	 * calls {@link HeufyBot#halfOp(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to give Half Operator status to
-	 */
-	public void halfOp(User user) {
-		bot.halfOp(this, user);
-	}
+
 	/**
 	 * Checks if the given user is a Half Operator in this channel
 	 * @return True if the user is a Half Operator, false if not
@@ -385,14 +317,7 @@ public class Channel {
 	public boolean isHalfOp(User user) {
 		return halfOps.contains(user);
 	}
-	/**
-	 * Attempts to remove Half Operator status from the given user in this channel.
-	 * Simply calls {@link HeufyBot#deHalfOp(org.pircbotx.Channel, org.pircbotx.User) }
-	 * @param user The user to attempt to remove Half Operator status from
-	 */
-	public void deHalfOp(User user) {
-		bot.deHalfOp(this, user);
-	}
+
 	/**
 	 * Removes user from op and voice lists
 	 * @param user

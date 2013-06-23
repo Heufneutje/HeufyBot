@@ -58,6 +58,7 @@ import org.pircbotx.cap.CapHandler;
 import org.pircbotx.cap.EnableCapHandler;
 import org.pircbotx.exception.IrcException;
 import org.pircbotx.exception.NickAlreadyInUseException;
+import org.pircbotx.features.types.AuthType;
 import org.pircbotx.gui.MainWindow;
 import org.pircbotx.hooks.CoreHooks;
 import org.pircbotx.hooks.Event;
@@ -140,8 +141,8 @@ public class HeufyBot {
 	protected String channelPrefixes = "#&+!";
 	private String commandPrefix = "~";
 	protected String networkName = null;
-	private String botOwner;
 	private ArrayList<String> ignoreList;
+	private ArrayList<String> ownerList;
 	/**
 	 * The logging lock object preventing lines from being printed as other
 	 * lines are being printed
@@ -205,6 +206,7 @@ public class HeufyBot {
 		}
 		this.featureInterface = new FeatureInterface(this);
 		this.ignoreList = new ArrayList<String>();
+		this.ownerList = new ArrayList<String>();
 		
 		SettingsUtils.readXML("settings.xml");
 		if (!(new File("settings.xml").exists()))
@@ -234,7 +236,6 @@ public class HeufyBot {
 					int authenticationtype = Integer.parseInt((String)settingsMap.get("authenticationtype"));
 					String channels = (String)settingsMap.get("channels");
 					commandPrefix = (String)settingsMap.get("commandprefix");
-					botOwner = (String)settingsMap.get("botowner");
 					
 					String features = (String)settingsMap.get("loadedfeatures");
 					if(features.length() > 0)
@@ -295,6 +296,7 @@ public class HeufyBot {
 				catch (Exception e1)
 				{
 					log("!!! Could not connect. " + e1.getClass().getCanonicalName() + " " + e1.getMessage(), "server");
+					e1.printStackTrace();
 				}
 			}
 		};
@@ -1055,124 +1057,7 @@ public class HeufyBot {
 		if (user == null) throw new IllegalArgumentException("Can\'t set user mode on null user");
 		setMode(chan, mode + user.getNick());
 	}
-	/**
-	 * Attempt to set the channel limit (+l) to specified value. May require operator
-	 * privileges in the channel
-	 * @param chan The channel to set the limit on
-	 * @param limit The maximum amount of people that can be in the channel
-	 */
-	public void setChannelLimit(Channel chan, int limit) {
-		setMode(chan, "+l", limit);
-	}
-	/**
-	 * Attempt to remove the channel limit (-l) on the specified channel. May require
-	 * operator privileges in the channel
-	 * @param chan
-	 */
-	public void removeChannelLimit(Channel chan) {
-		setMode(chan, "-l");
-	}
-	/**
-	 * Sets the channel key (+k) or password to get into the channel. May require
-	 * operator privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 * @param key The secret key to use
-	 */
-	public void setChannelKey(Channel chan, String key) {
-		if (key == null) throw new IllegalArgumentException("Can\'t set channel key to null");
-		setMode(chan, "+k", key);
-	}
-	/**
-	 * Removes the channel key (-k) or password to get into the channel. May require
-	 * operator privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 * @param key The secret key to remove. If this is not known a blank key or
-	 * asterisk might work
-	 */
-	public void removeChannelKey(Channel chan, String key) {
-		if (key == null) throw new IllegalArgumentException("Can\'t remove channel key with null key");
-		setMode(chan, "-k", key);
-	}
-	/**
-	 * Set the channel as invite only (+i). May require operator privileges in
-	 * the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void setInviteOnly(Channel chan) {
-		setMode(chan, "+i");
-	}
-	/**
-	 * Removes invite only (-i) status from the channel. May require operator
-	 * privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void removeInviteOnly(Channel chan) {
-		setMode(chan, "-i");
-	}
-	/**
-	 * Set the channel as moderated (+m). May require operator privileges in
-	 * the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void setModerated(Channel chan) {
-		setMode(chan, "+m");
-	}
-	/**
-	 * Removes moderated (-m) status from the channel. May require operator
-	 * privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void removeModerated(Channel chan) {
-		setMode(chan, "-m");
-	}
-	/**
-	 * Prevent external messages from appearing in the channel (+n). May require
-	 * operator privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void setNoExternalMessages(Channel chan) {
-		setMode(chan, "+n");
-	}
-	/**
-	 * Allow external messages to appear in the channel (+n). May require operator
-	 * privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void removeNoExternalMessages(Channel chan) {
-		setMode(chan, "-n");
-	}
-	/**
-	 * Set the channel as secret (+s). May require operator privileges in
-	 * the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void setSecret(Channel chan) {
-		setMode(chan, "+s");
-	}
-	/**
-	 * Removes secret (-s) status from the channel. May require operator
-	 * privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void removeSecret(Channel chan) {
-		setMode(chan, "-s");
-	}
-	/**
-	 * Prevent non-operator users from changing the channel topic (+t). May
-	 * require operator privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void setTopicProtection(Channel chan) {
-		setMode(chan, "+t");
-	}
-	/**
-	 * Allow non-operator users to change the channel topic (-t). May require operator
-	 * privileges in the channel
-	 * @param chan The channel to preform the mode change on
-	 */
-	public void removeTopicProtection(Channel chan) {
-		setMode(chan, "-t");
-	}
+
 	/**
 	 * Sends an invitation to join a channel. Some channels can be marked
 	 * as "invite-only", so it may be useful to allow a bot to invite people
@@ -1250,138 +1135,7 @@ public class HeufyBot {
 		if (hostmask == null) throw new IllegalArgumentException("Can\'t remove ban on null hostmask");
 		sendRawLine("MODE " + channel.getName() + " -b " + hostmask);
 	}
-	/**
-	 * Grants operator privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have operator
-	 * status itself.
-	 *
-	 * @param chan The channel we're opping the user on.
-	 * @param user The user we are opping.
-	 */
-	public void op(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t set op on null user");
-		setMode(chan, "+o " + user.getNick());
-	}
-	/**
-	 * Removes operator privileges from a user on a channel.
-	 * Successful use of this method may require the bot to have operator
-	 * status itself.
-	 *
-	 * @param chan The channel we're deopping the user on.
-	 * @param user The user we are deopping.
-	 */
-	public void deOp(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t remove op on null user");
-		setMode(chan, "-o " + user.getNick());
-	}
-	/**
-	 * Grants voice privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have operator
-	 * status itself.
-	 *
-	 * @param chan The channel we're voicing the user on.
-	 * @param user The user we are voicing.
-	 */
-	public void voice(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t set voice on null user");
-		setMode(chan, "+v " + user.getNick());
-	}
-	/**
-	 * Removes voice privileges from a user on a channel.
-	 * Successful use of this method may require the bot to have operator
-	 * status itself.
-	 *
-	 * @param chan The channel we're devoicing the user on.
-	 * @param user The user we are devoicing.
-	 */
-	public void deVoice(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t remove voice on null user");
-		setMode(chan, "-v " + user.getNick());
-	}
-	/**
-	 * Grants owner privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have operator or
-	 * halfOp status itself.
-	 * <p>
-	 * <b>Warning:</b> Not all IRC servers support this. Some servers may even use
-	 * it to mean something else!
-	 * @param chan
-	 * @param user
-	 */
-	public void halfOp(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t set halfop on null user");
-		setMode(chan, "+h " + user.getNick());
-	}
-	/**
-	 * Removes owner privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have operator or
-	 * halfOp status itself.
-	 * <p>
-	 * <b>Warning:</b> Not all IRC servers support this. Some servers may even use
-	 * it to mean something else!
-	 * @param chan
-	 * @param user
-	 */
-	public void deHalfOp(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t remove halfop on null user");
-		setMode(chan, "-h " + user.getNick());
-	}
-	/**
-	 * Grants owner privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have owner
-	 * status itself.
-	 * <p>
-	 * <b>Warning:</b> Not all IRC servers support this. Some servers may even use
-	 * it to mean something else!
-	 * @param chan
-	 * @param user
-	 */
-	public void owner(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t set owner on null user");
-		setMode(chan, "+q " + user.getNick());
-	}
-	/**
-	 * Removes owner privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have owner
-	 * status itself.
-	 * <p>
-	 * <b>Warning:</b> Not all IRC servers support this. Some servers may even use
-	 * it to mean something else!
-	 * @param chan
-	 * @param user
-	 */
-	public void deOwner(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t remove owner on null user");
-		setMode(chan, "-q " + user.getNick());
-	}
-	/**
-	 * Grants superOp privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have owner or superOp
-	 * status itself.
-	 * <p>
-	 * <b>Warning:</b> Not all IRC servers support this. Some servers may even use
-	 * it to mean something else!
-	 * @param chan
-	 * @param user
-	 */
-	public void superOp(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t set super op on null user");
-		setMode(chan, "+a " + user.getNick());
-	}
-	/**
-	 * Removes superOp privileges to a user on a channel.
-	 * Successful use of this method may require the bot to have owner or superOp
-	 * status itself.
-	 * <p>
-	 * <b>Warning:</b> Not all IRC servers support this. Some servers may even use
-	 * it to mean something else!
-	 * @param chan
-	 * @param user
-	 */
-	public void deSuperOp(Channel chan, User user) {
-		if (user == null) throw new IllegalArgumentException("Can\'t remove super op on null user");
-		setMode(chan, "-a " + user.getNick());
-	}
+	
 	/**
 	 * Set the topic for a channel.
 	 * This method attempts to set the topic of a channel. This
@@ -3045,14 +2799,6 @@ public class HeufyBot {
 		this.commandPrefix = commandPrefix;
 	}
 
-	public String getBotOwner() {
-		return botOwner;
-	}
-
-	public void setBotOwner(String botOwner) {
-		this.botOwner = botOwner;
-	}
-
 	public ArrayList<String> getIgnoreList() 
 	{
 		return ignoreList;
@@ -3062,41 +2808,17 @@ public class HeufyBot {
 	{
 		this.ignoreList = ignoreList;
 	}
-	
-	public boolean checkAutorization(User user, Channel channel)
+
+	/**
+	 * @return the ownerList
+	 */
+	public ArrayList<String> getOwnerList()
 	{
-		if(botOwner.equals("*") || user.isOped(channel))
-		{
-			return true;
-		}
-		else if(useNickServ)
-		{
-			if(user.isVerified())
-			{
-				if(user.getAccountName().equalsIgnoreCase(botOwner))
-				{
-					return true;
-				}
-				else
-				{
-					return false;
-				}
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
-			if(user.getNick().equalsIgnoreCase(botOwner))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+		return ownerList;
+	}
+
+	public void setOwnerList(ArrayList<String> ownerList)
+	{
+		this.ownerList = ownerList;
 	}
 }

@@ -67,7 +67,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
 			{
 				String source = channel.getName();
-				if(bot.checkAutorization(user, channel))
+				if(checkAutorization(user, channel, AuthType.OPs))
 				{
 					String metadata = message.substring(5);
 	
@@ -96,13 +96,13 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 				}
 				else
 				{
-					this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can load features!");
+					this.bot.sendMessage(source, "Only my owners and OPs can load features!");
 				}
 			}
 			else if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
 			{
 				String source = channel.getName();
-				if(bot.checkAutorization(user, channel))
+				if(checkAutorization(user, channel, AuthType.OPs))
 				{
 					String metadata = message.substring(7);
 
@@ -139,7 +139,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 				}
 				else
 				{
-					this.bot.sendMessage(source, "Only my owner " + bot.getBotOwner() + " and OPs can unload features!");
+					this.bot.sendMessage(source, "Only my owner and OPs can unload features!");
 				}
 			}
 			else
@@ -152,20 +152,20 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 						{
 							if (feature.getTriggers().length > 0 && !message.toLowerCase().startsWith(feature.getTriggers()[i]))
 								continue;
-							if(feature.getAuthType() == AuthType.OPs)
+							if(checkAutorization(user, channel, feature.getAuthType()))
 							{
-								if(bot.checkAutorization(user, channel))
-								{
-									feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
-								}
-								else
-								{
-									this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owner " + bot.getBotOwner() + " and OPs are authorized to use this command!");
-								}
+								feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
 							}
 							else
 							{
-								feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
+								if(feature.getAuthType() == AuthType.OPs)
+								{
+									this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owners and OPs are authorized to use this command!");
+								}
+								else if(feature.getAuthType() == AuthType.Owners)
+								{
+									this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owners are authorized to use this command!");
+								}
 							}
 						}
 						else
@@ -283,5 +283,42 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	public ArrayList<Feature> getFeatures()
 	{
 		return features;
+	}
+	
+	public boolean checkAutorization(User user, Channel channel, AuthType authType)
+	{
+		if(authType == AuthType.Anyone || (user.isOped(channel) && authType == AuthType.OPs) || bot.getOwnerList().size() == 0)
+		{
+			return true;
+		}
+		else if(bot.useNickServ)
+		{
+			if(user.isVerified())
+			{
+				for(String owner : bot.getOwnerList())
+				{
+					if(user.getAccountName().equalsIgnoreCase(owner))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			for(String owner : bot.getOwnerList())
+			{
+				if(user.getNick().equalsIgnoreCase(owner))
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
