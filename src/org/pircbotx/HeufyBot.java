@@ -58,7 +58,6 @@ import org.pircbotx.cap.CapHandler;
 import org.pircbotx.cap.EnableCapHandler;
 import org.pircbotx.exception.IrcException;
 import org.pircbotx.exception.NickAlreadyInUseException;
-import org.pircbotx.features.types.AuthType;
 import org.pircbotx.gui.MainWindow;
 import org.pircbotx.hooks.CoreHooks;
 import org.pircbotx.hooks.Event;
