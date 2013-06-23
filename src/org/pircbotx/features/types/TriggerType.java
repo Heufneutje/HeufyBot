@@ -2,5 +2,5 @@ package org.pircbotx.features.types;
 
 public enum TriggerType 
 {
-	Message, Join
+	Message, Join, PM, Action
 }

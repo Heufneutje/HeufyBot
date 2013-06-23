@@ -12,6 +12,7 @@ import org.pircbotx.hooks.ListenerAdapter;
 import org.pircbotx.hooks.events.ActionEvent;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
+import org.pircbotx.hooks.events.PrivateMessageEvent;
 
 @SuppressWarnings("rawtypes")
 public class FeatureInterface extends ListenerAdapter implements Listener
@@ -41,18 +42,23 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		}
 	}
 	
+	public void onPrivateMessage(PrivateMessageEvent event)
+	{
+		handleMessage(event.getMessage(), event.getUser(), null, TriggerType.PM);
+	}
+	
 	public void onAction(ActionEvent event)
 	{
-		handleMessage(event.getMessage(), event.getUser(), event.getChannel(), true);
+		handleMessage(event.getMessage(), event.getUser(), event.getChannel(), TriggerType.Action);
 	}
 
 	@Override
 	public void onMessage(MessageEvent event) throws Exception
 	{
-		handleMessage(event.getMessage(), event.getUser(), event.getChannel(), false);
+		handleMessage(event.getMessage(), event.getUser(), event.getChannel(), TriggerType.Message);
 	}
 	
-	private void handleMessage(String message, User user, Channel channel, boolean triggerOnAction)
+	private void handleMessage(String message, User user, Channel channel, TriggerType triggerType)
 	{
 		boolean ignored = false;
 		for(String ignore : bot.getIgnoreList())
@@ -66,8 +72,18 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		{
 			if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
 			{
-				String source = channel.getName();
-				if(checkAutorization(user, channel, AuthType.OPs))
+				String source = "";
+				boolean isPM = false;
+				if(triggerType == TriggerType.PM)
+				{
+					source = user.getNick();
+					isPM = true;
+				}
+				else
+				{
+					source = channel.getName();
+				}
+				if(checkAutorization(user, channel, AuthType.OPs, isPM))
 				{
 					String metadata = message.substring(5);
 	
@@ -101,8 +117,18 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			}
 			else if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
 			{
-				String source = channel.getName();
-				if(checkAutorization(user, channel, AuthType.OPs))
+				String source = "";
+				boolean isPM = false;
+				if(triggerType == TriggerType.PM)
+				{
+					source = user.getNick();
+					isPM = true;
+				}
+				else
+				{
+					source = channel.getName();
+				}
+				if(checkAutorization(user, channel, AuthType.OPs, isPM))
 				{
 					String metadata = message.substring(7);
 
@@ -144,27 +170,38 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 			}
 			else
 			{
+				String source = "";
+				boolean isPM = false;
+				if(triggerType == TriggerType.PM)
+				{
+					source = user.getNick();
+					isPM = true;
+				}
+				else
+				{
+					source = channel.getName();
+				}
 				for (Feature feature : this.features)
 				{
 					for (int i = 0; i < feature.getTriggers().length; i++)
 					{
-						if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerOnAction || !triggerOnAction))
+						if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerType == TriggerType.Action || triggerType != TriggerType.Action))
 						{
 							if (feature.getTriggers().length > 0 && !message.toLowerCase().startsWith(feature.getTriggers()[i]))
 								continue;
-							if(checkAutorization(user, channel, feature.getAuthType()))
+							if(checkAutorization(user, channel, feature.getAuthType(), isPM))
 							{
-								feature.process(channel.getName(), message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
+								feature.process(source, message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
 							}
 							else
 							{
 								if(feature.getAuthType() == AuthType.OPs)
 								{
-									this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owners and OPs are authorized to use this command!");
+									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my owners and OPs are authorized to use this command!");
 								}
 								else if(feature.getAuthType() == AuthType.Owners)
 								{
-									this.bot.sendMessage(channel, "[" + feature.getName() + "] Only my owners are authorized to use this command!");
+									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my owners are authorized to use this command!");
 								}
 							}
 						}
@@ -172,7 +209,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 						{
 							if (feature.getTriggers().length > 0 && !message.toLowerCase().contains(feature.getTriggers()[i]))
 								continue;
-							feature.process(channel.getName(), message, user.getNick(), null);
+							feature.process(source, message, user.getNick(), null);
 								break;
 						}
 					}
@@ -285,13 +322,23 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		return features;
 	}
 	
-	public boolean checkAutorization(User user, Channel channel, AuthType authType)
+	public boolean checkAutorization(User user, Channel channel, AuthType authType, boolean isPM)
 	{
-		if(authType == AuthType.Anyone || (user.isOped(channel) && authType == AuthType.OPs) || bot.getOwnerList().size() == 0)
+		if(isPM)
 		{
-			return true;
+			if(authType == AuthType.Anyone || bot.getOwnerList().size() == 0)
+			{
+				return true;
+			}
 		}
-		else if(bot.useNickServ)
+		else
+		{
+			if(authType == AuthType.Anyone || bot.getOwnerList().size() == 0 || (user.isOped(channel) && authType == AuthType.OPs))
+			{
+				return true;
+			}
+		}
+		if(bot.useNickServ)
 		{
 			if(user.isVerified())
 			{
