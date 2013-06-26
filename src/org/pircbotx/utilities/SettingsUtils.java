@@ -65,7 +65,6 @@ public class SettingsUtils
         Element eElement = (Element)nNode;
         settingsMap.put("commandprefix", getTagValue("commandprefix", eElement));
         settingsMap.put("loadedfeatures", getTagValue("loadedfeatures", eElement));
-        settingsMap.put("botowner", getTagValue("botowner", eElement));
       }
 
     }
@@ -82,7 +81,6 @@ public class SettingsUtils
       defaultSettings.put("channels", "#heufneutje");
       defaultSettings.put("commandprefix", "~");
       defaultSettings.put("loadedfeatures", "Join,Part,Quit");
-      defaultSettings.put("botowner", "*");
       writeXML(defaultSettings, filePath);
       return defaultSettings;
     }
@@ -148,10 +146,6 @@ public class SettingsUtils
       Element loadedfeatures = doc.createElement("loadedfeatures");
       loadedfeatures.appendChild(doc.createTextNode((String)settingsMap.get("loadedfeatures")));
       botsettings.appendChild(loadedfeatures);
-      
-      Element botowner = doc.createElement("botowner");
-      botowner.appendChild(doc.createTextNode((String)settingsMap.get("botowner")));
-      botsettings.appendChild(botowner);
 
       TransformerFactory transformerFactory = TransformerFactory.newInstance();
       Transformer transformer = transformerFactory.newTransformer();
