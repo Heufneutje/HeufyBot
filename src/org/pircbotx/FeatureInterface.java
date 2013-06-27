@@ -326,45 +326,24 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	{
 		if(isPM)
 		{
-			if(authType == AuthType.Anyone || bot.getOwnerList().size() == 0)
+			if(authType == AuthType.Anyone)
 			{
 				return true;
 			}
 		}
 		else
 		{
-			if(authType == AuthType.Anyone || bot.getOwnerList().size() == 0 || (user.isOped(channel) && authType == AuthType.OPs))
+			if(authType == AuthType.Anyone || (user.isOped(channel) && authType == AuthType.OPs))
 			{
 				return true;
 			}
 		}
-		if(bot.useNickServ)
+		if(user.isBotAdmin())
 		{
-			if(user.isVerified())
-			{
-				for(String owner : bot.getOwnerList())
-				{
-					if(user.getAccountName().equalsIgnoreCase(owner))
-					{
-						return true;
-					}
-				}
-				return false;
-			}
-			else
-			{
-				return false;
-			}
+			return true;
 		}
 		else
 		{
-			for(String owner : bot.getOwnerList())
-			{
-				if(user.getNick().equalsIgnoreCase(owner))
-				{
-					return true;
-				}
-			}
 			return false;
 		}
 	}

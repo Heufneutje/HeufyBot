@@ -10,8 +10,8 @@ import org.pircbotx.utilities.FileUtils;
 
 public class Accesscontrol extends Feature 
 {
-	private ArrayList<String> ownerList = new ArrayList<String>();
-	
+	private ArrayList<String> ownerList;
+
 	public Accesscontrol(HeufyBot bot, String name) 
 	{
 		super(bot, name);
@@ -33,71 +33,70 @@ public class Accesscontrol extends Feature
 	@Override
 	public void process(String source, String metadata, String triggerUser, String triggerCommand) 
 	{
-		if ((metadata.equals("")) || (metadata.equals(" ")))
-	    {
-			String owners = "";
-			for (String name : ownerList)
-			{
-				owners += name;
-				if(!ownerList.get(ownerList.size() - 1).equals(name))
-				{
-					owners += ", ";
-				}
-			}
-			this.bot.sendMessage(source, "[AccessControl] My owners are: " + owners);
-	    }
-		else if (metadata.startsWith(" add"))
-	    {
-  	  		String nick = metadata.substring(5);
-  	  		
-	  	  	boolean match = false;
-  	  		for(String ignore : ownerList)
-  	  		{
-  	  			if(ignore.equalsIgnoreCase(nick))
-  	  			{
-  	  				match = true;
-  	  			}
-  	  		}
-  	  		if(match)
-  	  		{
-  	  			bot.sendMessage(source, "[AccessControl] " + nick + " is already on the access list!");
-  	  		}
-  	  		else
-  	  		{
-  	  			ownerList.add(nick);
-  	  			FileUtils.writeFileAppend(settingsPath, nick + "\n");
-  	  			bot.sendMessage(source, "[AccessControl] " + nick + " was added to the access list!");
-  	  		}
-	    }
-		else if (metadata.startsWith(" remove"))
-	    {
-  	  		String nick = metadata.substring(8);
-  	  		
-  	  		boolean match = false;
-  	  		for(Iterator<String> iter = ownerList.iterator(); iter.hasNext();)
-  	  		{
-  	  			String access = iter.next();
-  	  			if(access.equalsIgnoreCase(nick))
-  	  			{
-  	  				iter.remove();
-  	  				match = true;
-  	  			}
-  	  		}
-  	  		if(match)
-  	  		{
-  	  			FileUtils.deleteFile(settingsPath);
-  	  			FileUtils.touchFile(settingsPath);
+		if(source.equalsIgnoreCase(triggerUser))
+		{
+			if ((metadata.equals("")) || (metadata.equals(" ")))
+		    {
+				this.bot.sendMessage(source, "[AccessControl] Access what?");
+		    }
+			else if (metadata.startsWith(" add"))
+		    {
+	  	  		String account = metadata.substring(5);
+	  	  		
+	  	  		
+		  	  	boolean match = false;
 	  	  		for(String ignore : ownerList)
 	  	  		{
-	  	  			FileUtils.writeFileAppend(settingsPath, ignore + "\n");
+	  	  			if(ignore.equalsIgnoreCase(nick))
+	  	  			{
+	  	  				match = true;
+	  	  			}
 	  	  		}
-	  	  		bot.sendMessage(source, "[AccessControl] " + nick + " was removed from the access list!");
-  	  		}
-  	  		else
-  	  		{
-  	  			bot.sendMessage(source, "[AccessControl] " + nick + " is not on the access list!");
-  	  		}
-	    }
+	  	  		if(match)
+	  	  		{
+	  	  			bot.sendMessage(source, "[AccessControl] " + nick + " is already on the access list!");
+	  	  		}
+	  	  		else
+	  	  		{
+	  	  			ownerList.add(nick);
+	  	  			FileUtils.writeFileAppend(settingsPath, nick + "\n");
+	  	  			bot.sendMessage(source, "[AccessControl] " + nick + " was added to the access list!");
+	  	  		}
+		    }
+			else if (metadata.startsWith(" remove"))
+		    {
+	  	  		String nick = metadata.substring(8);
+	  	  		
+	  	  		boolean match = false;
+	  	  		for(Iterator<String> iter = ownerList.iterator(); iter.hasNext();)
+	  	  		{
+	  	  			String access = iter.next();
+	  	  			if(access.equalsIgnoreCase(nick))
+	  	  			{
+	  	  				iter.remove();
+	  	  				match = true;
+	  	  			}
+	  	  		}
+	  	  		if(match)
+	  	  		{
+	  	  			FileUtils.deleteFile(settingsPath);
+	  	  			FileUtils.touchFile(settingsPath);
+		  	  		for(String ignore : ownerList)
+		  	  		{
+		  	  			FileUtils.writeFileAppend(settingsPath, ignore + "\n");
+		  	  		}
+		  	  		bot.sendMessage(source, "[AccessControl] " + nick + " was removed from the access list!");
+	  	  		}
+	  	  		else
+	  	  		{
+	  	  			bot.sendMessage(source, "[AccessControl] " + nick + " is not on the access list!");
+	  	  		}
+		    }
+		}
+		else
+		{
+			bot.sendMessage(source, "[AccessControl] This feature can only be used in PM.");
+		}
 	}
 
 	@Override
@@ -112,7 +111,6 @@ public class Accesscontrol extends Feature
 				ownerList.add(nicks[i]);
 			}
 		}
-		bot.setOwnerList(ownerList);
 	}
 
 	@Override

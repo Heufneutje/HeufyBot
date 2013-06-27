@@ -42,6 +42,7 @@ public class User implements Comparable<User> {
 	private String hostmask = "";
 	private boolean away = false;
 	private boolean ircop = false;
+	private boolean botAdmin = false;
 	private String server = "";
 	private int hops = 0;
 	private final HeufyBot bot;
@@ -97,6 +98,16 @@ public class User implements Comparable<User> {
 		} catch (InterruptedException ex) {
 			throw new RuntimeException("Couldn\'t finish querying user for verified status", ex);
 		}
+	}
+	
+	public boolean isBotAdmin()
+	{
+		return botAdmin;
+	}
+	
+	public void setBotAdmin(boolean admin)
+	{
+		this.botAdmin = admin;
 	}
 	
 	public UserSnapshot generateSnapshot() {
