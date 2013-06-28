@@ -1,5 +1,6 @@
 package org.pircbotx.features;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -10,15 +11,16 @@ import org.pircbotx.utilities.FileUtils;
 
 public class Accesscontrol extends Feature 
 {
-	private ArrayList<String> ownerList;
+	private ArrayList<String> adminList;
 
 	public Accesscontrol(HeufyBot bot, String name) 
 	{
 		super(bot, name);
 		this.settingsPath = "featuredata/botowners.txt";
+		this.adminList = new ArrayList<String>();
 		
 		this.triggerType = TriggerType.Message;
-		this.authType = AuthType.Owners;
+		this.authType = AuthType.Anyone;
 		
 		this.triggers = new String[1];
 		this.triggers[0] = bot.getCommandPrefix() + "ac";
@@ -41,34 +43,50 @@ public class Accesscontrol extends Feature
 		    }
 			else if (metadata.startsWith(" add"))
 		    {
-	  	  		String account = metadata.substring(5);
-	  	  		
-	  	  		
-		  	  	boolean match = false;
-	  	  		for(String ignore : ownerList)
-	  	  		{
-	  	  			if(ignore.equalsIgnoreCase(nick))
-	  	  			{
-	  	  				match = true;
-	  	  			}
-	  	  		}
-	  	  		if(match)
-	  	  		{
-	  	  			bot.sendMessage(source, "[AccessControl] " + nick + " is already on the access list!");
-	  	  		}
-	  	  		else
-	  	  		{
-	  	  			ownerList.add(nick);
-	  	  			FileUtils.writeFileAppend(settingsPath, nick + "\n");
-	  	  			bot.sendMessage(source, "[AccessControl] " + nick + " was added to the access list!");
-	  	  		}
+				try
+				{
+		  	  		String account = metadata.substring(5);
+		  	  		String username = account.split(":")[0];
+		  	  		String password = account.split(":")[1];
+		  	  		
+		  	  		byte[] bytes = password.getBytes("UTF-8");
+		  	  		MessageDigest md = MessageDigest.getInstance("MD5");
+		  	  		byte[] digestedBytes = md.digest(bytes);
+		  	  		password = new String(digestedBytes);
+		  	  		
+		  	  		String hashedAccount = username + ":" + password;
+		  	  		
+			  	  	boolean match = false;
+		  	  		for(String admin : adminList)
+		  	  		{
+		  	  			if(admin.equals(hashedAccount))
+		  	  			{
+		  	  				match = true;
+		  	  			}
+		  	  		}
+		  	  		if(match)
+		  	  		{
+		  	  			bot.sendMessage(source, "[AccessControl] " + username + " is already on the access list!");
+		  	  		}
+		  	  		else
+		  	  		{
+		  	  			adminList.add(hashedAccount);
+		  	  			FileUtils.writeFileAppend(settingsPath, hashedAccount + "\n");
+		  	  			bot.sendMessage(source, "[AccessControl] " + username + " was added to the access list!");
+		  	  		}
+				}
+				catch(Exception e)
+				{
+					e.printStackTrace();
+					bot.sendMessage(source, "[AccessControl] Error in command");
+				}
 		    }
 			else if (metadata.startsWith(" remove"))
 		    {
 	  	  		String nick = metadata.substring(8);
 	  	  		
 	  	  		boolean match = false;
-	  	  		for(Iterator<String> iter = ownerList.iterator(); iter.hasNext();)
+	  	  		for(Iterator<String> iter = adminList.iterator(); iter.hasNext();)
 	  	  		{
 	  	  			String access = iter.next();
 	  	  			if(access.equalsIgnoreCase(nick))
@@ -81,7 +99,7 @@ public class Accesscontrol extends Feature
 	  	  		{
 	  	  			FileUtils.deleteFile(settingsPath);
 	  	  			FileUtils.touchFile(settingsPath);
-		  	  		for(String ignore : ownerList)
+		  	  		for(String ignore : adminList)
 		  	  		{
 		  	  			FileUtils.writeFileAppend(settingsPath, ignore + "\n");
 		  	  		}
@@ -108,7 +126,7 @@ public class Accesscontrol extends Feature
 		{
 			if(!nicks[i].equals(""))
 			{
-				ownerList.add(nicks[i]);
+				adminList.add(nicks[i]);
 			}
 		}
 	}
