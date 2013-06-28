@@ -168,7 +168,7 @@ public class HeufyBot {
 	protected Map<String, WhoisEvent.WhoisEventBuilder> whoisBuilder = new HashMap();
 	
 	protected boolean useGui;
-	protected boolean useNickServ;
+	protected boolean adminMode;
 	private MainWindow gui;
 	private FeatureInterface featureInterface;
 	/**
@@ -249,7 +249,6 @@ public class HeufyBot {
 					
 					case 2: 
 						connect(serverip, port);
-						useNickServ = true;
 						identify(password);
 						break;
 					
@@ -2805,5 +2804,15 @@ public class HeufyBot {
 	public void setIgnoreList(ArrayList<String> ignoreList) 
 	{
 		this.ignoreList = ignoreList;
+	}
+
+	public boolean isAdminMode()
+	{
+		return adminMode;
+	}
+
+	public void setAdminMode(boolean adminMode)
+	{
+		this.adminMode = adminMode;
 	}
 }

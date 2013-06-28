@@ -197,11 +197,11 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 							{
 								if(feature.getAuthType() == AuthType.OPs)
 								{
-									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my owners and OPs are authorized to use this command!");
+									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my admins and OPs are authorized to use this command!");
 								}
-								else if(feature.getAuthType() == AuthType.Owners)
+								else if(feature.getAuthType() == AuthType.Admins)
 								{
-									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my owners are authorized to use this command!");
+									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my admins are authorized to use this command!");
 								}
 							}
 						}
@@ -338,7 +338,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 				return true;
 			}
 		}
-		if(user.isBotAdmin())
+		if(user.isBotAdmin() || bot.adminMode == false)
 		{
 			return true;
 		}

@@ -1,6 +1,5 @@
 package org.pircbotx.features;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -41,75 +40,125 @@ public class Accesscontrol extends Feature
 		    {
 				this.bot.sendMessage(source, "[AccessControl] Access what?");
 		    }
-			else if (metadata.startsWith(" add"))
-		    {
-				try
+			else
+			{
+				if(bot.getUser(source).isBotAdmin() || bot.isAdminMode() == false)
 				{
-		  	  		String account = metadata.substring(5);
-		  	  		String username = account.split(":")[0];
-		  	  		String password = account.split(":")[1];
-		  	  		
-		  	  		byte[] bytes = password.getBytes("UTF-8");
-		  	  		MessageDigest md = MessageDigest.getInstance("MD5");
-		  	  		byte[] digestedBytes = md.digest(bytes);
-		  	  		password = new String(digestedBytes);
-		  	  		
-		  	  		String hashedAccount = username + ":" + password;
-		  	  		
-			  	  	boolean match = false;
-		  	  		for(String admin : adminList)
-		  	  		{
-		  	  			if(admin.equals(hashedAccount))
-		  	  			{
-		  	  				match = true;
-		  	  			}
-		  	  		}
-		  	  		if(match)
-		  	  		{
-		  	  			bot.sendMessage(source, "[AccessControl] " + username + " is already on the access list!");
-		  	  		}
-		  	  		else
-		  	  		{
-		  	  			adminList.add(hashedAccount);
-		  	  			FileUtils.writeFileAppend(settingsPath, hashedAccount + "\n");
-		  	  			bot.sendMessage(source, "[AccessControl] " + username + " was added to the access list!");
-		  	  		}
+					if (metadata.startsWith(" register"))
+					{
+						try
+						{
+				  	  		String account = metadata.substring(10);
+				  	  		String username = account.split(":")[0];
+				  	  		String password = account.split(":")[1];
+				  	  		String hashedAccount = username + ":" + password;
+				  	  		
+					  	  	boolean match = false;
+				  	  		for(String admin : adminList)
+				  	  		{
+				  	  			if(admin.equals(hashedAccount))
+				  	  			{
+				  	  				match = true;
+				  	  			}
+				  	  		}
+				  	  		if(match)
+				  	  		{
+				  	  			bot.sendMessage(source, "[AccessControl] " + username + " is already on the access list!");
+				  	  		}
+				  	  		else
+				  	  		{
+				  	  			bot.setAdminMode(true);
+				  	  			adminList.add(hashedAccount);
+				  	  			FileUtils.writeFileAppend(settingsPath, hashedAccount + "\n");
+				  	  			bot.sendMessage(source, "[AccessControl] " + username + " was added to the access list!");
+				  	  		}
+						}
+						catch(Exception e)
+						{
+							bot.sendMessage(source, "[AccessControl] Error in command");
+						}
+				    }
+					else if (metadata.startsWith(" drop"))
+				    {
+						try
+						{
+							String account = metadata.substring(6);
+				  	  		String username = account.split(":")[0];
+				  	  		String password = account.split(":")[1];
+				  	  		String hashedAccount = username + ":" + password;
+				  	  		
+				  	  		boolean match = false;
+				  	  		for(Iterator<String> iter = adminList.iterator(); iter.hasNext();)
+				  	  		{
+				  	  			String access = iter.next();
+				  	  			if(access.equals(hashedAccount))
+				  	  			{
+				  	  				iter.remove();
+				  	  				match = true;
+				  	  			}
+				  	  		}
+				  	  		if(match)
+				  	  		{
+				  	  			if(adminList.size() == 0)
+				  	  			{
+				  	  				bot.setAdminMode(false);
+				  	  			}
+				  	  			FileUtils.deleteFile(settingsPath);
+				  	  			FileUtils.touchFile(settingsPath);
+					  	  		for(String ignore : adminList)
+					  	  		{
+					  	  			FileUtils.writeFileAppend(settingsPath, ignore + "\n");
+					  	  		}
+					  	  		bot.sendMessage(source, "[AccessControl] " + username + " was removed from the access list!");
+				  	  		}
+				  	  		else
+				  	  		{
+				  	  			bot.sendMessage(source, "[AccessControl] " + username + " is not on the access list!");
+				  	  		}
+						}
+						catch(Exception e)
+						{
+							bot.sendMessage(source, "[AccessControl] Error in command");
+						}
+				    }
 				}
-				catch(Exception e)
+				else if(metadata.startsWith(" login"))
 				{
-					e.printStackTrace();
-					bot.sendMessage(source, "[AccessControl] Error in command");
+					try
+					{
+			  	  		String account = metadata.substring(7);
+			  	  		String username = account.split(":")[0];
+			  	  		String password = account.split(":")[1];
+			  	  		String hashedAccount = username + ":" + password;
+			  	  		
+				  	  	boolean match = false;
+			  	  		for(String admin : adminList)
+			  	  		{
+			  	  			if(admin.equals(hashedAccount))
+			  	  			{
+			  	  				match = true;
+			  	  			}
+			  	  		}
+			  	  		if(match)
+			  	  		{
+			  	  			bot.getUser(source).setBotAdmin(true);
+			  	  			bot.sendMessage(source, "[AccessControl] " + username + " is succesfully logged in with access level Admin.");
+			  	  		}
+			  	  		else
+			  	  		{
+			  	  			bot.sendMessage(source, "[AccessControl] Login failed.");
+			  	  		}
+					}
+					catch(Exception e)
+					{
+						bot.sendMessage(source, "[AccessControl] Login failed.");
+					}
 				}
-		    }
-			else if (metadata.startsWith(" remove"))
-		    {
-	  	  		String nick = metadata.substring(8);
-	  	  		
-	  	  		boolean match = false;
-	  	  		for(Iterator<String> iter = adminList.iterator(); iter.hasNext();)
-	  	  		{
-	  	  			String access = iter.next();
-	  	  			if(access.equalsIgnoreCase(nick))
-	  	  			{
-	  	  				iter.remove();
-	  	  				match = true;
-	  	  			}
-	  	  		}
-	  	  		if(match)
-	  	  		{
-	  	  			FileUtils.deleteFile(settingsPath);
-	  	  			FileUtils.touchFile(settingsPath);
-		  	  		for(String ignore : adminList)
-		  	  		{
-		  	  			FileUtils.writeFileAppend(settingsPath, ignore + "\n");
-		  	  		}
-		  	  		bot.sendMessage(source, "[AccessControl] " + nick + " was removed from the access list!");
-	  	  		}
-	  	  		else
-	  	  		{
-	  	  			bot.sendMessage(source, "[AccessControl] " + nick + " is not on the access list!");
-	  	  		}
-		    }
+				else
+				{
+					this.bot.sendMessage(source, "[AccessControl] Only my admins are authorized to use this command!");
+				}
+			}
 		}
 		else
 		{
@@ -129,10 +178,15 @@ public class Accesscontrol extends Feature
 				adminList.add(nicks[i]);
 			}
 		}
+		if(adminList.size() > 0)
+		{
+			bot.setAdminMode(true);
+		}
 	}
 
 	@Override
 	public void onUnload()
 	{
+		bot.setAdminMode(false);
 	}
 }
