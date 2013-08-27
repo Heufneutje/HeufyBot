@@ -32,7 +32,7 @@ public class Outofcontext extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote/nick> | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
+		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote/nick>, " + bot.getCommandPrefix() + "ooc random | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
 	}
 
 	@Override
