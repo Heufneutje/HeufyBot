@@ -46,7 +46,7 @@ public class Weather extends Feature
 		{
 			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.substring(1);
 			String data = URLUtils.grab(urlString);
-			if(data.equals(", "))
+			if(data.equals(", ") || metadata.substring(1).contains(" "))
 			{
 				bot.sendMessage(source, this.lookupWeather(metadata.substring(1)));
 			}
@@ -67,7 +67,7 @@ public class Weather extends Feature
 		else
 		{
 			String location = weatherQuery.replaceAll(" ", "");
-			String urlString = "http://api.worldweatheronline.com/free/v1/weather.ashx?q=" + location.replaceAll(" ", "") + 
+			String urlString = "http://api.worldweatheronline.com/free/v1/weather.ashx?q=" + location + 
 					"&format=xml" + 
 					"&extra=localObsTime" +
 					"&num_of_days=1" + 

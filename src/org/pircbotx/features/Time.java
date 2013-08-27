@@ -48,7 +48,7 @@ public class Time extends Feature
 			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.substring(1);
 			String data = URLUtils.grab(urlString);
 			
-			if(data.equals(", "))
+			if(data.equals(", ") || metadata.substring(1).contains(" "))
 			{
 				this.bot.sendMessage(source, this.lookupTime(metadata.substring(1)));
 			}
