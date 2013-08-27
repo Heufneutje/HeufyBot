@@ -115,66 +115,74 @@ public class Outofcontext extends Feature
 			else if(metadata.substring(1).toLowerCase().startsWith("search "))
 			{
 				String search = metadata.substring(8);
-				
-				String quoteFile = FileUtils.readFile(settingsPath);
-				String[] quotes = quoteFile.split("\n");
-				ArrayList<String> matches = new ArrayList<String>();
-				
-				Pattern pattern = Pattern.compile(".*" + search + ".*", Pattern.CASE_INSENSITIVE);
-				String searchType = "";
-				
-				if(search.contains(" "))
-				{
-					searchType = "Word Combination";
-					for(int i = 0; i < quotes.length; i++)
-					{
-						if(pattern.matcher(quotes[i].substring(21)).matches())
-						{
-							matches.add(quotes[i]);
-						}
-					}
-				}
-				else
-				{
-					searchType = "Nickname";
-					for(int i = 0; i < quotes.length; i++)
-					{
-						if(quotes[i].substring(21).matches("^<.*>.*"))
-						{
-							if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<") + 1, quotes[i].indexOf(">"))).matches())
-							{
-								matches.add(quotes[i]);
-							}
-						}
-						else if(quotes[i].substring(21).matches("^\\* .*"))
-						{
-							if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
-							{
-								matches.add(quotes[i]);
-							}
-						}
-					}
-				}
-				
-				if(matches.size() == 0)
-				{
-					bot.sendMessage(source, "[OutOfContext] Search Type: " + searchType + " | No matches for '" + search + "' found");
-				}
-				else
-				{
-					bot.sendMessage(source, "[OutOfContext] Search Type: " + searchType + " | Total matched quotes: " + matches.size());
-					int quoteID = (int) (Math.random() * matches.size());
-					bot.sendMessage(source, "[OutOfContext] " + matches.get(quoteID));
-				}
+				search(search);
 			}
 			else if(metadata.substring(1).equalsIgnoreCase("help"))
 			{
 				bot.sendMessage(source, "[Help: Outofcontext] " + getHelp());
 			}
+			else if(metadata.substring(1).equalsIgnoreCase("random"))
+			{
+				search(".*");
+			}
 			else
 			{
 				bot.sendMessage(source, "[OutOfContext] Invalid operation. Please try again.");
 			}
+		}
+	}
+	
+	public void search(String searchString)
+	{
+		String quoteFile = FileUtils.readFile(settingsPath);
+		String[] quotes = quoteFile.split("\n");
+		ArrayList<String> matches = new ArrayList<String>();
+		
+		Pattern pattern = Pattern.compile(".*" + searchString + ".*", Pattern.CASE_INSENSITIVE);
+		String searchType = "";
+		
+		if(searchString.contains(" "))
+		{
+			searchType = "Word Combination";
+			for(int i = 0; i < quotes.length; i++)
+			{
+				if(pattern.matcher(quotes[i].substring(21)).matches())
+				{
+					matches.add(quotes[i]);
+				}
+			}
+		}
+		else
+		{
+			searchType = "Nickname";
+			for(int i = 0; i < quotes.length; i++)
+			{
+				if(quotes[i].substring(21).matches("^<.*>.*"))
+				{
+					if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<") + 1, quotes[i].indexOf(">"))).matches())
+					{
+						matches.add(quotes[i]);
+					}
+				}
+				else if(quotes[i].substring(21).matches("^\\* .*"))
+				{
+					if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
+					{
+						matches.add(quotes[i]);
+					}
+				}
+			}
+		}
+		
+		if(matches.size() == 0)
+		{
+			bot.sendMessage(sourceChannel, "[OutOfContext] Search Type: " + searchType + " | No matches for '" + searchString + "' found");
+		}
+		else
+		{
+			bot.sendMessage(sourceChannel, "[OutOfContext] Search Type: " + searchType + " | Total matched quotes: " + matches.size());
+			int quoteID = (int) (Math.random() * matches.size());
+			bot.sendMessage(sourceChannel, "[OutOfContext] " + matches.get(quoteID));
 		}
 	}
 
