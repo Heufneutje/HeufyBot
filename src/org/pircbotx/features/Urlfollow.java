@@ -40,6 +40,11 @@ public class Urlfollow extends Feature
 		  }
 	  }
 	  
+	  while(urls.size() > 3)
+	  {
+		  urls.remove(urls.size() - 1);
+	  }
+	  
 	  for(String urlstring : urls)
 	  {		    
 		  try

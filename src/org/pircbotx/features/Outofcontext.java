@@ -32,7 +32,7 @@ public class Outofcontext extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote/nick>, " + bot.getCommandPrefix() + "ooc random | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
+		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote>, " + bot.getCommandPrefix() + "ooc searchnick <nick>, " + bot.getCommandPrefix() + "ooc random | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
 	}
 
 	@Override
@@ -112,10 +112,15 @@ public class Outofcontext extends Feature
 			    	bot.sendMessage(source, "[OutOfContext] No nickname was found in this quote.");
 			    }
 			}
+			else if(metadata.substring(1).toLowerCase().startsWith("searchnick "))
+			{
+				String search = metadata.substring(12);
+				search(search, false);
+			}
 			else if(metadata.substring(1).toLowerCase().startsWith("search "))
 			{
 				String search = metadata.substring(8);
-				search(search);
+				search(search, true);
 			}
 			else if(metadata.substring(1).equalsIgnoreCase("help"))
 			{
@@ -123,7 +128,7 @@ public class Outofcontext extends Feature
 			}
 			else if(metadata.substring(1).equalsIgnoreCase("random"))
 			{
-				search(".*");
+				search(".*", false);
 			}
 			else
 			{
@@ -132,7 +137,7 @@ public class Outofcontext extends Feature
 		}
 	}
 	
-	public void search(String searchString)
+	public void search(String searchString, boolean searchInQuotes)
 	{
 		String quoteFile = FileUtils.readFile(settingsPath);
 		String[] quotes = quoteFile.split("\n");
@@ -141,9 +146,9 @@ public class Outofcontext extends Feature
 		Pattern pattern = Pattern.compile(".*" + searchString + ".*", Pattern.CASE_INSENSITIVE);
 		String searchType = "";
 		
-		if(searchString.contains(" "))
+		if(searchInQuotes)
 		{
-			searchType = "Word Combination";
+			searchType = "Quote";
 			for(int i = 0; i < quotes.length; i++)
 			{
 				if(pattern.matcher(quotes[i].substring(21)).matches())
