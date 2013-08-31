@@ -89,8 +89,6 @@ public class MultiBotManager {
 		login = dummyBot.getLogin();
 		autoNickChange = dummyBot.isAutoNickChange();
 		encoding = dummyBot.getEncoding();
-		dcciNetAddress = dummyBot.getDccInetAddress();
-		dccports = dummyBot.getDccPorts();
 	}
 	/**
 	 * Create a bot using the specified hostname, 6667 for port, and no password or socketfactory
@@ -136,8 +134,6 @@ public class MultiBotManager {
 		bot.setLogin(login);
 		bot.setAutoNickChange(autoNickChange);
 		bot.setEncoding(encoding);
-		bot.setDccInetAddress(dcciNetAddress);
-		bot.setDccPorts(dccports);
 		//Add to bot set
 		BotBuilder builder = new BotBuilder(bot);
 		bots.add(new BotEntry(bot, hostname, port, password, socketFactory, builder));

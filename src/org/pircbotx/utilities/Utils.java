@@ -25,10 +25,7 @@ import java.util.List;
 
 import org.pircbotx.User;
 import org.pircbotx.hooks.events.ActionEvent;
-import org.pircbotx.hooks.events.FileTransferFinishedEvent;
 import org.pircbotx.hooks.events.FingerEvent;
-import org.pircbotx.hooks.events.IncomingChatRequestEvent;
-import org.pircbotx.hooks.events.IncomingFileTransferEvent;
 import org.pircbotx.hooks.events.InviteEvent;
 import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.KickEvent;
@@ -83,14 +80,8 @@ public class Utils {
 			return null;
 		else if (event instanceof ActionEvent)
 			return ((ActionEvent) event).getUser();
-		else if (event instanceof FileTransferFinishedEvent)
-			return ((FileTransferFinishedEvent) event).getTransfer().getUser();
 		else if (event instanceof FingerEvent)
 			return ((FingerEvent) event).getUser();
-		else if (event instanceof IncomingChatRequestEvent)
-			return ((IncomingChatRequestEvent) event).getChat().getUser();
-		else if (event instanceof IncomingFileTransferEvent)
-			return ((IncomingFileTransferEvent) event).getTransfer().getUser();
 		else if (event instanceof JoinEvent)
 			return ((JoinEvent) event).getUser();
 		else if (event instanceof KickEvent)

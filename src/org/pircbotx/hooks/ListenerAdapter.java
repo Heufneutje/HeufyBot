@@ -118,19 +118,10 @@ public abstract class ListenerAdapter<T extends HeufyBot> implements Listener<T>
 	public void onDisconnect(DisconnectEvent<T> event) throws Exception {
 	}
 
-	public void onFileTransferFinished(FileTransferFinishedEvent<T> event) throws Exception {
-	}
-
 	public void onFinger(FingerEvent<T> event) throws Exception {
 	}
 
 	public void onHalfOp(HalfOpEvent<T> event) throws Exception {
-	}
-
-	public void onIncomingChatRequest(IncomingChatRequestEvent<T> event) throws Exception {
-	}
-
-	public void onIncomingFileTransfer(IncomingFileTransferEvent<T> event) throws Exception {
 	}
 
 	public void onInvite(InviteEvent<T> event) throws Exception {

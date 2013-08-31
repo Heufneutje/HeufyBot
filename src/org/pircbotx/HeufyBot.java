@@ -31,9 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.ConnectException;
 import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
@@ -122,10 +120,6 @@ public class HeufyBot {
 	 * Map to provide extremely fast lookup of user object by nick
 	 */
 	protected final Map<String, User> userNickMap = Collections.synchronizedMap(new HashMap());
-	// DccManager to process and handle all DCC events.
-	protected DccManager dccManager = new DccManager(this);
-	protected List<Integer> dccPorts = new ArrayList<Integer>();
-	protected InetAddress dccInetAddress = null;
 	protected boolean autoNickChange;
 	protected boolean verbose;
 	protected boolean capEnabled;
@@ -1206,72 +1200,7 @@ public class HeufyBot {
 	public void listChannels(String parameters) {
 		if (!channelListBuilder.isRunning()) if (parameters == null) sendRawLine("LIST"); else sendRawLine("LIST " + parameters);
 	}
-	/**
-	 * Sends a file to another user. Resuming is supported.
-	 * The other user must be able to connect directly to your bot to be
-	 * able to receive the file.
-	 * <p>
-	 * You may throttle the speed of this file transfer by calling the
-	 * setPacketDelay method on the DccFileTransfer that is returned.
-	 *
-	 * @since PircBot 0.9c
-	 *
-	 * @param file The file to send.
-	 * @param reciever The user to whom the file is to be sent.
-	 * @param timeout The number of milliseconds to wait for the recipient to
-	 * accept the file (we recommend about 120000).
-	 *
-	 * @return The DccFileTransfer that can be used to monitor this transfer.
-	 *
-	 * @see DccFileTransfer
-	 *
-	 */
-	public DccFileTransfer dccSendFile(File file, User reciever, int timeout) throws IOException {
-		if (file == null) throw new IllegalArgumentException("Can\'t send a null file");
-		if (reciever == null) throw new IllegalArgumentException("Can\'t send file to null user");
-		DccFileTransfer transfer = new DccFileTransfer(this, file, reciever, timeout);
-		transfer.doSend(true);
-		return transfer;
-	}
-	/**
-	 * Attempts to establish a DCC CHAT session with a client. This method
-	 * issues the connection request to the client and then waits for the
-	 * client to respond. If the connection is successfully made, then a
-	 * DccChat object is returned by this method. If the connection is not
-	 * made within the time limit specified by the timeout value, then null
-	 * is returned.
-	 * <p>
-	 * Note that this method blocks until the user accepts the DCC chat request
-	 *
-	 * @throws IOException If any issue occurs with creating the connection
-	 * @throws SocketTimeoutException If the user does not connect within the
-	 * specified timeout period
-	 * @param sender The user object representing the user we are trying to
-	 * establish a chat with.
-	 * @param timeout The number of milliseconds to wait for the recipient to
-	 * accept the chat connection (we recommend about 120000).
-	 *
-	 * @return a DccChat object that can be used to send and recieve lines of
-	 * text. Returns <b>null</b> if the connection could not be made.
-	 *
-	 * @see DccChat
-	 * @since PircBot 0.9.8
-	 */
-	public DccChat dccSendChatRequest(User sender, int timeout) throws IOException, SocketTimeoutException {
-		if (sender == null) throw new IllegalArgumentException("Can\'t send chat request to null user");
-		ServerSocket ss = dccManager.createServerSocket();
-		ss.setSoTimeout(timeout);
-		int serverPort = ss.getLocalPort();
-		InetAddress ourAddress = getDccInetAddress();
-		if (ourAddress == null) ourAddress = getInetAddress();
-		String ipNum = DccManager.addressToInteger(ourAddress);
-		sendCTCPCommand(sender, "DCC CHAT chat " + ipNum + " " + serverPort);
-		// The client may now connect to us to chat.
-		Socket userSocket = ss.accept();
-		// Close the server socket now that we've finished with it.
-		ss.close();
-		return new DccChat(this, sender, userSocket);
-	}
+	
 	/**
 	 * Adds a line to the log. This log is currently output to the standard
 	 * output and is in the correct format for use by tools such as pisg, the
@@ -1424,7 +1353,6 @@ public class HeufyBot {
 		// Check for CTCP requests.
 		if (command.equals("PRIVMSG") && line.indexOf(":\u0001") > 0 && line.endsWith("\u0001")) {
 			String request = line.substring(line.indexOf(":\u0001") + 2, line.length() - 1);
-			StringTokenizer tokenizer = new StringTokenizer(request);
 			if (request.equals("VERSION")) 
 			{
 			// VERSION request
@@ -1453,14 +1381,7 @@ public class HeufyBot {
 				// FINGER request
 				getListenerManager().dispatchEvent(new FingerEvent(this, source, channel));
 			}
-			else if (tokenizer.countTokens() >= 5 && tokenizer.nextToken().equals("DCC")) 
-			{
-				// This is a DCC request.
-				boolean success = dccManager.processRequest(source, request);
-				if (!success) 
-				// The DccManager didn't know what to do with the line.
-				getListenerManager().dispatchEvent(new UnknownEvent(this, line));
-			} else 
+			else 
 			// An unknown CTCP message - ignore it.
 			getListenerManager().dispatchEvent(new UnknownEvent(this, line));
 		} else if (command.equals("PRIVMSG") && channelPrefixes.indexOf(target.charAt(0)) >= 0) 
@@ -2178,46 +2099,6 @@ public class HeufyBot {
 		return inetAddress;
 	}
 	/**
-	 * Sets the InetAddress to be used when sending DCC chat or file transfers.
-	 * This can be very useful when you are running a bot on a machine which
-	 * is behind a firewall and you need to tell receiving clients to connect
-	 * to a NAT/router, which then forwards the connection.
-	 *
-	 * @since PircBot 1.4.4
-	 *
-	 * @param dccInetAddress The new InetAddress, or null to use the default.
-	 */
-	public void setDccInetAddress(InetAddress dccInetAddress) {
-		this.dccInetAddress = dccInetAddress;
-	}
-	/**
-	 * Returns the InetAddress used when sending DCC chat or file transfers.
-	 * If this is null, the default InetAddress will be used.
-	 *
-	 * @since PircBot 1.4.4
-	 *
-	 * @return The current DCC InetAddress, or null if left as default.
-	 */
-	public InetAddress getDccInetAddress() {
-		return dccInetAddress;
-	}
-	/**
-	 * Returns the list of port numbers to be used when sending a DCC chat
-	 * or file transfer. This is useful when you are behind a firewall and
-	 * need to set up port forwarding. The array of port numbers is traversed
-	 * in sequence until a free port is found to listen on. A DCC tranfer will
-	 * fail if all ports are already in use.
-	 * If empty, <i>any</i> free port number will be used.
-	 *
-	 * @since PircBot 1.4.4
-	 *
-	 * @return An array of port numbers that PircBotX can use to send DCC
-	 * transfers, or null if any port is allowed.
-	 */
-	public List<Integer> getDccPorts() {
-		return dccPorts;
-	}
-	/**
 	 * Returns a String representation of this object.
 	 * You may find this useful for debugging purposes, particularly
 	 * if you are using more than one PircBotX instance to achieve
@@ -2517,13 +2398,6 @@ public class HeufyBot {
 		} catch (Exception e) {
 			logException(e);
 		}
-		//Close the DCC Manager
-		try {
-			dccManager.close();
-		} catch (Exception ex) {
-			//Not much we can do with it here. And throwing it would not let other things shutdown
-			logException(ex);
-		}
 		//Cache channels for possible next reconnect
 		Map<String, String> previousChannels = new HashMap();
 		for (Channel curChannel : getChannels()) {
@@ -2670,16 +2544,6 @@ public class HeufyBot {
 	@java.lang.SuppressWarnings("all")
 	public void setInetAddress(final InetAddress inetAddress) {
 		this.inetAddress = inetAddress;
-	}
-	
-	@java.lang.SuppressWarnings("all")
-	public DccManager getDccManager() {
-		return this.dccManager;
-	}
-	
-	@java.lang.SuppressWarnings("all")
-	protected void setDccPorts(final List<Integer> dccPorts) {
-		this.dccPorts = dccPorts;
 	}
 	
 	@java.lang.SuppressWarnings("all")
