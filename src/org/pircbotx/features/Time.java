@@ -43,7 +43,7 @@ public class Time extends Feature
 				bot.sendMessage(source, this.lookupTime(data));
 			}
 		}
-		else
+		else if(metadata.startsWith(" "))
 		{
 			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.substring(1);
 			String data = URLUtils.grab(urlString);

@@ -15,16 +15,19 @@ public class Quit extends Feature
 
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)
 	{
-		try
+		if(metadata.equals(""))
 		{
-			this.bot.quitServer("Killed by " + triggerUser);
-			Thread.sleep(1000);
-			this.bot.shutdown(true);
-			System.exit(0);
-		} 
-		catch (InterruptedException e) 
-		{
-			e.printStackTrace();
+			try
+			{
+				this.bot.quitServer("Killed by " + triggerUser);
+				Thread.sleep(1000);
+				this.bot.shutdown(true);
+				System.exit(0);
+			} 
+			catch (InterruptedException e) 
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 

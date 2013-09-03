@@ -36,7 +36,7 @@ public class Translation extends Feature
 		{
 			this.bot.sendMessage(source, "[Translation] Translate what?");
 		}
-		else
+		else if(metadata.startsWith(" "))
 		{
 			metadata = metadata.substring(1);
 			String languageParam = "";

@@ -24,8 +24,11 @@ public class Uptime extends Feature
 
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)
 	{
-		DateFormat format = new SimpleDateFormat("MM-dd-yyyy hh:mm aa (z)");
-		this.bot.sendMessage(source, "[Uptime] HeufyBot has been running since " + format.format(date) + ".");
+		if(metadata.equals(""))
+		{
+			DateFormat format = new SimpleDateFormat("MM-dd-yyyy hh:mm aa (z)");
+			this.bot.sendMessage(source, "[Uptime] HeufyBot has been running since " + format.format(date) + ".");
+		}
 	}
 
 	@Override

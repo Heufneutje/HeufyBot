@@ -31,7 +31,7 @@ public class Youtube extends Feature
 		{
 			this.bot.sendMessage(source, "[Youtube] Search what?");
 		}
-		else
+		else if(metadata.startsWith(" "))
 		{
 			try
 			{

@@ -36,7 +36,7 @@ public class Accesscontrol extends Feature
 	{
 		if(source.equalsIgnoreCase(triggerUser))
 		{
-			if ((metadata.equals("")) || (metadata.equals(" ")))
+			if (metadata.equals(""))
 		    {
 				this.bot.sendMessage(source, "[AccessControl] Access what?");
 		    }

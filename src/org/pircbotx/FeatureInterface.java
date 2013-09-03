@@ -91,7 +91,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 					{
 						this.bot.sendMessage(source, "Load what?");
 					}
-					else if (metadata.startsWith(" "))
+					else if (metadata.charAt(0) == ' ')
 					{
 						String featureName = "";
 						featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
@@ -145,7 +145,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 						}
 						this.bot.sendMessage(source, "All features have been unloaded.");
 					}
-					else if (metadata.startsWith(" "))
+					else if (metadata.charAt(0) == ' ')
 					{
 						String featureName = "";
 						featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);

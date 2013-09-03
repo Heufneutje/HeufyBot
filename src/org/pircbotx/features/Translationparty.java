@@ -38,7 +38,7 @@ public class Translationparty extends Feature
 		{
 			this.bot.sendMessage(source, "[TranslationParty] Translate what?");
 		}
-		else
+		else if(metadata.startsWith(" "))
 		{
 			metadata = metadata.substring(1);
 			this.sourceChannel = source;

@@ -19,7 +19,10 @@ public class Source extends Feature
 
 	public void process(String source, String metadata, String triggerUser, String triggerCommand)
 	{
-		this.bot.sendMessage(source, "[Source] https://github.com/Heufneutje/HeufyBot");
+		if(metadata.equals(""))
+		{
+			this.bot.sendMessage(source, "[Source] https://github.com/Heufneutje/HeufyBot");
+		}
 	}
 
 	@Override

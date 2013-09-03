@@ -59,7 +59,7 @@ public class Outofcontext extends Feature
 			});
 			thread.start();
 		}
-		else
+		else if(metadata.startsWith(" "))
 		{
 			if(metadata.substring(1).toLowerCase().startsWith("add "))
 			{

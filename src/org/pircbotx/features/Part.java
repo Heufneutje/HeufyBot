@@ -21,7 +21,7 @@ public class Part extends Feature
 	{
 		if ((metadata.equals("")) || (metadata.equals(" ")))
 		{
-			this.bot.sendMessage(source, "[Part] Part what?");
+			this.bot.partChannel(source);
 		}
 		else if (metadata.startsWith(" "))
 		{
