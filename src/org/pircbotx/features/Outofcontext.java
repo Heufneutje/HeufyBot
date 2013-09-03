@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import org.pircbotx.HeufyBot;
@@ -32,7 +33,7 @@ public class Outofcontext extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote>, " + bot.getCommandPrefix() + "ooc searchnick <nick>, " + bot.getCommandPrefix() + "ooc random | Grab the OoC log, add an entry to it or search the log by providing a nickname or sentence.";
+		return "Commands: " + bot.getCommandPrefix() + "ooc, " + bot.getCommandPrefix() + "ooc add <quote>, " + bot.getCommandPrefix() + "ooc search <quote>, " + bot.getCommandPrefix() + "ooc searchnick <nick>, " + bot.getCommandPrefix() + "ooc random, " + bot.getCommandPrefix() + "ooc remove <quote> | Grab the OoC log, add an entry to it, search the log by providing a nickname or sentence or remove an entry.";
 	}
 
 	@Override
@@ -105,7 +106,7 @@ public class Outofcontext extends Feature
 				    }
 				    
 				    FileUtils.writeFileAppend(settingsPath, newQuote + "\n");
-					bot.sendMessage(source, "[OutOfContext] Quote was added to the log!");
+					bot.sendMessage(source, "[OutOfContext] Quote '" + newQuote + "' was added to the log!");
 			    }
 			    else
 			    {
@@ -114,7 +115,7 @@ public class Outofcontext extends Feature
 			}
 			else if(metadata.substring(1).toLowerCase().startsWith("searchnick "))
 			{
-				String search = metadata.substring(12);
+				String search = metadata.substring(12).replaceAll(" ", "");
 				search(search, false);
 			}
 			else if(metadata.substring(1).toLowerCase().startsWith("search "))
@@ -129,6 +130,58 @@ public class Outofcontext extends Feature
 			else if(metadata.substring(1).equalsIgnoreCase("random"))
 			{
 				search(".*", false);
+			}
+			else if(metadata.substring(1).startsWith("remove "))
+			{
+				String search = metadata.substring(8);
+				
+				String quoteFile = FileUtils.readFile(settingsPath);
+				String[] quotes = quoteFile.split("\n");
+				ArrayList<String> quoteList = new ArrayList<String>();
+				ArrayList<String> matches = new ArrayList<String>();
+				Pattern pattern = Pattern.compile(".*" + search + ".*", Pattern.CASE_INSENSITIVE);
+				
+				if(quotes[0].length() < 21)
+				{
+					bot.sendMessage(sourceChannel, "[OutOfContext] No quotes in the log.");
+				}
+				else
+				{
+					for(int i = 0; i < quotes.length; i++)
+					{
+						quoteList.add(quotes[i]);
+						if(pattern.matcher(quotes[i].substring(21)).matches())
+						{
+							matches.add(quotes[i]);
+						}
+					}
+					if(matches.size() == 0)
+					{
+						bot.sendMessage(sourceChannel, "[OutOfContext] No matches for '" + search + "' found");
+					}
+					else if(matches.size() > 1)
+					{
+						bot.sendMessage(sourceChannel, "[OutOfContext] Unable to remove quote. Multiple matches were found | Total matched quotes: " + matches.size());
+					}
+					else
+					{
+						for(Iterator<String> iter = quoteList.iterator(); iter.hasNext();)
+			  	  		{
+			  	  			String quote = iter.next();
+			  	  			if(quote.equalsIgnoreCase(matches.get(0)))
+			  	  			{
+			  	  				iter.remove();
+			  	  			}
+			  	  		}
+						FileUtils.deleteFile(settingsPath);
+		  	  			FileUtils.touchFile(settingsPath);
+			  	  		for(String quote : quoteList)
+			  	  		{
+			  	  			FileUtils.writeFileAppend(settingsPath, quote + "\n");
+			  	  		}
+			  	  		bot.sendMessage(source, "[OutOfContext] Quote '" + matches.get(0) + "' was removed from the log!");
+					}
+				}
 			}
 			else
 			{
@@ -146,48 +199,55 @@ public class Outofcontext extends Feature
 		Pattern pattern = Pattern.compile(".*" + searchString + ".*", Pattern.CASE_INSENSITIVE);
 		String searchType = "";
 		
-		if(searchInQuotes)
+		if(quotes[0].length() < 21)
 		{
-			searchType = "Quote";
-			for(int i = 0; i < quotes.length; i++)
-			{
-				if(pattern.matcher(quotes[i].substring(21)).matches())
-				{
-					matches.add(quotes[i]);
-				}
-			}
+			bot.sendMessage(sourceChannel, "[OutOfContext] No quotes in the log.");
 		}
 		else
 		{
-			searchType = "Nickname";
-			for(int i = 0; i < quotes.length; i++)
+			if(searchInQuotes)
 			{
-				if(quotes[i].substring(21).matches("^<.*>.*"))
+				searchType = "Quote";
+				for(int i = 0; i < quotes.length; i++)
 				{
-					if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<") + 1, quotes[i].indexOf(">"))).matches())
-					{
-						matches.add(quotes[i]);
-					}
-				}
-				else if(quotes[i].substring(21).matches("^\\* .*"))
-				{
-					if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
+					if(pattern.matcher(quotes[i].substring(21)).matches())
 					{
 						matches.add(quotes[i]);
 					}
 				}
 			}
-		}
-		
-		if(matches.size() == 0)
-		{
-			bot.sendMessage(sourceChannel, "[OutOfContext] Search Type: " + searchType + " | No matches for '" + searchString + "' found");
-		}
-		else
-		{
-			bot.sendMessage(sourceChannel, "[OutOfContext] Search Type: " + searchType + " | Total matched quotes: " + matches.size());
-			int quoteID = (int) (Math.random() * matches.size());
-			bot.sendMessage(sourceChannel, "[OutOfContext] " + matches.get(quoteID));
+			else
+			{
+				searchType = "Nickname";
+				for(int i = 0; i < quotes.length; i++)
+				{
+					if(quotes[i].substring(21).matches("^<.*>.*"))
+					{
+						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("<") + 1, quotes[i].indexOf(">"))).matches())
+						{
+							matches.add(quotes[i]);
+						}
+					}
+					else if(quotes[i].substring(21).matches("^\\* .*"))
+					{
+						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf("* ") + 2).split(" ")[0]).matches())
+						{
+							matches.add(quotes[i]);
+						}
+					}
+				}
+			}
+			
+			if(matches.size() == 0)
+			{
+				bot.sendMessage(sourceChannel, "[OutOfContext] Search Type: " + searchType + " | No matches for '" + searchString + "' found");
+			}
+			else
+			{
+				bot.sendMessage(sourceChannel, "[OutOfContext] Search Type: " + searchType + " | Total matched quotes: " + matches.size());
+				int quoteID = (int) (Math.random() * matches.size());
+				bot.sendMessage(sourceChannel, "[OutOfContext] " + matches.get(quoteID));
+			}
 		}
 	}
 

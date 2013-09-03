@@ -36,7 +36,7 @@ public class Translationparty extends Feature
 	{
 		if(metadata.equals("") || metadata.equals(" "))
 		{
-			this.bot.sendMessage(source, "[Translationparty] Translate what?");
+			this.bot.sendMessage(source, "[TranslationParty] Translate what?");
 		}
 		else
 		{
@@ -56,7 +56,7 @@ public class Translationparty extends Feature
 			}
 			catch(IndexOutOfBoundsException e)
 			{
-				this.bot.sendMessage(source, "[Translationparty] Error: No MS Azure login credentials were provided.");
+				this.bot.sendMessage(source, "[TranslationParty] Error: No MS Azure login credentials were provided.");
 				return;
 			}
 			Thread thread = new Thread()
@@ -81,7 +81,7 @@ public class Translationparty extends Feature
 							newText = Translate.execute(newText, Language.JAPANESE, Language.ENGLISH);
 							if(newText.equals(lastEnglishEntry))
 							{
-								bot.sendMessage(sourceChannel, "[Translationparty] " + newText + " | Steps: " + tries);
+								bot.sendMessage(sourceChannel, "[TranslationParty] " + newText + " | Steps: " + tries);
 								return;
 							}
 							else
@@ -89,11 +89,11 @@ public class Translationparty extends Feature
 								lastEnglishEntry = newText;
 							}
 						}
-						bot.sendMessage(sourceChannel, "[Translationparty] " + newText + " | Steps: 20+");
+						bot.sendMessage(sourceChannel, "[TranslationParty] " + newText + " | Steps: 20+");
 					}
 					catch (Exception e)
 					{
-						bot.sendMessage(sourceChannel, "[Translationparty] Error: Text could not be translated.");
+						bot.sendMessage(sourceChannel, "[TranslationParty] Error: Text could not be translated.");
 					}
 				}
 			};
