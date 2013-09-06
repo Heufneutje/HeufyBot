@@ -35,7 +35,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 	{
 		for (Feature feature : this.features)
 		{
-			if (feature.getType() == TriggerType.Join)
+			if (feature.getTriggerType() == TriggerType.Join)
 			{
 				feature.process(event.getChannel().getName(), "", event.getUser().getNick(), "join" + "");
 			}
@@ -212,6 +212,10 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 							feature.process(source, message, user.getNick(), null);
 								break;
 						}
+					}
+					if(feature.getTriggerType() == TriggerType.Automatic)
+					{
+						feature.process(source, message, user.getNick(), "Auto");
 					}
 				}
 			}

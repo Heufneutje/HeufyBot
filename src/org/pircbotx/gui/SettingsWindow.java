@@ -62,7 +62,7 @@ public class SettingsWindow extends JFrame
     this.nicknameLabel = new JLabel("Nickname");
     this.realnameLabel = new JLabel("Real Name");
     this.usernameLabel = new JLabel("Username");
-    this.serverLabel = new JLabel("Hostname");
+    this.serverLabel = new JLabel("Server");
     this.portLabel = new JLabel("Port");
     this.passwordLabel = new JLabel("Password");
     this.authenticationtypeLabel = new JLabel("Authentication Type");

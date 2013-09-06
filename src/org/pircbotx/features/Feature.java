@@ -31,7 +31,7 @@ public abstract class Feature
 		return this.name;
 	}
   
-	public TriggerType getType()
+	public TriggerType getTriggerType()
 	{
 		return triggerType;
 	}
