@@ -113,10 +113,20 @@ public class Outofcontext extends Feature
 			    	bot.sendMessage(source, "[OutOfContext] No nickname was found in this quote.");
 			    }
 			}
-			else if(metadata.substring(1).toLowerCase().startsWith("searchnick "))
+			else if(metadata.substring(1).toLowerCase().startsWith("searchnick"))
 			{
-				String search = metadata.substring(12).replaceAll(" ", "");
-				search(search, false);
+				if(metadata.split("searchnick").length == 1)
+				{
+					search(triggerUser, false);
+				}
+				else if(metadata.split("searchnick")[1].startsWith(" "))
+				{
+					search(metadata.split("searchnick")[1].replaceAll(" ", ""), false);
+				}
+				else
+				{
+					bot.sendMessage(source, "[OutOfContext] Invalid operation. Please try again.");
+				}
 			}
 			else if(metadata.substring(1).toLowerCase().startsWith("search "))
 			{
@@ -129,7 +139,7 @@ public class Outofcontext extends Feature
 			}
 			else if(metadata.substring(1).equalsIgnoreCase("random"))
 			{
-				search(".*", false);
+				search(".*", true);
 			}
 			else if(metadata.substring(1).startsWith("remove "))
 			{
