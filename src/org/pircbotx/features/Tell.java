@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,7 +20,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
@@ -61,7 +61,7 @@ public class Tell extends Feature
 	@Override
 	public String getHelp()
 	{
-		return null;
+		return "Commands: " + bot.getCommandPrefix() + "tell <user> <message> | Tells the specified user a message the next time they speak.";
 	}
 
 	@Override
@@ -101,12 +101,26 @@ public class Tell extends Feature
 					tellsMap.get(recepient).add(tellMessage);
 					
 					writeMessages();
-					bot.sendMessage(source, "[Tell] Okay, I'll tell them that next time they speak.");
+					bot.sendMessage(source, "[Tell] Okay, I'll tell " + arguments[0] + " that next time they speak.");
 				}
 			}
 		}
 		else
 		{
+			for(Iterator<String> iter = tellsMap.keySet().iterator(); iter.hasNext();)
+			{
+				String user = iter.next();
+				if(triggerUser.matches(user))
+				{
+					for(Message message : tellsMap.get(user))
+					{
+						bot.sendMessage(source, "[Tell] " + triggerUser + ": " + message.text);
+						bot.sendMessage(source, "[Tell] ^ From " + message.from + " on " + message.dateSent);
+					}
+					iter.remove();
+					writeMessages();
+				}
+			}
 		}
 	}
 
@@ -134,39 +148,37 @@ public class Tell extends Feature
 			Document doc = dBuilder.parse(fXmlFile);
 			doc.getDocumentElement().normalize();
 	
-			NodeList nList = doc.getElementsByTagName("recepient");
-			for(int i = 0; i < nList.getLength(); i++)
-			{
-				Node nNode = nList.item(i);
-				String name = "";
-		        if (nNode.getNodeType() != 1)
-		        	continue;
-		        Element eElement = (Element)nNode;
-		        name = getTagValue("name", eElement);
-		        
-		        for(int k = 0; k < nNode.getChildNodes().getLength(); k++)
-		        {
-		        	System.out.println(k + " " + nNode.getChildNodes().item(k).getNodeName());
-		        }
-		        
-		        NodeList nList2 = nNode.getChildNodes().item(3).getChildNodes();
-		        ArrayList<Message> messages = new ArrayList<Message>();
-		        System.out.println(nList2.getLength());
-		        
-		        for(int j = 0; j < nList2.getLength(); j++)
-		        {
-		        	Node nNode2 = nList2.item(i);
-		        	System.out.println(nNode2.getNodeName());
-			        if (nNode2.getNodeType() != 1)
-			        	continue;
-			        Element eElement2 = (Element)nNode2;
-			        String from = getTagValue("from", eElement2);
-			        String text = getTagValue("text", eElement2);
-			        String dateSent = getTagValue("datesent", eElement2);
-			        
-			        Message message = new Message(from, text, dateSent);
-			        messages.add(message);
-		        }
+			NodeList n = doc.getElementsByTagName("recepient");
+	        for(int i = 0; i < n.getLength(); i++)
+	        {
+	        	String name = "";
+	        	ArrayList<Message> messages = new ArrayList<Message>();
+	        	
+	        	if (n.item(i).getNodeType() == 1)
+        		{
+	        		Element eElement = (Element)n.item(i);
+	        		name = getTagValue("name", eElement);
+        		}
+	        	NodeList list1 = n.item(i).getChildNodes();
+	        	for(int j = 0; j < list1.getLength(); j++)
+	        	{     		
+	        		if(list1.item(j).getNodeName().equals("messages"))
+	        		{
+	        			NodeList list2 = list1.item(j).getChildNodes();
+	        			for(int k = 0; k < list2.getLength(); k++)
+	        			{
+	        				if(list2.item(k).getNodeName().equals("message"))
+	        				{
+	        					Node nNode = list2.item(k);
+        				        if (nNode.getNodeType() != 1)
+        				          continue;
+        				        Element eElement2 = (Element)nNode;
+        				        Message message = new Message(getTagValue("from", eElement2), getTagValue("text", eElement2), getTagValue("datesent", eElement2));
+        				        messages.add(message);
+	        				}
+	        			}
+	        		}
+	        	}
 		        tellsMap.put(name, messages);
 			}
 		}
