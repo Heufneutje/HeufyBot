@@ -46,7 +46,7 @@ public class Outofcontext extends Feature
 			{
 				public void run()
 				{
-					String result = PastebinUtils.post(settingsPath, "HeufyBot OutOfContext Log");
+					String result = PastebinUtils.post(settingsPath, "HeufyBot OutOfContext Log", true);
 					if(result != null)
 					{
 						bot.sendMessage(sourceChannel, "[OutOfContext] OoC Log posted: " + result  + " (Link expires in 10 minutes)");

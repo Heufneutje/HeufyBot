@@ -11,23 +11,35 @@ import java.util.Scanner;
 
 public class PastebinUtils
 {
-	public static String post(final String filePath, final String title)
+	public static String post(final String data, final String title, boolean dataIsFilePath)
 	{
 		try
 	    {
-	      String log = "";
-	      File file = new File(filePath);
-	      
-	      if(file.exists())
-	      {
-	        Scanner fileScanner = new Scanner(file);
-
-	        while (fileScanner.hasNextLine())
-	        {
-	          log = log + fileScanner.nextLine() + "\n";
-	        }
-
-	        URL url = new URL("http://pastebin.com/api/api_post.php");
+			String log = "";
+			
+			if(dataIsFilePath)
+			{
+				File file = new File(data);
+				if(file.exists())
+				{
+					Scanner fileScanner = new Scanner(file);
+					while (fileScanner.hasNextLine())
+					{
+						log = log + fileScanner.nextLine() + "\n";
+					}
+					fileScanner.close();
+				}
+				else
+				{
+					return "NotFound";
+				}
+			}
+			else
+			{
+				log = data;
+			}
+			
+			URL url = new URL("http://pastebin.com/api/api_post.php");
 	        URLConnection connection = url.openConnection();
 	        connection.setDoOutput(true);
 
@@ -42,42 +54,33 @@ public class PastebinUtils
 	        String api_paste_expire_date = "10M";
 
 	        String postData = URLEncoder.encode("api_dev_key", "UTF8") + "=" + URLEncoder.encode(api_dev_key, "UTF8") + "&" + 
-	          URLEncoder.encode("api_option", "UTF8") + "=" + URLEncoder.encode(api_option, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_code", "UTF8") + "=" + URLEncoder.encode(api_paste_code, "UTF8") + "&" + 
-	          URLEncoder.encode("api_user_key", "UTF8") + "=" + URLEncoder.encode(api_user_key, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_name", "UTF8") + "=" + URLEncoder.encode(api_paste_name, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_format", "UTF8") + "=" + URLEncoder.encode(api_paste_format, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_private", "UTF8") + "=" + URLEncoder.encode(api_paste_private, "UTF8") + "&" + 
-	          URLEncoder.encode("api_paste_expire_date", "UTF8") + "=" + URLEncoder.encode(api_paste_expire_date, "UTF8");
+	        		URLEncoder.encode("api_option", "UTF8") + "=" + URLEncoder.encode(api_option, "UTF8") + "&" + 
+	        		URLEncoder.encode("api_paste_code", "UTF8") + "=" + URLEncoder.encode(api_paste_code, "UTF8") + "&" + 
+	        		URLEncoder.encode("api_user_key", "UTF8") + "=" + URLEncoder.encode(api_user_key, "UTF8") + "&" + 
+	        		URLEncoder.encode("api_paste_name", "UTF8") + "=" + URLEncoder.encode(api_paste_name, "UTF8") + "&" + 
+	        		URLEncoder.encode("api_paste_format", "UTF8") + "=" + URLEncoder.encode(api_paste_format, "UTF8") + "&" + 
+	        		URLEncoder.encode("api_paste_private", "UTF8") + "=" + URLEncoder.encode(api_paste_private, "UTF8") + "&" + 
+	        		URLEncoder.encode("api_paste_expire_date", "UTF8") + "=" + URLEncoder.encode(api_paste_expire_date, "UTF8");
 
 	        OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
 	        out.write(postData);
 	        out.close();
 
-	        BufferedReader in = new BufferedReader(
-	          new InputStreamReader(
-	          connection.getInputStream()));
+	        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 	        String decodedString;
 	        String result = "";
 	        while ((decodedString = in.readLine()) != null)
 	        {
 	        	result += decodedString;
-	          //this.bot.sendMessage(this.source, "[OutOfContext] OoC Log posted: " + decodedString + " (Link expires in 10 minutes)");
 	        }
 	        in.close();
-	        fileScanner.close();
 	        System.out.println(result);
 	        return result;
-	      }
-	      else
-	      {
-	    	  return "NotFound";
-	      }
 	    }
 	    catch (Exception e)
 	    {
-	      e.printStackTrace();
+	    	e.printStackTrace();
+	    	return null;
 	    }
-		return null;
 	}	
 }

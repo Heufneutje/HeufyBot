@@ -24,6 +24,7 @@ import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.PastebinUtils;
 import org.pircbotx.utilities.RegexUtils;
 
 public class Tell extends Feature 
@@ -51,9 +52,10 @@ public class Tell extends Feature
 		this.triggerType = TriggerType.Automatic;
 		this.authType = AuthType.Anyone;
 		
-		this.triggers = new String[2];
+		this.triggers = new String[3];
 		this.triggers[0] = bot.getCommandPrefix() + "tell";
 		this.triggers[1] = bot.getCommandPrefix() + "rtell";
+		this.triggers[2] = bot.getCommandPrefix() + "senttells";
 		
 		this.tellsMap = new HashMap<String, ArrayList<Message>>();
 	}
@@ -61,7 +63,7 @@ public class Tell extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "tell <user> <message> | Tells the specified user a message the next time they speak.";
+		return "Commands: " + bot.getCommandPrefix() + "tell <user> <message>, " + bot.getCommandPrefix() + "rtell <message>, " + bot.getCommandPrefix() + "senttells | Tells the specified user a message the next time they speak, removes a message sent by you from the database or lists your pending messages.";
 	}
 
 	@Override
@@ -86,22 +88,98 @@ public class Tell extends Feature
 				}
 				else
 				{
-					String recepient = fixRegex(arguments[0]);
-					String message = metadata.substring(arguments[0].length() + 2);
-					Date date = new Date();
-					DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss '(UTC)'");
-					String dateString = format.format(date);
-					
-					Message tellMessage = new Message(triggerUser, message, dateString);
-					
-					if(!tellsMap.containsKey(recepient))
+					String[] recepients;
+					if(arguments[0].contains("&"))
 					{
-						tellsMap.put(recepient, new ArrayList<Message>());
+						recepients = arguments[0].split("&");
 					}
-					tellsMap.get(recepient).add(tellMessage);
+					else
+					{
+						recepients = new String[] {arguments[0]};
+					}
+					for(int i = 0; i < recepients.length; i++)
+					{
+						String recepient = fixRegex(recepients[i]);
+						String message = metadata.substring(arguments[0].length() + 2);
+						Date date = new Date();
+						DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss '(UTC)'");
+						String dateString = format.format(date);
+						
+						Message tellMessage = new Message(triggerUser, message, dateString);
+						
+						if(!tellsMap.containsKey(recepient))
+						{
+							tellsMap.put(recepient, new ArrayList<Message>());
+						}
+						tellsMap.get(recepient).add(tellMessage);
+					}
 					
 					writeMessages();
 					bot.sendMessage(source, "[Tell] Okay, I'll tell " + arguments[0] + " that next time they speak.");
+				}
+			}
+		}
+		else if(triggerCommand.equals(bot.getCommandPrefix() + "rtell"))
+		{
+			if(metadata.equals(""))
+			{
+				bot.sendMessage(source, "[Tell] Remove what?");
+			}
+			else if(metadata.startsWith(" "))
+			{
+				for(Iterator<String> iter = tellsMap.keySet().iterator(); iter.hasNext();)
+				{
+					String user = iter.next();
+					for(Iterator<Message> iter2 = tellsMap.get(user).iterator(); iter2.hasNext();)
+					{
+						Message message = iter2.next();
+						boolean messageFound = false;
+						if(message.from.equalsIgnoreCase(triggerUser) && message.text.matches(".*" + metadata.substring(1) + ".*"))
+						{
+							bot.sendMessage(source, "[Tell] Message '" + message.text + "' sent to " + user + " on " + message.dateSent + "was removed from the message database!");
+							iter2.remove();
+							messageFound = true;
+						}
+						if(messageFound)
+							break;
+					}
+					if(tellsMap.get(user).size() == 0)
+					{
+						iter.remove();
+					}
+				}
+			}
+		}
+		else if(triggerCommand.equals(bot.getCommandPrefix() + "senttells"))
+		{
+			if(metadata.equals(""))
+			{
+				String foundTells = "";
+				for(String user : tellsMap.keySet())
+				{
+					for(Message message : tellsMap.get(user))
+					{
+						if(message.from.equalsIgnoreCase(triggerUser))
+						{
+							foundTells += message.text + " < Sent to " + user + " on " + message.dateSent + "\n";
+						}
+					}
+				}
+				if(foundTells.equals(""))
+				{
+					bot.sendMessage(source, "[Tell] There are no messages sent by you that have not been received yet.");
+				}
+				else
+				{
+					String result = PastebinUtils.post(foundTells, triggerUser + "'s Messages", false);
+					if(result != null)
+					{
+						bot.sendMessage(source, "[Tell] These messages sent by you have not yet been received: " + result  + " (Link expires in 10 minutes)");
+					}
+					else
+					{
+						bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+					}
 				}
 			}
 		}
@@ -112,10 +190,31 @@ public class Tell extends Feature
 				String user = iter.next();
 				if(triggerUser.matches(user))
 				{
-					for(Message message : tellsMap.get(user))
+					if(tellsMap.get(user).size() > 3)
 					{
-						bot.sendMessage(source, "[Tell] " + triggerUser + ": " + message.text);
-						bot.sendMessage(source, "[Tell] ^ From " + message.from + " on " + message.dateSent);
+						String tells = "";
+						for(Message message : tellsMap.get(user))
+						{
+							tells += message.text + "\n";
+							tells += "^ From " + message.from + " on " + message.dateSent + "\n";
+						}
+						String result = PastebinUtils.post(tells, triggerUser + "'s Messages", false);
+						if(result != null)
+						{
+							bot.sendMessage(source, "[Tell] " + triggerUser + ", you have more than 3 messages. Go here to read them: " + result  + " (Link expires in 10 minutes)");
+						}
+						else
+						{
+							bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+						}
+					}
+					else
+					{
+						for(Message message : tellsMap.get(user))
+						{
+							bot.sendMessage(source, "[Tell] " + triggerUser + ": " + message.text);
+							bot.sendMessage(source, "[Tell] ^ From " + message.from + " on " + message.dateSent);
+						}
 					}
 					iter.remove();
 					writeMessages();
@@ -184,7 +283,7 @@ public class Tell extends Feature
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			//XML file could not be read
 		}
 	}
 	

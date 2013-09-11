@@ -66,7 +66,7 @@ public class Log extends Feature
 		{
 			public void run()
 			{
-				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + source + "/" + dateString + ".txt", "Log for " + source + " on " + dateString);
+				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + source + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, true);
 				if(result != null)
 				{
 					if(result.equals("NotFound"))
