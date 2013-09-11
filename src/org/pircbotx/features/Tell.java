@@ -362,6 +362,7 @@ public class Tell extends Feature
 				replaceAll("\\?", ".").
 				replaceAll("\\(", "(").
                 replaceAll("\\)", ")").
+                replaceAll(","), "|").
                 replaceAll("/", "|") + "$";
 	}
 }

@@ -16,6 +16,7 @@ public class RegexUtils
 				replaceAll("\\$", "\\\\$").
 				replaceAll("\\.", "\\\\.").
 				replaceAll("\\#", "\\\\#").
+				replaceAll("\\~", "").
 				replaceAll(" ", "");
 	}
 }
