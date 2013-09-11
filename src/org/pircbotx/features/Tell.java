@@ -195,8 +195,7 @@ public class Tell extends Feature
 						String tells = "";
 						for(Message message : tellsMap.get(user))
 						{
-							tells += message.text + "\n";
-							tells += "^ From " + message.from + " on " + message.dateSent + "\n";
+							tells += message.text + " < From " + message.from + " on " + message.dateSent + "\n";
 						}
 						String result = PastebinUtils.post(tells, triggerUser + "'s Messages", false);
 						if(result != null)
@@ -212,8 +211,7 @@ public class Tell extends Feature
 					{
 						for(Message message : tellsMap.get(user))
 						{
-							bot.sendMessage(source, "[Tell] " + triggerUser + ": " + message.text);
-							bot.sendMessage(source, "[Tell] ^ From " + message.from + " on " + message.dateSent);
+							bot.sendMessage(source, "[Tell] " + triggerUser + ": " + message.text + " < From " + message.from + " on " + message.dateSent);
 						}
 					}
 					iter.remove();
@@ -362,7 +360,7 @@ public class Tell extends Feature
 				replaceAll("\\?", ".").
 				replaceAll("\\(", "(").
                 replaceAll("\\)", ")").
-                replaceAll(","), "|").
+                replaceAll(",", "|").
                 replaceAll("/", "|") + "$";
 	}
 }
