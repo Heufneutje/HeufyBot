@@ -6,12 +6,11 @@ import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
 
 import com.memetix.mst.language.Language;
-import com.memetix.mst.translate.Translate;
 import com.memetix.mst.detect.Detect;
 
-public class Translation extends Feature 
+public class Translate extends Feature 
 {
-	public Translation(HeufyBot bot, String name) 
+	public Translate(HeufyBot bot, String name) 
 	{
 		super(bot, name);
 		this.settingsPath = "featuredata/msazurekey.txt";
@@ -61,8 +60,8 @@ public class Translation extends Feature
 			
 			if(authCredentials.length > 1)
 			{
-				Translate.setClientId(authCredentials[0]);
-				Translate.setClientSecret(authCredentials[1]);
+				com.memetix.mst.translate.Translate.setClientId(authCredentials[0]);
+				com.memetix.mst.translate.Translate.setClientSecret(authCredentials[1]);
 				
 				Detect.setClientId(authCredentials[0]);
 				Detect.setClientSecret(authCredentials[1]);
@@ -80,13 +79,13 @@ public class Translation extends Feature
 					String fromLanguage = languageParam.substring(0, 2);
 					String toLanguage = languageParam.substring(3, 5);
 					System.out.println(fromLanguage + "\n" + toLanguage);
-					String translatedText = Translate.execute(textToTranslate, Language.fromString(fromLanguage), Language.fromString(toLanguage));
+					String translatedText = com.memetix.mst.translate.Translate.execute(textToTranslate, Language.fromString(fromLanguage), Language.fromString(toLanguage));
 					bot.sendMessage(source, "[Translation] " + translatedText + " | Source Language: " + fromLanguage);
 				}
 				else
 				{
 					Language sourceLanguage = Detect.execute(textToTranslate);
-					String translatedText = Translate.execute(textToTranslate, Language.fromString(languageParam));
+					String translatedText = com.memetix.mst.translate.Translate.execute(textToTranslate, Language.fromString(languageParam));
 					bot.sendMessage(source, "[Translation] " + translatedText +  " | Source Language: Auto-Detect (" + sourceLanguage.toString() + ")");
 				}			
 			} 
