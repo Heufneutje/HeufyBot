@@ -45,7 +45,7 @@ public class Time extends Feature
 		}
 		else if(metadata.startsWith(" "))
 		{
-			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.substring(1);
+			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.replaceAll(" ", "");
 			String data = URLUtils.grab(urlString);
 			
 			if(data.equals(", ") || metadata.substring(1).contains(" "))
