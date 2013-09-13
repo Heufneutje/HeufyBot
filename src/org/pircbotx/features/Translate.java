@@ -25,7 +25,7 @@ public class Translate extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "translate <tolanguage> <sentence>, " + bot.getCommandPrefix() + "translate <fromlanguage>/<tolanguage> <sentence> | Translates a sentence to a different language through Bing Translate.";
+		return "Commands: " + bot.getCommandPrefix() + "translate <tolanguage> <sentence>, " + bot.getCommandPrefix() + "translate <fromlanguage>/<tolanguage> <sentence> | Translates a sentence to a different language through Bing Translate. Language codes: http://msdn.microsoft.com/en-us/library/hh456380.aspx";
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class Translate extends Feature
 	{
 		if(metadata.equals("") || metadata.equals(" "))
 		{
-			this.bot.sendMessage(source, "[Translation] Translate what?");
+			this.bot.sendMessage(source, "[Translate] Translate what?");
 		}
 		else if(metadata.startsWith(" "))
 		{
@@ -47,7 +47,7 @@ public class Translate extends Feature
 			}
 			catch (StringIndexOutOfBoundsException e)
 			{
-				this.bot.sendMessage(source, "[Translation] Error: No text to translate.");
+				this.bot.sendMessage(source, "[Translate] Error: No text to translate.");
 				return;
 			}
 			
@@ -68,7 +68,7 @@ public class Translate extends Feature
 			}
 			else
 			{
-				this.bot.sendMessage(source, "[Translation] Error: No MS Azure login credentials were provided.");
+				this.bot.sendMessage(source, "[Translate] Error: No MS Azure login credentials were provided.");
 				return;
 			}
 			
@@ -80,18 +80,18 @@ public class Translate extends Feature
 					String toLanguage = languageParam.substring(3, 5);
 					System.out.println(fromLanguage + "\n" + toLanguage);
 					String translatedText = com.memetix.mst.translate.Translate.execute(textToTranslate, Language.fromString(fromLanguage), Language.fromString(toLanguage));
-					bot.sendMessage(source, "[Translation] " + translatedText + " | Source Language: " + fromLanguage);
+					bot.sendMessage(source, "[Translate] " + translatedText + " | Source Language: " + fromLanguage);
 				}
 				else
 				{
 					Language sourceLanguage = Detect.execute(textToTranslate);
 					String translatedText = com.memetix.mst.translate.Translate.execute(textToTranslate, Language.fromString(languageParam));
-					bot.sendMessage(source, "[Translation] " + translatedText +  " | Source Language: Auto-Detect (" + sourceLanguage.toString() + ")");
+					bot.sendMessage(source, "[Translate] " + translatedText +  " | Source Language: Auto-Detect (" + sourceLanguage.toString() + ")");
 				}			
 			} 
 			catch (Exception e)
 			{
-				bot.sendMessage(source, "[Translation] Error: Text could not be translated. Make sure the language code is corrent.");
+				bot.sendMessage(source, "[Translate] Error: Text could not be translated. Make sure the language code is corrent.");
 			}
 		}
 	}
