@@ -46,7 +46,7 @@ public class Weather extends Feature
 		{
 			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.replaceAll(" ", "");
 			String data = URLUtils.grab(urlString);
-			if(data.equals(", ") || metadata.substring(1).contains(" "))
+			if(data.equals(", "))
 			{
 				bot.sendMessage(source, this.lookupWeather(metadata.substring(1)));
 			}

@@ -35,7 +35,7 @@ public class Time extends Feature
 			if(data.equals(", "))
 			{
 				Date date = new Date();
-				DateFormat format = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
+				DateFormat format = new SimpleDateFormat("HH:mm (hh:mm aa) 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
 				this.bot.sendMessage(source, "[Time] Local time is " + format.format(date) + " | You are not registed on the chatmap, returned the bot's local time instead");
 			}
 			else
@@ -48,7 +48,7 @@ public class Time extends Feature
 			String urlString = "http://www.tsukiakariusagi.net/chatmaplookup.php?nick=" + metadata.replaceAll(" ", "");
 			String data = URLUtils.grab(urlString);
 			
-			if(data.equals(", ") || metadata.substring(1).contains(" "))
+			if(data.equals(", "))
 			{
 				this.bot.sendMessage(source, this.lookupTime(metadata.substring(1)));
 			}
@@ -106,7 +106,7 @@ public class Time extends Feature
 				try 
 				{
 					date = dt.parse(localtime);
-					SimpleDateFormat dt1 = new SimpleDateFormat("hh:mm aa 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
+					SimpleDateFormat dt1 = new SimpleDateFormat("HH:mm (hh:mm aa) 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
 					return "Local time is " + dt1.format(date) + " | " + type + ": " + query;
 				}
 				catch (ParseException e)
