@@ -3,6 +3,7 @@ package org.pircbotx.features;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
+import org.pircbotx.utilities.FileUtils;
 import org.pircbotx.utilities.URLUtils;
 
 public class Youtube extends Feature 
@@ -10,6 +11,8 @@ public class Youtube extends Feature
 	public Youtube(HeufyBot bot, String name) 
 	{
 		super(bot, name);
+		
+		this.settingsPath = "featuredata/googleapikey.txt";
 		
 		this.triggerType = TriggerType.Message;
 		this.authType = AuthType.Anyone;
@@ -27,7 +30,12 @@ public class Youtube extends Feature
 	@Override
 	public void process(String source, String metadata, String triggerUser, String triggerCommand) 
 	{
-		if ((metadata.equals("")) || (metadata.equals(" ")))
+		String apiKey = FileUtils.readFile(getSettingsPath());
+		if(apiKey.equals(""))
+		{
+			bot.sendMessage(source, "[Youtube] Error: No API key for Google provided");
+		}
+		else if ((metadata.equals("")) || (metadata.equals(" ")))
 		{
 			this.bot.sendMessage(source, "[Youtube] Search what?");
 		}
@@ -39,7 +47,7 @@ public class Youtube extends Feature
 	                    "&orderby=relevance" +
 	                    "&max-results=1" +
 	                    "&v=2" +
-	                    "&key=AIzaSyBqSIpLIvf4r2CNKa7xAAxe1sDB3DEfyOk";
+	                    "&key=" + apiKey;
 				String videoData = URLUtils.grab(urlString);
 			    String[] splitElements = videoData.split("<");
 			    String title = "";
@@ -104,7 +112,8 @@ public class Youtube extends Feature
 
 	@Override
 	public void onLoad() 
-	{	
+	{
+		FileUtils.touchFile(getSettingsPath());
 	}
 
 	@Override

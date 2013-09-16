@@ -198,13 +198,17 @@ public class Tell extends Feature
 							tells += message.text + " < From " + message.from + " on " + message.dateSent + "\n";
 						}
 						String result = PastebinUtils.post(tells, triggerUser + "'s Messages", false);
-						if(result != null)
+						if(result == null)
 						{
-							bot.sendMessage(source, "[Tell] " + triggerUser + ", you have more than 3 messages. Go here to read them: " + result  + " (Link expires in 10 minutes)");
+							bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+						}
+						else if(result.equals("NoKey"))
+						{
+							bot.sendMessage(source, "[Tell] Error: No PasteBin API key was found");
 						}
 						else
 						{
-							bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+							bot.sendMessage(source, "[Tell] " + triggerUser + ", you have more than 3 messages. Go here to read them: " + result  + " (Link expires in 10 minutes)");
 						}
 					}
 					else

@@ -73,6 +73,10 @@ public class Log extends Feature
 					{
 						bot.sendMessage(source, "[Log] I do not have that log");
 					}
+					else if(result.equals("NoKey"))
+					{
+						bot.sendMessage(source, "[Log] Error: No PasteBin API key was found");
+					}
 					else
 					{
 						bot.sendMessage(source, "[Log] Log for " + source + " on " + dateString + " posted: " + result + " (Link expires in 10 minutes)");

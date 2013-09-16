@@ -15,9 +15,15 @@ public class PastebinUtils
 	{
 		try
 	    {
+			FileUtils.touchFile("featuredata/pastebinapikey.txt");
 			String log = "";
 			
-			if(dataIsFilePath)
+			String api_dev_key = FileUtils.readFile("featuredata/pastebinapikey.txt").replaceAll("\n", "");
+			if(api_dev_key.equals(""))
+			{
+				return "NoKey";
+			}
+			else if(dataIsFilePath)
 			{
 				File file = new File(data);
 				if(file.exists())
@@ -43,7 +49,7 @@ public class PastebinUtils
 	        URLConnection connection = url.openConnection();
 	        connection.setDoOutput(true);
 
-	        String api_dev_key = "103e700947c8d6782b3fb99c85ae4d9f";
+	        ;
 	        String api_option = "paste";
 	        String api_paste_code = log;
 

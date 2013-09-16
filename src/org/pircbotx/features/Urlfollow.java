@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
+import org.pircbotx.utilities.FileUtils;
 import org.pircbotx.utilities.URLUtils;
 
 public class Urlfollow extends Feature
@@ -18,6 +19,8 @@ public class Urlfollow extends Feature
   public Urlfollow(HeufyBot bot, String name)
   {
 	  super(bot, name);
+	  
+	  this.settingsPath = "featuredata/googleapikey.txt";
 	  
 	  this.triggerType = TriggerType.Message;
 	  this.authType = AuthType.Anyone;
@@ -52,7 +55,8 @@ public class Urlfollow extends Feature
 			  if(!urlstring.matches(".*(jpe?g|gif|png|bmp)"))
 			  {
 				  String fullHostname = URLUtils.getFullHostname(urlstring);
-				  if(fullHostname.contains("http://www.youtube.com/watch"))
+				  String apiKey = FileUtils.readFile(getSettingsPath());
+				  if(fullHostname.contains("http://www.youtube.com/watch") && !apiKey.equals(""))
 				  {
 					  String videoID = "";
 					  if(fullHostname.contains("&"))
@@ -63,7 +67,7 @@ public class Urlfollow extends Feature
 					  {
 						  videoID = fullHostname.split("watch\\?v=")[1];
 					  }
-					  bot.sendMessage(source, "[URLFollow] " + followYouTubeURL(videoID));
+					  bot.sendMessage(source, "[URLFollow] " + followYouTubeURL(videoID, apiKey));
 				  }
 				  else
 				  {
@@ -156,9 +160,9 @@ public class Urlfollow extends Feature
 	      }
 	}
 	
-	public String followYouTubeURL(String videoID) throws IOException
+	public String followYouTubeURL(String videoID, String apiKey) throws IOException
 	{
-		 String urlString = "https://gdata.youtube.com/feeds/api/videos/" + videoID + "?v=2&key=AIzaSyBqSIpLIvf4r2CNKa7xAAxe1sDB3DEfyOk";
+		 String urlString = "https://gdata.youtube.com/feeds/api/videos/" + videoID + "?v=2&key=" + apiKey;
 		 String data = URLUtils.grab(urlString);
 	      String[] splitElements = data.split("<");
 	      
