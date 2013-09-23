@@ -2,6 +2,7 @@ package org.pircbotx.utilities;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -16,8 +17,7 @@ public class URLUtils
 			String line;
 			String data = "";
 		    bufReader = new BufferedReader( new InputStreamReader(url.openStream()));
-		     
-		    //read line by line
+		    
 		    while( (line = bufReader.readLine()) != null)
 		    {
 		    	data += line + " ";
@@ -48,6 +48,57 @@ public class URLUtils
 		catch (Exception e)
 		{
 			return "ERROR";
+		}
+	}
+	
+	public static String shortenURL(String urlstring)
+	{
+		FileUtils.touchFile("featuredata/googleapikey.txt");
+		
+		String apiKey = FileUtils.readFile("featuredata/googleapikey.txt").replaceAll("\n", "");
+		if(apiKey.equals(""))
+		{
+			return "NoKey";
+		}
+		else
+		{
+			try
+			{
+				String json = "";
+				if(urlstring.startsWith("http:"))
+				{
+					json = "{\"longUrl\": \"" + urlstring + "\"}";
+				}
+				else
+				{
+					json = "{\"longUrl\": \"http://"+urlstring+"/\"}";
+				}
+				
+				URL url = new URL("https://www.googleapis.com/urlshortener/v1/url?key=" + apiKey);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		        connection.setRequestMethod("POST"); 
+		        connection.setRequestProperty("Content-Type", "application/json"); 
+		        connection.setDoOutput(true);
+	
+		        OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+		        out.write(json);
+		        out.close();
+	
+		        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		        String decodedString;
+		        String result = "";
+		        while ((decodedString = in.readLine()) != null)
+		        {
+		        	result += decodedString;
+		        }
+		        in.close();
+		        return result.substring(result.indexOf("http://goo.gl"), result.indexOf("\"", result.indexOf("http://goo.gl")));
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				return null;
+			}
 		}
 	}
 }

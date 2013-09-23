@@ -145,7 +145,12 @@ public class Weather extends Feature
 						lastUpdate = splitElements[i].substring(splitElements[i].indexOf(">") + 1);
 					}
 				}
-				return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir + " (Local Observation Time: " + lastUpdate + ")";
+				String shortenedSearch = URLUtils.shortenURL("http://www.worldweatheronline.com/search-weather.aspx?q=" + location);
+				if(!shortenedSearch.equals("NoKey"))
+				{
+					return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir + " | Local Observation Time: " + lastUpdate + " | More details: " + shortenedSearch;
+				}
+				return "[Weather] " + type + ": " + query + " | " + "Temp: " + tempC + "°C/" + tempF + "°F | Weather: " + weatherDesc + " | Humidity: " + humidity + "% | Wind: " + windSpeedKm + " kmph/" + windSpeedMiles + "mph " + winddir + " | Local Observation Time: " + lastUpdate;
 			}
 		}
 	}

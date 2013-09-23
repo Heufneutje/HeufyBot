@@ -49,7 +49,6 @@ public class PastebinUtils
 	        URLConnection connection = url.openConnection();
 	        connection.setDoOutput(true);
 
-	        ;
 	        String api_option = "paste";
 	        String api_paste_code = log;
 
