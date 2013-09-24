@@ -6,7 +6,6 @@ public class RegexUtils
 	{
 		return regex.replaceAll("\\*", "\\*").
 				replaceAll("\\+", "\\\\+").
-				replaceAll("\\?", "\\\\?").
 				replaceAll("\\|", "\\\\|").
 				replaceAll("\\{", "\\\\{").
 				replaceAll("\\[", "\\\\[").
