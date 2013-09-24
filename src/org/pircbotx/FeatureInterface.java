@@ -187,7 +187,7 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 					{
 						if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerType == TriggerType.Action || triggerType != TriggerType.Action))
 						{
-							if (feature.getTriggers().length > 0 && !message.toLowerCase().startsWith(feature.getTriggers()[i]))
+							if (feature.getTriggers().length > 0 && !message.toLowerCase().split(" ")[0].matches("^" + feature.getTriggers()[i] + "$"))
 								continue;
 							if(checkAutorization(user, channel, feature.getAuthType(), isPM))
 							{
