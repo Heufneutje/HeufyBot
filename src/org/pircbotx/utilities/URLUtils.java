@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class URLUtils
@@ -13,10 +14,12 @@ public class URLUtils
 		try
 		{
 			URL url = new URL(urlString);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 			BufferedReader bufReader;
 			String line;
 			String data = "";
-		    bufReader = new BufferedReader( new InputStreamReader(url.openStream()));
+		    bufReader = new BufferedReader( new InputStreamReader(connection.getInputStream()));
 		    
 		    while( (line = bufReader.readLine()) != null)
 		    {
@@ -48,6 +51,20 @@ public class URLUtils
 		catch (Exception e)
 		{
 			return "ERROR";
+		}
+	}
+	
+	public static String getHost(String urlString)
+	{
+		URL url;
+		try
+		{
+			url = new URL(urlString);
+			return url.getHost();
+		}
+		catch (MalformedURLException e)
+		{
+			return null;
 		}
 	}
 	
