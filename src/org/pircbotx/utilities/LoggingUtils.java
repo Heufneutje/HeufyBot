@@ -9,6 +9,11 @@ public class LoggingUtils
 {
 	public static void write(String logString, String server, String target)
 	{
+		if(!target.contains("#"))
+		{
+			target = target.replaceAll("[^a-zA-Z0-9]+","");
+		}
+		
 		File file = new File("logs/");
 	    if (!file.exists())
 	    {

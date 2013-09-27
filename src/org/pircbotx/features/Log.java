@@ -66,7 +66,12 @@ public class Log extends Feature
 		{
 			public void run()
 			{
-				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + source + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, true);
+				String targetLog = source;
+				if(!source.contains("#"))
+				{
+					targetLog = source.replaceAll("[^a-zA-Z0-9]+","");
+				}
+				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + targetLog + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, true);
 				if(result != null)
 				{
 					if(result.equals("NotFound"))
