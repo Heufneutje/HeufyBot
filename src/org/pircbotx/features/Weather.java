@@ -48,7 +48,7 @@ public class Weather extends Feature
 			String data = URLUtils.grab(urlString);
 			if(data.equals(", "))
 			{
-				bot.sendMessage(source, this.lookupWeather(metadata.substring(1)));
+				bot.sendMessage(source, this.lookupWeather(metadata.substring(1).replaceAll(" ", "%20")));
 			}
 			else
 			{

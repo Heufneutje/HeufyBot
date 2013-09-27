@@ -50,7 +50,7 @@ public class Time extends Feature
 			
 			if(data.equals(", "))
 			{
-				this.bot.sendMessage(source, this.lookupTime(metadata.substring(1)));
+				this.bot.sendMessage(source, this.lookupTime(metadata.substring(1).replaceAll(" ", "%20")));
 			}
 			else
 			{
