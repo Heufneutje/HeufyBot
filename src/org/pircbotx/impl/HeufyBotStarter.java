@@ -26,8 +26,7 @@ public class HeufyBotStarter
       {
     	  bot = new HeufyBot(true);
       }
-      
-      bot.setVersion("HeufyBot IRC Bot V1.6.3 (PircBotX 1.9)");
+      bot.setVersionNumber("V1.6.4");
     }
     catch (Exception e)
     {

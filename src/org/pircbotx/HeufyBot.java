@@ -129,7 +129,8 @@ public class HeufyBot {
 	private String realName = "PircBotX";
 	protected String nick = name;
 	protected String login = "PircBotX";
-	protected String version = "VERSION";
+	protected String versionNumber = "0.0.0";
+	protected String version = "version";
 	protected String finger = "Boop!";
 	protected String channelPrefixes = "#&+!";
 	private String commandPrefix = "~";
@@ -2678,5 +2679,16 @@ public class HeufyBot {
 	public void setAdminMode(boolean adminMode)
 	{
 		this.adminMode = adminMode;
+	}
+
+	public String getVersionNumber()
+	{
+		return this.versionNumber;
+	}
+	
+	public void setVersionNumber(String versionNumber)
+	{
+		this.versionNumber = versionNumber;
+		this.version = "HeufyBot IRC Bot " + versionNumber + " (PircBotX " + VERSION + ")";
 	}
 }
