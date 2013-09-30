@@ -225,7 +225,6 @@ public class Outofcontext extends Feature
 				searchType = "Quote";
 				for(int i = 0; i < quotes.length; i++)
 				{
-					System.out.println(quotes[i].indexOf("<"));
 					if(quotes[i].indexOf("<") == 21)
 					{
 						if(pattern.matcher(quotes[i].substring(quotes[i].indexOf(">") + 1)).matches())
