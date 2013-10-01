@@ -36,7 +36,7 @@ public class Time extends Feature
 			{
 				Date date = new Date();
 				DateFormat format = new SimpleDateFormat("HH:mm (hh:mm aa) 'on' EEEEEEEE, dd 'of' MMMMMMMMMM, yyyy", Locale.US);
-				this.bot.sendMessage(source, "[Time] Local time is " + format.format(date) + " | You are not registed on the chatmap, returned the bot's local time instead");
+				this.bot.sendMessage(source, "[Time] Local time is " + format.format(date) + " | You are not registered on the chatmap, returned the bot's local time instead");
 			}
 			else
 			{
