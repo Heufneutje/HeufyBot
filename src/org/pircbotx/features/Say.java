@@ -21,7 +21,7 @@ public class Say extends Feature
 	{
 		if ((metadata.equals("")) || (metadata.equals(" ")))
 		{
-			this.bot.sendMessage(source, "Say what?");
+			this.bot.sendMessage(source, "[Say] Say what?");
 		}
 		else if (metadata.startsWith(" "))
 		{

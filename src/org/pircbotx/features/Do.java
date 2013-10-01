@@ -21,7 +21,7 @@ public class Do extends Feature
 	{
 		if ((metadata.equals("")) || (metadata.equals(" ")))
 		{
-			this.bot.sendMessage(source, "Do what?");
+			this.bot.sendMessage(source, "[Do] Do what?");
 		}
 		else if (metadata.startsWith(" "))
 		{
