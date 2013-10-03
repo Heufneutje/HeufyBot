@@ -102,7 +102,7 @@ public class Tell extends Feature
 						{
 							bot.sendMessage(source, "[Tell] Why are you telling yourself that?");
 						}
-						else if(bot.getNick().toLowerCase().matches(recepient.toLowerCase()))
+						else if(recepients[i].equalsIgnoreCase(bot.getNick()))
 						{
 							bot.sendMessage(source, "[Tell] Thanks for telling me that " + triggerUser + ".");
 						}
