@@ -34,12 +34,14 @@ public class Tell extends Feature
 		public String from;
 		public String text;
 		public String dateSent;
+		public String messageSource;
 		
-		Message(String from, String text, String dateSent)
+		Message(String from, String text, String dateSent, String messageSource)
 		{
 			this.from = from;
 			this.text = text;
 			this.dateSent = dateSent;
+			this.messageSource = messageSource;
 		}
 	}
 	private HashMap<String, ArrayList<Message>> tellsMap;
@@ -82,10 +84,6 @@ public class Tell extends Feature
 				{
 					bot.sendMessage(source, "[Tell] What do you want me to tell them?");
 				}
-				else if(arguments[0].equalsIgnoreCase(bot.getNick()))
-				{
-					bot.sendMessage(source, "[Tell] Thanks for telling me that " + triggerUser + ".");
-				}
 				else
 				{
 					String[] recepients;
@@ -100,22 +98,41 @@ public class Tell extends Feature
 					for(int i = 0; i < recepients.length; i++)
 					{
 						String recepient = fixRegex(recepients[i]);
-						String message = metadata.substring(arguments[0].length() + 2);
-						Date date = new Date();
-						DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss '(UTC)'");
-						String dateString = format.format(date);
-						
-						Message tellMessage = new Message(triggerUser, message, dateString);
-						
-						if(!tellsMap.containsKey(recepient))
+						if(triggerUser.toLowerCase().matches(recepient.toLowerCase()))
 						{
-							tellsMap.put(recepient, new ArrayList<Message>());
+							bot.sendMessage(source, "[Tell] Why are you telling yourself that?");
 						}
-						tellsMap.get(recepient).add(tellMessage);
+						else if(bot.getNick().toLowerCase().matches(recepient.toLowerCase()))
+						{
+							bot.sendMessage(source, "[Tell] Thanks for telling me that " + triggerUser + ".");
+						}
+						else
+						{
+							String message = metadata.substring(arguments[0].length() + 2);
+							Date date = new Date();
+							DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss '(UTC)'");
+							String dateString = format.format(date);
+							String messageSource = "";
+							if(source.equals(triggerUser))
+							{
+								messageSource = "PM";
+							}
+							else
+							{
+								messageSource = "Channel";
+							}
+							
+							Message tellMessage = new Message(triggerUser, message, dateString, messageSource);
+							
+							if(!tellsMap.containsKey(recepient))
+							{
+								tellsMap.put(recepient, new ArrayList<Message>());
+							}
+							tellsMap.get(recepient).add(tellMessage);
+							bot.sendMessage(source, "[Tell] Okay, I'll tell " + recepients[i] + " that next time they speak.");
+						}
 					}
-					
 					writeMessages();
-					bot.sendMessage(source, "[Tell] Okay, I'll tell " + arguments[0] + " that next time they speak.");
 				}
 			}
 		}
@@ -136,7 +153,7 @@ public class Tell extends Feature
 						boolean messageFound = false;
 						if(message.from.equalsIgnoreCase(triggerUser) && message.text.matches(".*" + metadata.substring(1) + ".*"))
 						{
-							bot.sendMessage(source, "[Tell] Message '" + message.text + "' sent to " + user + " on " + message.dateSent + "was removed from the message database!");
+							bot.sendMessage(source, "[Tell] Message '" + message.text + "' sent to " + user + " on " + message.dateSent + " was removed from the message database!");
 							iter2.remove();
 							messageFound = true;
 						}
@@ -155,30 +172,68 @@ public class Tell extends Feature
 			if(metadata.equals(""))
 			{
 				String foundTells = "";
+				String foundPMs = "";
 				for(String user : tellsMap.keySet())
 				{
 					for(Message message : tellsMap.get(user))
 					{
 						if(message.from.equalsIgnoreCase(triggerUser))
 						{
-							foundTells += message.text + " < Sent to " + user + " on " + message.dateSent + "\n";
+							if(message.messageSource.equals("PM"))
+							{
+								foundPMs += message.text + " < Sent to " + user + " on " + message.dateSent + "\n";
+							}
+							else
+							{
+								foundTells += message.text + " < Sent to " + user + " on " + message.dateSent + "\n";
+							}
 						}
 					}
 				}
-				if(foundTells.equals(""))
+				if(foundTells.equals("") && foundPMs.equals(""))
 				{
 					bot.sendMessage(source, "[Tell] There are no messages sent by you that have not been received yet.");
 				}
 				else
 				{
-					String result = PastebinUtils.post(foundTells, triggerUser + "'s Messages", false);
-					if(result != null)
+					if(!foundTells.equals(""))
 					{
-						bot.sendMessage(source, "[Tell] These messages sent by you have not yet been received: " + result  + " (Link expires in 10 minutes)");
+						String[] tells = foundTells.split("\n");
+						if(tells.length > 3)
+						{
+							String result = PastebinUtils.post(foundTells, triggerUser + "'s Messages", false, 10);
+							if(result == null)
+							{
+								bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+							}
+							else if(result.equals("NoKey"))
+							{
+								bot.sendMessage(source, "[Tell] Error: No PasteBin API key was found");
+							}
+							else
+							{
+								bot.sendMessage(source, "[Tell] These messages sent by you have not yet been received: " + result  + " (Link expires in 10 minutes)");
+							}
+						}
+						else
+						{
+							for(int i = 0; i < tells.length; i++)
+							{
+								bot.sendMessage(source, "[Tell] " + tells[i]);
+							}
+						}
 					}
-					else
+					if(!foundPMs.equals(""))
 					{
-						bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+						if(!source.equals(triggerUser) && foundTells.equals(""))
+						{
+							bot.sendMessage(source, "[Tell] There are no public messages sent by you that have not been received yet, but there are private messages.");
+						}
+						String[] tells = foundPMs.split("\n");
+						for(int i = 0; i < tells.length; i++)
+						{
+							bot.sendMessage(triggerUser, "[Tell] " + tells[i]);
+						}
 					}
 				}
 			}
@@ -188,34 +243,55 @@ public class Tell extends Feature
 			for(Iterator<String> iter = tellsMap.keySet().iterator(); iter.hasNext();)
 			{
 				String user = iter.next();
-				if(triggerUser.matches(user))
+				if(triggerUser.toLowerCase().matches(user.toLowerCase()))
 				{
-					if(tellsMap.get(user).size() > 3)
+					String tells = "";
+					String pms = "";					
+					
+					for(Message message : tellsMap.get(user))
 					{
-						String tells = "";
-						for(Message message : tellsMap.get(user))
+						if(message.messageSource.equals("PM"))
 						{
-							tells += message.text + " < From " + message.from + " on " + message.dateSent + "\n";
-						}
-						String result = PastebinUtils.post(tells, triggerUser + "'s Messages", false);
-						if(result == null)
-						{
-							bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
-						}
-						else if(result.equals("NoKey"))
-						{
-							bot.sendMessage(source, "[Tell] Error: No PasteBin API key was found");
+							pms += message.text + " < From " + message.from + " on " + message.dateSent + "\n";
 						}
 						else
 						{
-							bot.sendMessage(source, "[Tell] " + triggerUser + ", you have more than 3 messages. Go here to read them: " + result  + " (Link expires in 10 minutes)");
+							tells += message.text + " < From " + message.from + " on " + message.dateSent + "\n";
 						}
 					}
-					else
+					if(!tells.equals(""))
 					{
-						for(Message message : tellsMap.get(user))
+						String[] receivedTells = tells.split("\n");
+						if(receivedTells.length > 3)
 						{
-							bot.sendMessage(source, "[Tell] " + triggerUser + ": " + message.text + " < From " + message.from + " on " + message.dateSent);
+							String result = PastebinUtils.post(tells, triggerUser + "'s Messages", false, 60);
+							if(result == null)
+							{
+								bot.sendMessage(source, "[Tell] Error: Messages could not be posted.");
+							}
+							else if(result.equals("NoKey"))
+							{
+								bot.sendMessage(source, "[Tell] Error: No PasteBin API key was found");
+							}
+							else
+							{
+								bot.sendMessage(source, "[Tell] " + triggerUser + ", you have more than 3 messages. Go here to read them: " + result  + " (Link expires in 60 minutes)");
+							}
+						}
+						else
+						{
+							for(int i = 0; i < receivedTells.length; i++)
+							{
+								bot.sendMessage(source, "[Tell] " + receivedTells[i]);
+							}
+						}
+					}
+					if(!pms.equals(""))
+					{
+						String[] receivedPMs = pms.split("\n");
+						for(int i = 0; i < receivedPMs.length; i++)
+						{
+							bot.sendMessage(triggerUser, "[Tell] " + receivedPMs[i]);
 						}
 					}
 					iter.remove();
@@ -274,7 +350,7 @@ public class Tell extends Feature
         				        if (nNode.getNodeType() != 1)
         				          continue;
         				        Element eElement2 = (Element)nNode;
-        				        Message message = new Message(getTagValue("from", eElement2), getTagValue("text", eElement2), getTagValue("datesent", eElement2));
+        				        Message message = new Message(getTagValue("from", eElement2), getTagValue("text", eElement2), getTagValue("datesent", eElement2), getTagValue("messagesource", eElement2));
         				        messages.add(message);
 	        				}
 	        			}
@@ -326,6 +402,10 @@ public class Tell extends Feature
 					Element dateElement = doc.createElement("datesent");
 					messageElement.appendChild(dateElement);
 					dateElement.appendChild(doc.createTextNode(message.dateSent));
+					
+					Element sourceElement = doc.createElement("messagesource");
+					messageElement.appendChild(sourceElement);
+					sourceElement.appendChild(doc.createTextNode(message.messageSource));
 				}
 			}
 			

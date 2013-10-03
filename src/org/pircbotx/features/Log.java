@@ -71,7 +71,7 @@ public class Log extends Feature
 				{
 					targetLog = source.replaceAll("[^a-zA-Z0-9]+","");
 				}
-				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + targetLog + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, true);
+				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + targetLog + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, true, 10);
 				if(result != null)
 				{
 					if(result.equals("NotFound"))

@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class PastebinUtils
 {
-	public static String post(final String data, final String title, boolean dataIsFilePath)
+	public static String post(final String data, final String title, boolean dataIsFilePath, int expireMinutes)
 	{
 		try
 	    {
@@ -56,7 +56,7 @@ public class PastebinUtils
 	        String api_paste_name = title;
 	        String api_paste_format = "text";
 	        String api_paste_private = "1";
-	        String api_paste_expire_date = "10M";
+	        String api_paste_expire_date = expireMinutes + "M";
 
 	        String postData = URLEncoder.encode("api_dev_key", "UTF8") + "=" + URLEncoder.encode(api_dev_key, "UTF8") + "&" + 
 	        		URLEncoder.encode("api_option", "UTF8") + "=" + URLEncoder.encode(api_option, "UTF8") + "&" + 
