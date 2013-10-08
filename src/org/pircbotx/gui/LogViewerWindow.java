@@ -12,7 +12,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.pircbotx.utilities.LoggingUtils;
+import org.pircbotx.utilities.FileUtils;
 
 public class LogViewerWindow extends JFrame
 {
@@ -111,7 +111,7 @@ public class LogViewerWindow extends JFrame
 			if (node.isLeaf())
 			{
 				LogInfo logInfo = (LogInfo) nodeInfo;
-				log.setText(LoggingUtils.read(logInfo.getPath()));
+				log.setText(FileUtils.readFile(logInfo.getPath()));
 			}
 			else
 			{

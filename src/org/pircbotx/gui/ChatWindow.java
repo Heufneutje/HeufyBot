@@ -16,16 +16,16 @@ import javax.swing.text.DefaultCaret;
 
 public class ChatWindow extends JPanel
 {
-  private static final long serialVersionUID = 6405271968746118256L;
-  private JTextArea chat;
-  private JTextField input;
-  private JTextPane topic;
-  private JButton changeButton;
-  private JPanel topicPanel;
+	private static final long serialVersionUID = 6405271968746118256L;
+	private JTextArea chat;
+	private JTextField input;
+	private JTextPane topic;
+	private JButton changeButton;
+	private JPanel topicPanel;
   
-  private JScrollPane scrollPane;
-  private MainWindow gui;
-  private String name;
+	private JScrollPane scrollPane;
+	private MainWindow gui;
+	private String name;
 
   	public ChatWindow(String name, MainWindow gui)
   	{
