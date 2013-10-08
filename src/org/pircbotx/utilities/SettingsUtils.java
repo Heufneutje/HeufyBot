@@ -158,7 +158,7 @@ public class SettingsUtils
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			LoggingUtils.writeError(SettingsUtils.class.toString(), e.getClass().toString(), e.getMessage());
 		}
 		return false;
 	}

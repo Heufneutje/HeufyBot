@@ -30,6 +30,7 @@ public class URLUtils
 		}
 		catch(Exception e)
 		{
+			LoggingUtils.writeError(URLUtils.class.toString(), e.getClass().toString(), e.getMessage());
 			return "ERROR";
 		}
 	}
@@ -50,6 +51,7 @@ public class URLUtils
 		}
 		catch (Exception e)
 		{
+			LoggingUtils.writeError(URLUtils.class.toString(), e.getClass().toString(), e.getMessage());
 			return "ERROR";
 		}
 	}
@@ -64,6 +66,7 @@ public class URLUtils
 		}
 		catch (MalformedURLException e)
 		{
+			LoggingUtils.writeError(URLUtils.class.toString(), e.getClass().toString(), e.getMessage());
 			return null;
 		}
 	}
@@ -113,7 +116,7 @@ public class URLUtils
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				LoggingUtils.writeError(URLUtils.class.toString(), e.getClass().toString(), e.getMessage());
 				return null;
 			}
 		}

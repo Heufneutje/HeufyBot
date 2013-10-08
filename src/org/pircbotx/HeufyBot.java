@@ -25,8 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.ConnectException;
@@ -1221,13 +1219,15 @@ public class HeufyBot {
 	 *
 	 * @param line The line to add to the log.
 	 */
-	public void log(String line, String target) {
-		synchronized (this.logLock) {
-			if (this.verbose) {
+	public void log(String line, String target)
+	{
+		synchronized (this.logLock) 
+		{
+			if (this.verbose)
+			{
 				DateFormat dateFormat = new SimpleDateFormat("HH:mm");
 				Date date = new Date();
 				String logLine = "[" + dateFormat.format(date) + "] " + line + "\n";
-				System.out.print(target + ": " + logLine);
 				if(useGui)
 				{
 					this.gui.appendText(logLine, target);
@@ -1245,20 +1245,11 @@ public class HeufyBot {
 		return networkName;
 	}
 	
-	public void logException(Throwable t) {
-		synchronized (this.logLock) {
-			if (!verbose) return;
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			t.printStackTrace(pw);
-			pw.flush();
-			StringTokenizer tokenizer = new StringTokenizer(sw.toString(), "\r\n");
-			log("### Your implementation of PircBotX is faulty and you have", "server");
-			log("### allowed an uncaught Exception or Error to propagate in your", "server");
-			log("### code. It may be possible for PircBotX to continue operating", "server");
-			log("### normally. Here is the stack trace that was produced: -", "server");
-			log("### ", "server");
-			while (tokenizer.hasMoreTokens()) log("### " + tokenizer.nextToken(), "server");
+	public void logException(Throwable t)
+	{
+		synchronized (this.logLock)
+		{
+			LoggingUtils.writeError(this.getClass().toString(), t.getClass().toString(), t.getMessage());
 		}
 	}
 	

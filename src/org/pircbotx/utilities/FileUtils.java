@@ -57,7 +57,7 @@ public class FileUtils
 		} 
 		catch (IOException e) 
 		{
-			e.printStackTrace();
+			LoggingUtils.writeError(FileUtils.class.toString(), e.getClass().toString(), e.getMessage());
 			return false;
 		}
 	}
@@ -76,7 +76,7 @@ public class FileUtils
 		} 
 		catch (IOException e) 
 		{
-			e.printStackTrace();
+			LoggingUtils.writeError(FileUtils.class.toString(), e.getClass().toString(), e.getMessage());
 			return false;
 		}
 	}
@@ -90,7 +90,7 @@ public class FileUtils
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			LoggingUtils.writeError(FileUtils.class.toString(), e.getClass().toString(), e.getMessage());
 			return false;
 		}
 	}

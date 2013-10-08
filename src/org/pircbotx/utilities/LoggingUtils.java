@@ -33,11 +33,22 @@ public class LoggingUtils
 	    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date date = new Date();
 
+	    System.out.print(target + ": " + logString);
 	    FileUtils.writeFileAppend("logs/" + server + "/" + target + "/" + dateFormat.format(date) + ".txt", logString);
 	}
-  
-	public static String read(String filePath)
+	
+	public static void writeError(String source, String type, String error)
 	{
-		return FileUtils.readFile(filePath);
+		File file = new File("logs/");
+	    if (!file.exists())
+	    {
+	    	file.mkdir();
+	    }
+	    
+	    DateFormat dateFormat = new SimpleDateFormat("[yyyy-MM-dd HH:mm:ss]");
+	    Date date = new Date();
+	    
+	    System.err.println("ERROR in " + source + " : " + type + " : " + error);
+	    FileUtils.writeFileAppend("logs/errorlog.txt", dateFormat.format(date) + " " + source + ": " + error + "\n");
 	}
 }

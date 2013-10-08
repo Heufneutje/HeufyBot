@@ -7,6 +7,7 @@ import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.LoggingUtils;
 
 public class Accesscontrol extends Feature 
 {
@@ -75,6 +76,7 @@ public class Accesscontrol extends Feature
 						}
 						catch(Exception e)
 						{
+							LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 							bot.sendMessage(source, "[AccessControl] Error in command");
 						}
 				    }
@@ -118,6 +120,7 @@ public class Accesscontrol extends Feature
 						}
 						catch(Exception e)
 						{
+							LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 							bot.sendMessage(source, "[AccessControl] Error in command");
 						}
 				    }
@@ -151,6 +154,7 @@ public class Accesscontrol extends Feature
 					}
 					catch(Exception e)
 					{
+						LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 						bot.sendMessage(source, "[AccessControl] Login failed.");
 					}
 				}

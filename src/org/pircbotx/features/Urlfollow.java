@@ -77,22 +77,22 @@ public class Urlfollow extends Feature
 			}
 			catch(IllegalArgumentException e)
 			{
-				LoggingUtils.writeError(e.getClass().toString(), e.getMessage());
+				LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
 			}
 			catch(UnknownHostException e1)
 			{
-				LoggingUtils.writeError(e1.getClass().toString(), e1.getMessage());
+				LoggingUtils.writeError(this.getClass().toString(), e1.getClass().toString(), e1.getMessage());
 				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL. Host " + e1.getMessage() + " was not found.");
 		 	}
 			catch(FileNotFoundException e2)
 			{
-				LoggingUtils.writeError(e2.getClass().toString(), e2.getMessage());
+				LoggingUtils.writeError(this.getClass().toString(), e2.getClass().toString(), e2.getMessage());
 				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
 			}
 			catch(IOException e3)
 			{
-				LoggingUtils.writeError(e3.getClass().toString(), e3.getMessage());
+				LoggingUtils.writeError(this.getClass().toString(), e3.getClass().toString(), e3.getMessage());
 				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
 			}
 		}
