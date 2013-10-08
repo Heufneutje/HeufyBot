@@ -11,7 +11,7 @@ public class MenuBar extends JMenuBar
 {
 	private static final long serialVersionUID = 5547220776106013519L;
 	private JMenu file, tools;
-	private JMenuItem connect, disconnect, exit, settings, logViewer;
+	private JMenuItem connect, disconnect, exit, settings;
 	private HeufyBot bot;
 
 	public MenuBar(HeufyBot bot)
@@ -25,7 +25,6 @@ public class MenuBar extends JMenuBar
 		this.disconnect = new JMenuItem("Disconnect");
 		this.exit = new JMenuItem("Exit");
 		this.settings = new JMenuItem("Settings...");
-		this.logViewer = new JMenuItem("Log Viewer...");
 
 		this.disconnect.setEnabled(false);
 
@@ -34,13 +33,11 @@ public class MenuBar extends JMenuBar
 		this.disconnect.addActionListener(listener);
 		this.exit.addActionListener(listener);
 		this.settings.addActionListener(listener);
-    	this.logViewer.addActionListener(listener);
 
     	this.file.add(this.connect);
     	this.file.add(this.disconnect);
     	this.file.add(this.exit);
     	this.tools.add(this.settings);
-    	this.tools.add(this.logViewer);
 
     	add(this.file);
     	add(this.tools);
@@ -72,13 +69,9 @@ public class MenuBar extends JMenuBar
 				}
 				System.exit(0);
 			}
-			else if (e.getSource() == settings)
-			{
-				new SettingsWindow();
-			}
 			else
 			{
-				new LogViewerWindow();
+				new SettingsWindow();
 			}
 		}
 	}
