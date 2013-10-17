@@ -26,7 +26,7 @@ public class HeufyBotStarter
       {
     	  bot = new HeufyBot(true);
       }
-      bot.setVersionNumber("V1.7.1");
+      bot.setVersionNumber("V1.7.2");
     }
     catch (Exception e)
     {

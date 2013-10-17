@@ -91,12 +91,22 @@ public class Event extends Feature
 				  
 					Date date1 = new Date();
 					Date date2 = format.parse(firstDate);
-				  
 					Calendar start = Calendar.getInstance();
-					start.setTime(date1);
 					Calendar end = Calendar.getInstance();
-					end.setTime(date2);
-				
+					boolean eventHappened = false;
+							
+					if(date1.after(date2))
+					{
+						start.setTime(date2);
+						end.setTime(date1);
+						eventHappened = true;
+					}
+					else
+					{
+						start.setTime(date1);
+						end.setTime(date2);
+					}
+					
 					Integer[] elapsed = new Integer[3];
 					Calendar clone = (Calendar) start.clone(); // Otherwise changes are been reflected.
 					elapsed[0] = elapsed(clone, end, Calendar.DATE);
@@ -107,7 +117,15 @@ public class Event extends Feature
 					clone.add(Calendar.MINUTE, elapsed[2]);
 				
 					String result = String.format("%d day(s), %d hour(s) and %d minute(s)", elapsed[0], elapsed[1], elapsed[2]);
-					bot.sendMessage(source, "[Event] '" + firstEvent + "' will occur in " + result);
+					
+					if(eventHappened)
+					{
+						bot.sendMessage(source, "[Event] '" + firstEvent + "' occurred " + result + " ago.");
+					}
+					else
+					{
+						bot.sendMessage(source, "[Event] '" + firstEvent + "' will occur in " + result + ".");
+					}
 				}
 				else
 				{

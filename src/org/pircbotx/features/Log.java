@@ -39,23 +39,45 @@ public class Log extends Feature
 		}
 		else if (metadata.startsWith(" "))
 		{
-			try
+			this.source = source;
+			
+			if(metadata.startsWith(" -"))
 			{
-				int year = Integer.parseInt(metadata.substring(1, 5));
-				int month = Integer.parseInt(metadata.substring(6, 8));
-				int day = Integer.parseInt(metadata.substring(9));
-    		
-				Calendar calendar = new GregorianCalendar(year, month, day);
-				calendar.clear();
-    		
-				this.dateString = metadata.substring(1);
-				this.source = source;
-    		
-				post();
-	    	}
-			catch (Exception e)
+				try
+				{
+					int numberdays = Integer.parseInt(metadata.substring(1));
+					Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.DATE, numberdays);
+					
+					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					this.dateString = dateFormat.format(cal.getTime());
+					
+					post();
+				}
+				catch (Exception e)
+				{
+					this.bot.sendMessage(source, "[Log] Parser Error: Make sure the format is: log -<numberofdays>");
+				}
+			}
+			else
 			{
-				this.bot.sendMessage(source, "[Log] Parser Error: Make sure the date format for the log is: yyyy-mm-dd");
+				try
+				{
+					int year = Integer.parseInt(metadata.substring(1, 5));
+					int month = Integer.parseInt(metadata.substring(6, 8));
+					int day = Integer.parseInt(metadata.substring(9));
+	    		
+					Calendar calendar = new GregorianCalendar(year, month, day);
+					calendar.clear();
+	    		
+					this.dateString = metadata.substring(1);
+	    		
+					post();
+		    	}
+				catch (Exception e)
+				{
+					this.bot.sendMessage(source, "[Log] Parser Error: Make sure the date format for the log is: yyyy-mm-dd");
+				}
 			}
 		}
 	}

@@ -1644,10 +1644,37 @@ public class HeufyBot {
 			log(response.split(" :")[1], "server");
 			getServerInfo().setMotd(getServerInfo().getMotd().trim());
 			getListenerManager().dispatchEvent(new MotdEvent(this, (getServerInfo().getMotd())));
-		} else if (code == 4 || code == 5) 
+		}
+		else if (code == 4 || code == 5) 
+		{
 		//Example: 004 PircBotX sendak.freenode.net ircd-seven-1.1.3 DOQRSZaghilopswz CFILMPQbcefgijklmnopqrstvz bkloveqjfI
-		//Server info line, let ServerInfo class parse it
-		getServerInfo().parse(code, response); else if (code == ReplyConstants.RPL_WHOISUSER) {
+			//Server info line, let ServerInfo class parse it
+			getServerInfo().parse(code, response);
+			try
+			{
+				log(response.split(this.nick + " ")[1], "server");
+				if(code == 5)
+				{
+					this.networkName = response.split("NETWORK=")[1].split(" ")[0];
+					if(useGui)
+					{
+						gui.setNetworkName(networkName);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				if(networkName == null)
+				{
+					this.networkName = server;
+					if(useGui)
+					{
+						gui.setNetworkName(networkName);
+					}
+				}
+			}
+		}
+		else if (code == ReplyConstants.RPL_WHOISUSER) {
 			//New whois is starting
 			//311 TheLQ Plazma ~Plazma freenode/staff/plazma * :Plazma Rooolz!
 			String[] parts = response.split(" ", 6);
@@ -1659,22 +1686,11 @@ public class HeufyBot {
 			whoisBuilder.put(parsed[1], builder);
 		} else if (code == ReplyConstants.RPL_WELCOME) {
 			String response2 = response.split(" :")[1];
-			try
-			{
-				this.setNetworkName(response2.split("Welcome to the ")[1].split(" ")[0]);
-			}
-			catch (ArrayIndexOutOfBoundsException e)
-			{
-				this.setNetworkName(server);
-			}
-			if(useGui)
-			{
-				this.gui.setNetworkName(getNetworkName());
-			}
 			log(response2, "server");
 		} else if ((code == ReplyConstants.RPL_YOURHOST) || (code == ReplyConstants.RPL_CREATED)) {
 			log(response.split(" :")[1], "server");
-		} else if ((code == ReplyConstants.RPL_MYINFO) || (code == ReplyConstants.RPL_BOUNCE) || ((code > 400) && (code < 503))) {
+		}
+		else if ((code > 400) && (code < 503)) {
 			try {
 				log(response.split(this.nick + " ")[1], "server");
 			} catch (ArrayIndexOutOfBoundsException e) {
@@ -1709,11 +1725,6 @@ public class HeufyBot {
 		//WARNING: Parsed array might be modified, recreate if you're going to use down here
 		getListenerManager().dispatchEvent(new ServerResponseEvent(this, code, response));
 	}
-	private void setNetworkName(String name)
-	{
-		this.networkName = name;
-	}
-
 	/**
 	 * Called when the mode of a channel is set. We process this in
 	 * order to call the appropriate onOp, onDeop, etc method before
