@@ -2,6 +2,7 @@ package org.pircbotx.features;
 
 import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
+import org.pircbotx.utilities.LoggingUtils;
 
 public class Quit extends Feature
 {
@@ -26,7 +27,7 @@ public class Quit extends Feature
 			} 
 			catch (InterruptedException e) 
 			{
-				e.printStackTrace();
+				LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 			}
 		}
 	}

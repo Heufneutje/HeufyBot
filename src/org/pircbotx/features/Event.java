@@ -11,6 +11,7 @@ import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.LoggingUtils;
 
 public class Event extends Feature
 {
@@ -57,6 +58,7 @@ public class Event extends Feature
 			}
 			catch (Exception e)
 			{
+				LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 				this.bot.sendMessage(source, "[Event] Unknown error. Please try again.");
 			}
 		}
@@ -134,14 +136,8 @@ public class Event extends Feature
 			}
 			catch (Exception e)
 			{
-				try
-				{
-					bot.sendMessage(source, "[Event] No event matching '" + metadata.substring(1) + "' was found in the events list.");
-				}
-				catch(Exception e1)
-				{
-					bot.sendMessage(source, "[Event] Unknown error. Please try again");
-				}
+				bot.sendMessage(source, "[Event] No event matching '" + metadata.substring(1) + "' was found in the events list.");
+				LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 			}
 		}
 		else
@@ -192,6 +188,7 @@ public class Event extends Feature
 			}
 			catch (Exception e)
 			{
+				LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 				bot.sendMessage(source, "[Event] Unknown error. Please try again");
 			}
 		}

@@ -25,8 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.net.ConnectException;
@@ -218,13 +216,28 @@ public class HeufyBot {
 			public void run() {
 				try {
 					HashMap<String, String> settingsMap = SettingsUtils.readXML(filePath);
+					UtilSSLSocketFactory factory = null;
+					
 					name = ((String)settingsMap.get("nickname"));
 					realName = ((String)settingsMap.get("realname"));
 					login = ((String)settingsMap.get("username"));
 					verbose = true;
 					autoNickChange = true;
 					String serverip = (String)settingsMap.get("serverip");
-					int port = Integer.parseInt((String)settingsMap.get("port"));
+					
+					int port = 0;
+					String portString = (String)settingsMap.get("port");
+					if(portString.startsWith("+"))
+					{
+						port = Integer.parseInt(portString.substring(1));
+						factory = new UtilSSLSocketFactory();
+						factory.trustAllCertificates();
+					}
+					else
+					{
+						port = Integer.parseInt(portString);
+					}
+
 					String password = (String)settingsMap.get("password");
 					int authenticationtype = Integer.parseInt((String)settingsMap.get("authenticationtype"));
 					String channels = (String)settingsMap.get("channels");
@@ -239,35 +252,39 @@ public class HeufyBot {
 					
 					switch (authenticationtype) {
 					case 1: 
-						connect(serverip, port, password);
+						connect(serverip, port, password, factory);
 						break;
 					
 					case 2: 
-						connect(serverip, port);
+						connect(serverip, port, null, factory);
 						identify(password);
 						break;
 					
 					case 3: 
-						connect(serverip, port);
+						connect(serverip, port, null, factory);
 						sendRawLine("AUTH " + name + " " + password);
 						break;
 					
 					default: 
-						connect(serverip, port);
+						connect(serverip, port, null, factory);
 					
 					}
 					sendRawLine("MODE " + name + " +iB");
-					if ((channels != null) && (!channels.equals(""))) {
-						if (channels.contains(",")) {
+					if ((channels != null) && (!channels.equals("")))
+					{
+						if (channels.contains(",")) 
+						{
 							String[] splittedString = channels.split(",");
-							for (int i = 0; i < splittedString.length; i++) {
+							for (int i = 0; i < splittedString.length; i++) 
+							{
 								joinChannel(splittedString[i]);
 							}
-						} else {
+						} 
+						else 
+						{
 							joinChannel(channels);
 						}
 					}
-					//featureInterface.runConnectTriggers();
 				}
 				catch (UnknownHostException e1) 
 				{
@@ -387,10 +404,17 @@ public class HeufyBot {
 			// Connect to the server by DNS server
 			Throwable lastException = null;
 			for (InetAddress curAddress : InetAddress.getAllByName(hostname)) {
-				log("*** Trying address " + curAddress, "server");
+				log("*** Trying address " + curAddress + ":" + port, "server");
 				try {
 					//Create socket from appropiate place
-					if (socketFactory == null) socket = new Socket(hostname, port, inetAddress, 0); else socket = socketFactory.createSocket(hostname, port, inetAddress, 0);
+					if (socketFactory == null)
+					{
+						socket = new Socket(hostname, port, inetAddress, 0);
+					}
+					else
+					{
+						socket = socketFactory.createSocket(hostname, port, inetAddress, 0);
+					}
 					//No exception, assume successful
 					break;
 				} catch (Throwable t) {
@@ -1221,13 +1245,15 @@ public class HeufyBot {
 	 *
 	 * @param line The line to add to the log.
 	 */
-	public void log(String line, String target) {
-		synchronized (this.logLock) {
-			if (this.verbose) {
+	public void log(String line, String target)
+	{
+		synchronized (this.logLock) 
+		{
+			if (this.verbose)
+			{
 				DateFormat dateFormat = new SimpleDateFormat("HH:mm");
 				Date date = new Date();
 				String logLine = "[" + dateFormat.format(date) + "] " + line + "\n";
-				System.out.print(target + ": " + logLine);
 				if(useGui)
 				{
 					this.gui.appendText(logLine, target);
@@ -1245,20 +1271,11 @@ public class HeufyBot {
 		return networkName;
 	}
 	
-	public void logException(Throwable t) {
-		synchronized (this.logLock) {
-			if (!verbose) return;
-			StringWriter sw = new StringWriter();
-			PrintWriter pw = new PrintWriter(sw);
-			t.printStackTrace(pw);
-			pw.flush();
-			StringTokenizer tokenizer = new StringTokenizer(sw.toString(), "\r\n");
-			log("### Your implementation of PircBotX is faulty and you have", "server");
-			log("### allowed an uncaught Exception or Error to propagate in your", "server");
-			log("### code. It may be possible for PircBotX to continue operating", "server");
-			log("### normally. Here is the stack trace that was produced: -", "server");
-			log("### ", "server");
-			while (tokenizer.hasMoreTokens()) log("### " + tokenizer.nextToken(), "server");
+	public void logException(Throwable t)
+	{
+		synchronized (this.logLock)
+		{
+			LoggingUtils.writeError(this.getClass().toString(), t.getClass().toString(), t.getMessage());
 		}
 	}
 	

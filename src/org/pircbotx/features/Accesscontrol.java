@@ -7,6 +7,7 @@ import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.LoggingUtils;
 
 public class Accesscontrol extends Feature 
 {
@@ -28,7 +29,7 @@ public class Accesscontrol extends Feature
 	@Override
 	public String getHelp() 
 	{
-		return "Commands: " + bot.getCommandPrefix() + "ac," + bot.getCommandPrefix() + "ac add <nickname>, " + bot.getCommandPrefix() + "ac remove <nickname> | Add or remove a nickname from the owner list.";
+		return "Commands: " + bot.getCommandPrefix() + "ac login <username>:<password>," + bot.getCommandPrefix() + "ac add <nickname>, " + bot.getCommandPrefix() + "ac drop <nickname> | Login to your HeufyBot account, or add or remove a nickname from the owner list.";
 	}
 
 	@Override
@@ -75,6 +76,7 @@ public class Accesscontrol extends Feature
 						}
 						catch(Exception e)
 						{
+							LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 							bot.sendMessage(source, "[AccessControl] Error in command");
 						}
 				    }
@@ -118,6 +120,7 @@ public class Accesscontrol extends Feature
 						}
 						catch(Exception e)
 						{
+							LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 							bot.sendMessage(source, "[AccessControl] Error in command");
 						}
 				    }
@@ -151,6 +154,7 @@ public class Accesscontrol extends Feature
 					}
 					catch(Exception e)
 					{
+						LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 						bot.sendMessage(source, "[AccessControl] Login failed.");
 					}
 				}

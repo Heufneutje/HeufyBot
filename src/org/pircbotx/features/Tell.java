@@ -24,6 +24,7 @@ import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.LoggingUtils;
 import org.pircbotx.utilities.PastebinUtils;
 import org.pircbotx.utilities.RegexUtils;
 
@@ -361,7 +362,7 @@ public class Tell extends Feature
 		}
 		catch(Exception e)
 		{
-			//XML file could not be read
+			LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 		}
 	}
 	
@@ -419,11 +420,11 @@ public class Tell extends Feature
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 		}
 	}
 	
-	private static String getTagValue(String sTag, Element eElement)
+	private String getTagValue(String sTag, Element eElement)
 	{
 	    try
 	    {
@@ -433,6 +434,7 @@ public class Tell extends Feature
 	    }
 	    catch (NullPointerException e) 
 	    {
+	    	LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 	    }
 	    return "";
 	}

@@ -5,10 +5,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
+import org.pircbotx.utilities.LoggingUtils;
 import org.pircbotx.utilities.URLUtils;
 
 public class Time extends Feature
@@ -111,7 +113,7 @@ public class Time extends Feature
 				}
 				catch (ParseException e)
 				{
-					e.printStackTrace();
+					LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
 					return null;
 				}
 			}

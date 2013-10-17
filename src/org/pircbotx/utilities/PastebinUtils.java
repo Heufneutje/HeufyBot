@@ -79,12 +79,11 @@ public class PastebinUtils
 	        	result += decodedString;
 	        }
 	        in.close();
-	        System.out.println(result);
 	        return result;
 	    }
 	    catch (Exception e)
 	    {
-	    	e.printStackTrace();
+	    	LoggingUtils.writeError(PastebinUtils.class.toString(), e.getClass().toString(), e.getMessage());
 	    	return null;
 	    }
 	}	
