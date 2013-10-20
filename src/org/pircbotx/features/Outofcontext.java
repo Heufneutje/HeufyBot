@@ -46,7 +46,7 @@ public class Outofcontext extends Feature
 			{
 				public void run()
 				{
-					String result = PastebinUtils.post(settingsPath, "HeufyBot OutOfContext Log", true, 10);
+					String result = PastebinUtils.post(settingsPath, "HeufyBot OutOfContext Log", "10M", true);
 					if(result == null)
 					{
 						bot.sendMessage(sourceChannel, "[OutOfContext] Error: OoC Log could not be posted");
@@ -55,9 +55,13 @@ public class Outofcontext extends Feature
 					{
 						bot.sendMessage(sourceChannel, "[OutOfContext] Error: No PasteBin API key was found");
 					}
-					else
+					else if(result.startsWith("http://pastebin.com/"))
 					{
 						bot.sendMessage(sourceChannel, "[OutOfContext] OoC Log posted: " + result  + " (Link expires in 10 minutes)");
+					}
+					else
+					{
+						bot.sendMessage(sourceChannel, "[OutOfContext] Error: " + result);
 					}
 					
 				}

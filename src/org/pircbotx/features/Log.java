@@ -93,7 +93,7 @@ public class Log extends Feature
 				{
 					targetLog = source.replaceAll("[^a-zA-Z0-9]+","");
 				}
-				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + targetLog + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, true, 10);
+				String result = PastebinUtils.post("logs/" + bot.getNetworkName() + "/" + targetLog + "/" + dateString + ".txt", "Log for " + source + " on " + dateString, "10M", true);
 				if(result != null)
 				{
 					if(result.equals("NotFound"))
@@ -104,9 +104,13 @@ public class Log extends Feature
 					{
 						bot.sendMessage(source, "[Log] Error: No PasteBin API key was found");
 					}
-					else
+					else if(result.startsWith("http://pastebin.com/"))
 					{
 						bot.sendMessage(source, "[Log] Log for " + source + " on " + dateString + " posted: " + result + " (Link expires in 10 minutes)");
+					}
+					else
+					{
+						bot.sendMessage(source, "[Log] Error: " + result);
 					}
 				}
 				else
