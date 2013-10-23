@@ -261,7 +261,7 @@ public class Tell extends Feature
 						}
 						else
 						{
-							tells += message.text + " < From " + message.from + " on " + message.dateSent + "\n";
+							tells += triggerUser + ": " + message.text + " < From " + message.from + " on " + message.dateSent + "\n";
 						}
 					}
 					if(!tells.equals(""))
