@@ -115,7 +115,7 @@ public class Loader extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "load <feature>, " + bot.getCommandPrefix() + "unload <feature>" + bot.getCommandPrefix() + "reload <feature> | Load, unload or reload one or more features. Seperate feature names by spaces if more.";
+		return "Commands: " + bot.getCommandPrefix() + "load <feature>, " + bot.getCommandPrefix() + "unload <feature>, " + bot.getCommandPrefix() + "reload <feature> | Load, unload or reload one or more features. Seperate feature names by spaces if more.";
 	}
 
 	@Override
