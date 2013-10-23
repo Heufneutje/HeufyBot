@@ -244,9 +244,11 @@ public class HeufyBot {
 					commandPrefix = (String)settingsMap.get("commandprefix");
 					
 					String features = (String)settingsMap.get("loadedfeatures");
+					featureInterface.loadFeature("Loader");
 					if(features.length() > 0)
 					{
 						featureInterface.unloadAllFeatures();
+						featureInterface.loadFeature("Loader");
 						featureInterface.loadFeatures(features.split(","));
 					}
 					
@@ -1273,6 +1275,7 @@ public class HeufyBot {
 	
 	public void logException(Throwable t)
 	{
+		t.printStackTrace();
 		synchronized (this.logLock)
 		{
 			LoggingUtils.writeError(this.getClass().toString(), t.getClass().toString(), t.getMessage());

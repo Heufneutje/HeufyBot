@@ -70,152 +70,55 @@ public class FeatureInterface extends ListenerAdapter implements Listener
 		}
 		if(ignored == false)
 		{
-			if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "load"))
+			String source = "";
+			boolean isPM = false;
+			if(triggerType == TriggerType.PM)
 			{
-				String source = "";
-				boolean isPM = false;
-				if(triggerType == TriggerType.PM)
-				{
-					source = user.getNick();
-					isPM = true;
-				}
-				else
-				{
-					source = channel.getName();
-				}
-				if(checkAutorization(user, channel, AuthType.OPs, isPM))
-				{
-					String metadata = message.substring(5);
-	
-					if ((metadata.equals("")) || (metadata.equals(" ")))
-					{
-						this.bot.sendMessage(source, "Load what?");
-					}
-					else if (metadata.charAt(0) == ' ')
-					{
-						String featureName = "";
-						featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
-	
-						switch (loadFeature(featureName)) {
-						case 0:
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" was successfully loaded!");
-							break;
-						case 1:
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" is already loaded!");
-							break;
-						case 2:
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" does not exist!");
-						default:
-							break;
-						}
-					}
-				}
-				else
-				{
-					this.bot.sendMessage(source, "Only my owners and OPs can load features!");
-				}
-			}
-			else if (message.toLowerCase().startsWith(bot.getCommandPrefix() + "unload"))
-			{
-				String source = "";
-				boolean isPM = false;
-				if(triggerType == TriggerType.PM)
-				{
-					source = user.getNick();
-					isPM = true;
-				}
-				else
-				{
-					source = channel.getName();
-				}
-				if(checkAutorization(user, channel, AuthType.OPs, isPM))
-				{
-					String metadata = message.substring(7);
-
-					if ((metadata.equals("")) || (metadata.equals(" ")))
-					{
-						this.bot.sendMessage(source, "Unload what?");
-					}
-					else if (metadata.equals(" *"))
-					{
-						int featureCount = features.size();
-						for(int i = 0; i < featureCount; i++)
-						{
-							unloadFeature(features.get(0).getName());
-						}
-						this.bot.sendMessage(source, "All features have been unloaded.");
-					}
-					else if (metadata.charAt(0) == ' ')
-					{
-						String featureName = "";
-						featureName += Character.toUpperCase(metadata.substring(1).toLowerCase().charAt(0)) + metadata.substring(1).toLowerCase().substring(1);
-
-						switch (unloadFeature(featureName)) 
-						{
-						case 0:
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" was successfully unloaded!");
-							break;
-						case 1:
-							this.bot.sendMessage(source, "Feature \"" + featureName + "\" is not loaded or does not exist!");
-							break;
-						default:
-							break;
-						}
-					}
-				}
-				else
-				{
-					this.bot.sendMessage(source, "Only my owner and OPs can unload features!");
-				}
+				source = user.getNick();
+				isPM = true;
 			}
 			else
 			{
-				String source = "";
-				boolean isPM = false;
-				if(triggerType == TriggerType.PM)
+				source = channel.getName();
+			}
+			Feature[] listCopy = new Feature[features.size()];
+			listCopy = features.toArray(listCopy);
+			for (int l = 0; l < listCopy.length; l++)
+			{
+				Feature feature = listCopy[l];
+				if(feature.getTriggerType() == TriggerType.Automatic)
 				{
-					source = user.getNick();
-					isPM = true;
+					feature.process(source, message, user.getNick(), "Auto");
 				}
-				else
+				
+				for (int i = 0; i < feature.getTriggers().length; i++)
 				{
-					source = channel.getName();
-				}
-				for (Feature feature : this.features)
-				{
-					for (int i = 0; i < feature.getTriggers().length; i++)
+					if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerType == TriggerType.Action || triggerType != TriggerType.Action))
 					{
-						if(feature.mustStartWithTrigger() && (feature.triggersOnAction() && triggerType == TriggerType.Action || triggerType != TriggerType.Action))
+						if (feature.getTriggers().length > 0 && !message.toLowerCase().split(" ")[0].matches("^" + feature.getTriggers()[i] + "$"))
+							continue;
+						if(checkAutorization(user, channel, feature.getAuthType(), isPM))
 						{
-							if (feature.getTriggers().length > 0 && !message.toLowerCase().split(" ")[0].matches("^" + feature.getTriggers()[i] + "$"))
-								continue;
-							if(checkAutorization(user, channel, feature.getAuthType(), isPM))
-							{
-								feature.process(source, message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
-							}
-							else
-							{
-								if(feature.getAuthType() == AuthType.OPs)
-								{
-									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my admins and OPs are authorized to use this command!");
-								}
-								else if(feature.getAuthType() == AuthType.Admins)
-								{
-									this.bot.sendMessage(source, "[" + feature.getName() + "] Only my admins are authorized to use this command!");
-								}
-							}
+							feature.process(source, message.substring(feature.getTriggers()[i].length()), user.getNick(), feature.getTriggers()[i]);
 						}
 						else
 						{
-							if (feature.getTriggers().length > 0 && !message.toLowerCase().contains(feature.getTriggers()[i]))
-								continue;
-							feature.process(source, message, user.getNick(), null);
-								break;
+							if(feature.getAuthType() == AuthType.OPs)
+							{
+								this.bot.sendMessage(source, "[" + feature.getName() + "] Only my admins and OPs are authorized to use this command!");
+							}
+							else if(feature.getAuthType() == AuthType.Admins)
+							{
+								this.bot.sendMessage(source, "[" + feature.getName() + "] Only my admins are authorized to use this command!");
+							}
 						}
 					}
-					if(feature.getTriggerType() == TriggerType.Automatic)
+					else
 					{
-						feature.process(source, message, user.getNick(), "Auto");
+						if (feature.getTriggers().length > 0 && !message.toLowerCase().contains(feature.getTriggers()[i]))
+							continue;
+						feature.process(source, message, user.getNick(), null);
+							return;
 					}
 				}
 			}
@@ -310,7 +213,11 @@ public class FeatureInterface extends ListenerAdapter implements Listener
   
 	public void unloadAllFeatures()
 	{
-		features.clear();
+		int featureCount = features.size();
+        for(int i = 0; i < featureCount; i++)
+        {
+            unloadFeature(features.get(0).getName());
+        }
 	}
   
 	public void runLoads()
