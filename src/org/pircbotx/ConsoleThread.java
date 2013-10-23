@@ -57,7 +57,76 @@ public class ConsoleThread extends Thread
 		    	{
 		    		command = command.substring(5);
 		    		bot.partChannel(command.split(" ")[0]);
-		    	} 
+		    	}
+		    	else if(command.startsWith("load "))
+		    	{
+		    		if(bot.isConnected())
+		    		{
+			    		command = command.substring(5);
+			    		String[] features = command.split(" ");
+						for(int i = 0; i < features.length; i++)
+						{
+							String featureName = Character.toUpperCase(features[i].toLowerCase().charAt(0)) + features[i].toLowerCase().substring(1);
+				
+							switch (bot.getFeatureInterface().loadFeature(featureName)) 
+							{
+							case 0:
+								System.out.println("Feature \"" + featureName + "\" was successfully loaded!");
+								break;
+							case 1:
+								System.out.println("Feature \"" + featureName + "\" is already loaded!");
+								break;
+							case 2:
+								System.out.println("Feature \"" + featureName + "\" does not exist!");
+							default:
+								break;
+							}
+						}
+		    		}
+		    	}
+		    	else if(command.startsWith("unload "))
+		    	{
+		    		command = command.substring(7);
+		    		String[] features = command.split(" ");
+					for(int i = 0; i < features.length; i++)
+					{
+						String featureName = Character.toUpperCase(features[i].toLowerCase().charAt(0)) + features[i].toLowerCase().substring(1);
+		
+						switch (bot.getFeatureInterface().unloadFeature(featureName)) 
+						{
+						case 0:
+							System.out.println("Feature \"" + featureName + "\" was successfully unloaded!");
+							break;
+						case 1:
+							System.out.println("Feature \"" + featureName + "\" is not loaded or does not exist!");
+							break;
+						default:
+							break;
+						}
+					}
+		    	}
+		    	else if(command.startsWith("reload "))
+		    	{
+		    		command = command.substring(7);
+		    		String[] features = command.split(" ");
+					for(int i = 0; i < features.length; i++)
+					{
+						String featureName = Character.toUpperCase(features[i].toLowerCase().charAt(0)) + features[i].toLowerCase().substring(1);
+		
+						switch (bot.getFeatureInterface().unloadFeature(featureName)) 
+						{
+						case 0:
+							this.bot.getFeatureInterface().loadFeature(featureName);
+							System.out.println("Feature \"" + featureName + "\" was successfully reloaded!");
+							break;
+						case 1:
+							System.out.println("Feature \"" + featureName + "\" is not loaded or does not exist!");
+							break;
+						default:
+							break;
+						}
+					}
+		    	}
 			}
 			catch (Exception e)
 			{
