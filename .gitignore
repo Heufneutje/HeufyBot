@@ -8,3 +8,5 @@
 /featuredata
 /json-simple-1.1.1.jar
 /microsoft-translator-java-api-0.6.2.jar
+.classpath
+.project
