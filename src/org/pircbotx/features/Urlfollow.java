@@ -52,7 +52,7 @@ public class Urlfollow extends Feature
 				if(fullHostname != null)
 				{
 					String apiKey = FileUtils.readFile(getSettingsPath());
-					if(fullHostname.contains("http://www.youtube.com/watch") && !apiKey.equals(""))
+					if(fullHostname.matches("^http?s://www.youtube.com/watch.*") && !apiKey.equals(""))
 					{
 						String videoID = "";
 						if(fullHostname.contains("&"))
