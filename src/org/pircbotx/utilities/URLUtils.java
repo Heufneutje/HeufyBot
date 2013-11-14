@@ -31,7 +31,7 @@ public class URLUtils
 		catch(Exception e)
 		{
 			LoggingUtils.writeError(URLUtils.class.toString(), e.getClass().toString(), e.getMessage());
-			return "ERROR";
+			return null;
 		}
 	}
 	
@@ -46,13 +46,12 @@ public class URLUtils
 				urlString = connection.getHeaderField("location");
 			    connection = (HttpURLConnection) new URL(urlString).openConnection();
 			}
-			System.out.println(urlString);
 			return urlString;
 		}
 		catch (Exception e)
 		{
 			LoggingUtils.writeError(URLUtils.class.toString(), e.getClass().toString(), e.getMessage());
-			return "ERROR";
+			return null;
 		}
 	}
 	

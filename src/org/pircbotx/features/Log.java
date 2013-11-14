@@ -130,7 +130,7 @@ public class Log extends Feature
 	@Override
 	public String getHelp()
 	{
-		return "Commands: " + bot.getCommandPrefix() + "log, " + bot.getCommandPrefix() + "log <YYYY-MM-DD> | Provides a log of the current channel for today, or another date if specified.";
+		return "Commands: " + bot.getCommandPrefix() + "log, " + bot.getCommandPrefix() + "log <YYYY-MM-DD>, " + bot.getCommandPrefix() + "log -<numberofdays> | Provides a log of the current channel for today, or another date if specified.";
 	}
 
 	@Override

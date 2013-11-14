@@ -44,7 +44,7 @@ public class Uptime extends Feature
 			elapsed[2] = (int) (end.getTimeInMillis() - clone.getTimeInMillis()) / 60000;
 			clone.add(Calendar.MINUTE, elapsed[2]);
 			
-			this.bot.sendMessage(source, "[Uptime] HeufyBot has been running since " + format.format(dateStarted) + " (" + elapsed[0] + " day(s), " + elapsed[1] + " hour(s) and " + elapsed[2] + " mimute(s))");
+			this.bot.sendMessage(source, "[Uptime] HeufyBot has been running since " + format.format(dateStarted) + " (" + elapsed[0] + " day(s), " + elapsed[1] + " hour(s) and " + elapsed[2] + " minute(s))");
 		}
 	}
 

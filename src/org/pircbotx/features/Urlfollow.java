@@ -1,8 +1,5 @@
 package org.pircbotx.features;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,7 +8,6 @@ import org.pircbotx.HeufyBot;
 import org.pircbotx.features.types.AuthType;
 import org.pircbotx.features.types.TriggerType;
 import org.pircbotx.utilities.FileUtils;
-import org.pircbotx.utilities.LoggingUtils;
 import org.pircbotx.utilities.URLUtils;
 
 public class Urlfollow extends Feature
@@ -50,11 +46,11 @@ public class Urlfollow extends Feature
 	  
 		for(String urlstring : urls)
 		{		    
-			try
+			if(!urlstring.toLowerCase().matches(".*(jpe?g|gif|png|bmp)"))
 			{
-				if(!urlstring.toLowerCase().matches(".*(jpe?g|gif|png|bmp)"))
+				String fullHostname = URLUtils.getFullHostname(urlstring);
+				if(fullHostname != null)
 				{
-					String fullHostname = URLUtils.getFullHostname(urlstring);
 					String apiKey = FileUtils.readFile(getSettingsPath());
 					if(fullHostname.contains("http://www.youtube.com/watch") && !apiKey.equals(""))
 					{
@@ -74,26 +70,6 @@ public class Urlfollow extends Feature
 						bot.sendMessage(source, "[URLFollow] " + followNormalURL(urlstring));
 					}
 				}
-			}
-			catch(IllegalArgumentException e)
-			{
-				LoggingUtils.writeError(this.getClass().toString(), e.getClass().toString(), e.getMessage());
-				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
-			}
-			catch(UnknownHostException e1)
-			{
-				LoggingUtils.writeError(this.getClass().toString(), e1.getClass().toString(), e1.getMessage());
-				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL. Host " + e1.getMessage() + " was not found.");
-		 	}
-			catch(FileNotFoundException e2)
-			{
-				LoggingUtils.writeError(this.getClass().toString(), e2.getClass().toString(), e2.getMessage());
-				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
-			}
-			catch(IOException e3)
-			{
-				LoggingUtils.writeError(this.getClass().toString(), e3.getClass().toString(), e3.getMessage());
-				this.bot.sendMessage(source, "[URLFollow] Error: Not a valid URL");
 			}
 		}
 	}
@@ -117,7 +93,7 @@ public class Urlfollow extends Feature
 		return "No title found || At host: " + URLUtils.getHost(urlString);
 	}
 	
-	public String followYouTubeURL(String videoID, String apiKey) throws IOException
+	public String followYouTubeURL(String videoID, String apiKey)
 	{
 		String urlString = "https://gdata.youtube.com/feeds/api/videos/" + videoID + "?v=2&key=" + apiKey;
 		String data = URLUtils.grab(urlString);

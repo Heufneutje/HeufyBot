@@ -1260,10 +1260,7 @@ public class HeufyBot {
 				{
 					this.gui.appendText(logLine, target);
 				}
-				if(this.getNetworkName() != null)
-				{
-					LoggingUtils.write(logLine, this.getNetworkName(), target);
-				}
+				LoggingUtils.write(logLine, this.getNetworkName(), target);
 			}
 		}
 	}
